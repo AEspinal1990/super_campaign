@@ -13,3 +13,22 @@ Keep all the code you right within the src directory. When the project is compil
 
 <b>NOTE</b><br>
 I'm going to be changing how it's structured as the semester goes on. I just wanted to get something together that allows us to all start working on it. 
+
+The full folder structure of this app is explained below:
+
+> **Note!** Make sure you have already built the app using `npm run build`
+
+| Name | Description |
+| ------------------------ | --------------------------------------------------------------------------------------------- |
+| **.vscode**              | Contains VS Code specific settings                                                            |
+| **dist**                 | Contains the distributable (or output) from our TypeScript build. This is the code we deploy  |
+| **node_modules**         | Contains all our npm dependencies                                                             |
+| **src**                  | Contains our source code that will be compiled to the dist dir                                |
+| **src/config**           | Passport authentication strategies and login middleware. Database script                      |
+| **src/controllers**      | Controllers define functions that respond to various http requests                            |
+| **src/public**           | Static assets that will be used client side                                                   |
+| **src**/server.ts        | Entry point to your express app                                                               |
+| **test**                 | Contains your tests. Seperate from source because there is a different build process.         |
+| **views**                | Views define how your app renders on the client. In this case we're using pug                 |
+| package.json             | File that contains npm dependencies as well as [build scripts](#what-if-a-library-isnt-on-definitelytyped)                          |
+| tsconfig.json            | Config settings for compiling server code written in TypeScript                               |
