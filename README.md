@@ -16,7 +16,7 @@ I'm going to be changing how it's structured as the semester goes on. I just wan
 
 The full folder structure of this app is explained below:
 
-> **Note!** Make sure you have already built the app using `npm run build`
+> **Note!** Make sure you have already built the app using `npm run watch`
 
 | Name | Description |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
@@ -32,3 +32,7 @@ The full folder structure of this app is explained below:
 | **views**                | Views define how your app renders on the client. In this case we're using pug                 |
 | package.json             | File that contains npm dependencies as well as [build scripts](#what-if-a-library-isnt-on-definitelytyped)                          |
 | tsconfig.json            | Config settings for compiling server code written in TypeScript                               |
+
+
+# Where I'm getting structure from
+https://github.com/Microsoft/TypeScript-Node-Starter
