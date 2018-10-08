@@ -62,7 +62,7 @@ class CampaignManager {
 
     }
 
-    public addLocation(location:Location, campaignID:number){
+    public addLocation(location:Locations, campaignID:number){
 
     }
 
