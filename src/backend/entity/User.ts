@@ -1,8 +1,14 @@
+import {Column, Entity, PrimaryColumn, JoinColumn} from "typeorm";
 
-class User {
+@Entity()
+export class User {
+    @PrimaryColumn({name: "username"})
     private _username: string;
+    @Column({name: "fullName"})
     private _name: string;
+    @Column({name: "permission"})
     private _permission: number;
+    @Column({name: "employeeID"})
     private _employeeID: number;
 
     constructor (username:string, name:string, permission:number, employeeID:number){

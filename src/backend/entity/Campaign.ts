@@ -1,13 +1,20 @@
+import {Column, Entity, PrimaryColumn} from "typeorm";
 
-class Campaign {
+@Entity()
+export class Campaign {
+    @PrimaryColumn({name: "ID"})
     private _ID: number;
+    @Column({name: "campaignName"})
     private _name:string;
     private _managers:number[];
     private _canvassers: number[];
     private _assignment: Assignment;
     private _locations:number[];
+    @Column({name: "startDate"})
     private _startDate:Date;
+    @Column({name: "endDate"})
     private _endDate:Date;
+    @Column({name: "avgDuration"})
     private _avgDuration:number;
     private _questionaire:string[];
     private _talkingPoints:string[];
