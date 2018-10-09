@@ -21,7 +21,6 @@ The full folder structure of this app is explained below:
 | Name | Description |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
 | **.vscode**              | Contains VS Code specific settings                                                            |
-| **dist**                 | Contains the distributable (or output) from our TypeScript build. This is the code we deploy  |
 | **node_modules**         | Contains all our npm dependencies                                                             |
 | **src**                  | Contains our source code that will be compiled to the dist dir                                |
 | **src/config**           | Passport authentication strategies and login middleware. Database script                      |
