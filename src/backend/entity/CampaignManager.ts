@@ -46,31 +46,31 @@ export class CampaignManager {
 
     // }
 
-    public editAssignment(assignment:Assignment){
+    // public editAssignment(assignment:Assignment){
 
-    }
+    // }
 
-    public addManager(managerID:number, campaignID:number){
+    // public addManager(managerID:number, campaignID:number){
         
-    }
+    // }
 
-    public removeManager(managerID:number, campaignID:number){
+    // public removeManager(managerID:number, campaignID:number){
 
-    }
+    // }
 
-    public addCanvasser(canvasserID:number, campaignID:number){
+    // public addCanvasser(canvasserID:number, campaignID:number){
 
-    }
+    // }
 
-    public removeCanvasser(canvasserID:number, campaignID:number){
+    // public removeCanvasser(canvasserID:number, campaignID:number){
 
-    }
+    // }
 
-    public addLocation(location:Locations, campaignID:number){
+    // public addLocation(location:Locations, campaignID:number){
 
-    }
+    // }
 
-    public removeLocation(locationID:number, campaignID:number){
+    // public removeLocation(locationID:number, campaignID:number){
 
-    }
+    // }
 }
