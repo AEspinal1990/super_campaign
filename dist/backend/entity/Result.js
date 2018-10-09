@@ -72,7 +72,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Result.prototype, "_locationID", void 0);
 __decorate([
-    typeorm_1.PrimaryColumn({ name: "canvasserID" }),
+    typeorm_1.Column({ name: "canvasserID" }),
     __metadata("design:type", Number)
 ], Result.prototype, "_canvasserID", void 0);
 __decorate([
@@ -80,7 +80,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Result.prototype, "_answer", void 0);
 __decorate([
-    typeorm_1.Column({ name: "resultNum" }),
+    typeorm_1.PrimaryColumn({ name: "resultNum" }),
     __metadata("design:type", Number)
 ], Result.prototype, "_answerNumber", void 0);
 __decorate([

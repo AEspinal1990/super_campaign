@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const Locations_1 = require("./Locations");
 let Task = class Task {
     constructor(ID, canvasserID, campaignID, remainingLocations, completedLocations, currentLocation, recommendedRoute, scheduledOn, status) {
         this._ID = ID;
@@ -109,6 +108,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Task.prototype, "_campaignID", void 0);
 __decorate([
+    typeorm_1.Column({ name: "currentLocID" }),
+    __metadata("design:type", Number)
+], Task.prototype, "_currentLocation", void 0);
+__decorate([
     typeorm_1.Column({ name: "ofDate" }),
     __metadata("design:type", Date)
 ], Task.prototype, "_scheduledOn", void 0);
@@ -118,7 +121,7 @@ __decorate([
 ], Task.prototype, "_status", void 0);
 Task = __decorate([
     typeorm_1.Entity(),
-    __metadata("design:paramtypes", [Number, Number, Number, Array, Array, Locations_1.Locations, Array, Date, Boolean])
+    __metadata("design:paramtypes", [Number, Number, Number, Array, Array, Number, Array, Date, Boolean])
 ], Task);
 exports.Task = Task;
 //# sourceMappingURL=Task.js.map
