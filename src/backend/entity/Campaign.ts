@@ -2,20 +2,36 @@ import {Column, Entity, PrimaryColumn} from "typeorm";
 
 @Entity()
 export class Campaign {
+
     @PrimaryColumn({name: "ID"})
     private _ID: number;
+    
     @Column({name: "campaignName"})
     private _name:string;
+
+    // We reference the managers table and look for all that have a this campaign id?
     private _managers:number[];
+
+    // We reference the canvassers table and look for all that have a this campaign id?
     private _canvassers: number[];
+
+    // We reference the assignment table and look for an assignment with this campaign id
     private _assignment: Assignment;
+
+    // We reference the locations table and look for all locations with this campaign id
     private _locations:number[];
+    
     @Column({name: "startDate"})
     private _startDate:Date;
+    
     @Column({name: "endDate"})
     private _endDate:Date;
+    
     @Column({name: "avgDuration"})
     private _avgDuration:number;
+
+    // We reference the questionaire table and look for all questions with this campaign id.
+    // Will they always come back in order? How do we ensure question1 matches with answer1 in result 
     private _questionaire:string[];
     private _talkingPoints:string[];
 

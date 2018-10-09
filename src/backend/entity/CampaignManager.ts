@@ -1,6 +1,10 @@
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
-class CampaignManager {
+@Entity()
+export class CampaignManager {
+    @PrimaryGeneratedColumn()
     private _ID: number;
+    @Column()
     private _currentCampaigns: number[];
 
     constructor (ID:number, currentCampaigns:number[]){

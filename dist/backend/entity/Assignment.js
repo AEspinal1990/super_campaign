@@ -1,4 +1,3 @@
-"use strict";
 class Assignment {
     constructor(ID, task) {
         this._ID = ID;

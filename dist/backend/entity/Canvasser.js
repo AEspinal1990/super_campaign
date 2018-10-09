@@ -1,4 +1,3 @@
-"use strict";
 class Canvasser {
     constructor(ID, tasksRemaining, tasksCompleted, datesAvailable, datesAssigned) {
         this._ID = ID;

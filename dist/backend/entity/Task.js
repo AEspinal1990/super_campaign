@@ -1,4 +1,3 @@
-"use strict";
 class Task {
     constructor(ID, canvasserID, remainingLocations, completedLocations, currentLocation, recommendedRoute, scheduledOn, status) {
         this._ID = ID;

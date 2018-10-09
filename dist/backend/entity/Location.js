@@ -1,4 +1,3 @@
-"use strict";
 class Locations {
     constructor(ID, num, street, unit, city, state, zipcode) {
         this._ID = ID;

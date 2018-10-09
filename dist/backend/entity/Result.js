@@ -1,4 +1,3 @@
-"use strict";
 class Result {
     constructor(ID, location, canvasser, answers, rating) {
         this._ID = ID;
