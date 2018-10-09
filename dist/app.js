@@ -6,6 +6,5 @@ require("reflect-metadata");
 const app = express();
 app.set('port', process.env.PORT || 3000);
 app.get('/', statusController.hi);
-app.post('/awesome', statusController.awesome);
 exports.default = app;
 //# sourceMappingURL=app.js.map

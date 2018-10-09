@@ -10,42 +10,46 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let Assignment = class Assignment {
-    constructor(ID, taskID, task) {
+let CompletedLocation = class CompletedLocation {
+    constructor(ID, locationID, resultID) {
         this._ID = ID;
-        this._taskID = taskID;
-        this._task = task;
+        this._locationID = locationID;
+        this._resultID = resultID;
     }
     get ID() {
         return this._ID;
     }
-    get taskID() {
-        return this._taskID;
+    get locationID() {
+        return this._locationID;
     }
-    get task() {
-        return this._task;
+    get resultID() {
+        return this._resultID;
     }
-    set ID(value) {
-        this._ID = value;
+    set ID(ID) {
+        this._ID = ID;
     }
-    set taskID(taskID) {
-        this._taskID = taskID;
+    set locationID(locationID) {
+        this._locationID = locationID;
     }
-    set task(value) {
-        this._task = value;
+    set resultID(resultID) {
+        this._resultID = resultID;
     }
 };
 __decorate([
-    typeorm_1.PrimaryColumn(),
+    typeorm_1.PrimaryColumn({ name: "ID" }),
     __metadata("design:type", Number)
-], Assignment.prototype, "_ID", void 0);
+], CompletedLocation.prototype, "_ID", void 0);
 __decorate([
-    typeorm_1.PrimaryColumn(),
+    typeorm_1.PrimaryColumn({ name: "locationID" }),
     __metadata("design:type", Number)
-], Assignment.prototype, "_taskID", void 0);
-Assignment = __decorate([
+], CompletedLocation.prototype, "_locationID", void 0);
+__decorate([
+    typeorm_1.PrimaryColumn({ name: "resultID" }),
+    __metadata("design:type", Number)
+], CompletedLocation.prototype, "_resultID", void 0);
+CompletedLocation = __decorate([
     typeorm_1.Entity(),
-    __metadata("design:paramtypes", [Number, Number, Array])
-], Assignment);
-exports.Assignment = Assignment;
-//# sourceMappingURL=Assignment.js.map
+    __metadata("design:paramtypes", [Number, Number, Number])
+], CompletedLocation);
+exports.CompletedLocation = CompletedLocation;
+//# sourceMappingURL=CompletedLocation.js.map

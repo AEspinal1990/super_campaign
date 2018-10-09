@@ -1,4 +1,5 @@
 import {Column, Entity, PrimaryColumn} from "typeorm";
+import { Assignment } from "./Assignment";
 
 @Entity()
 export class Campaign {

@@ -1,8 +1,21 @@
 "use strict";
-class Task {
-    constructor(ID, canvasserID, remainingLocations, completedLocations, currentLocation, recommendedRoute, scheduledOn, status) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const typeorm_1 = require("typeorm");
+const Locations_1 = require("./Locations");
+let Task = class Task {
+    constructor(ID, canvasserID, campaignID, remainingLocations, completedLocations, currentLocation, recommendedRoute, scheduledOn, status) {
         this._ID = ID;
         this._canvaserID = canvasserID;
+        this._campaignID = campaignID;
         this._remainingLocations = remainingLocations;
         this._completedLocations = completedLocations;
         this._currentLocation = currentLocation;
@@ -15,6 +28,9 @@ class Task {
     }
     get canvasserID() {
         return this._canvaserID;
+    }
+    get campaignID() {
+        return this._campaignID;
     }
     get remainingLocations() {
         return this._remainingLocations;
@@ -39,6 +55,9 @@ class Task {
     }
     set canvasserID(canvasserID) {
         this._canvaserID = canvasserID;
+    }
+    set campaignID(campaignId) {
+        this._campaignID = campaignId;
     }
     set remainingLocations(locations) {
         this._remainingLocations = locations;
@@ -76,5 +95,30 @@ class Task {
         }
         return 0;
     }
-}
+};
+__decorate([
+    typeorm_1.PrimaryColumn({ name: "ID" }),
+    __metadata("design:type", Number)
+], Task.prototype, "_ID", void 0);
+__decorate([
+    typeorm_1.Column({ name: "canvasserID" }),
+    __metadata("design:type", Number)
+], Task.prototype, "_canvaserID", void 0);
+__decorate([
+    typeorm_1.Column({ name: "campaignID" }),
+    __metadata("design:type", Number)
+], Task.prototype, "_campaignID", void 0);
+__decorate([
+    typeorm_1.Column({ name: "ofDate" }),
+    __metadata("design:type", Date)
+], Task.prototype, "_scheduledOn", void 0);
+__decorate([
+    typeorm_1.Column({ name: "taskStatus" }),
+    __metadata("design:type", Boolean)
+], Task.prototype, "_status", void 0);
+Task = __decorate([
+    typeorm_1.Entity(),
+    __metadata("design:paramtypes", [Number, Number, Number, Array, Array, Locations_1.Locations, Array, Date, Boolean])
+], Task);
+exports.Task = Task;
 //# sourceMappingURL=Task.js.map

@@ -27,11 +27,13 @@ The full folder structure of this app is explained below:
 | **src/config**           | Passport authentication strategies and login middleware. Database script                      |
 | **src/controllers**      | Controllers define functions that respond to various http requests                            |
 | **src/public**           | Static assets that will be used client side                                                   |
+| **src/backend**		   | Contains our source code for the server side 												   |
 | **src**/server.ts        | Entry point to your express app                                                               |
 | **test**                 | Contains your tests. Seperate from source because there is a different build process.         |
 | **views**                | Views define how your app renders on the client. In this case we're using pug                 |
 | package.json             | File that contains npm dependencies as well as [build scripts](#what-if-a-library-isnt-on-definitelytyped)                          |
 | tsconfig.json            | Config settings for compiling server code written in TypeScript                               |
+| ormconfig.json 		   | Config settings for TypeORM. Where you specifiy the DB credentials and connection			   |
 
 
 # Where I'm getting structure from

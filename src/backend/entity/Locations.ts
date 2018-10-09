@@ -1,11 +1,20 @@
+import {Column, Entity, PrimaryColumn} from "typeorm";
 
-class Locations{
+@Entity()
+export class Locations{
+    @PrimaryColumn({name: "ID"})
     private _ID: number;
+    @Column({name: "num"})
     private _streetNumber: number;
+    @Column({name: "street"})
     private _street: string;
+    @Column({name: "unit"})
     private _unit: string;
+    @Column({name: "city"})
     private _city: string;
+    @Column({name: "state"})
     private _state: string;
+    @Column({name: "zipcode"})
     private _zipcode: number;
 
     constructor (ID:number, num:number, street:string, unit:string, city:string, state:string, zipcode:number){

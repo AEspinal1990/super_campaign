@@ -10,42 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let Assignment = class Assignment {
-    constructor(ID, taskID, task) {
-        this._ID = ID;
-        this._taskID = taskID;
-        this._task = task;
+let AssignedDate = class AssignedDate {
+    constructor(canvasserID, assignedDate) {
+        this._canvasserID = canvasserID;
+        this._assignedDate = assignedDate;
     }
-    get ID() {
-        return this._ID;
+    get canvasserID() {
+        return this._canvasserID;
     }
-    get taskID() {
-        return this._taskID;
+    get assignedDate() {
+        return this._assignedDate;
     }
-    get task() {
-        return this._task;
+    set canvasserID(canvasserID) {
+        this._canvasserID = canvasserID;
     }
-    set ID(value) {
-        this._ID = value;
-    }
-    set taskID(taskID) {
-        this._taskID = taskID;
-    }
-    set task(value) {
-        this._task = value;
+    set assignedDate(assignedDate) {
+        this._assignedDate = assignedDate;
     }
 };
 __decorate([
-    typeorm_1.PrimaryColumn(),
+    typeorm_1.PrimaryColumn({ name: "canvasserID" }),
     __metadata("design:type", Number)
-], Assignment.prototype, "_ID", void 0);
+], AssignedDate.prototype, "_canvasserID", void 0);
 __decorate([
-    typeorm_1.PrimaryColumn(),
-    __metadata("design:type", Number)
-], Assignment.prototype, "_taskID", void 0);
-Assignment = __decorate([
+    typeorm_1.PrimaryColumn({ name: "assignedDate" }),
+    __metadata("design:type", Date)
+], AssignedDate.prototype, "_assignedDate", void 0);
+AssignedDate = __decorate([
     typeorm_1.Entity(),
-    __metadata("design:paramtypes", [Number, Number, Array])
-], Assignment);
-exports.Assignment = Assignment;
-//# sourceMappingURL=Assignment.js.map
+    __metadata("design:paramtypes", [Number, Date])
+], AssignedDate);
+exports.AssignedDate = AssignedDate;
+//# sourceMappingURL=AssignedDate.js.map

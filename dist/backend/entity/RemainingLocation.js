@@ -10,42 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let Assignment = class Assignment {
-    constructor(ID, taskID, task) {
+let RemainingLocation = class RemainingLocation {
+    constructor(ID, locationID) {
         this._ID = ID;
-        this._taskID = taskID;
-        this._task = task;
+        this._locationID = locationID;
     }
     get ID() {
         return this._ID;
     }
-    get taskID() {
-        return this._taskID;
+    get locationID() {
+        return this._locationID;
     }
-    get task() {
-        return this._task;
+    set ID(ID) {
+        this._ID = ID;
     }
-    set ID(value) {
-        this._ID = value;
-    }
-    set taskID(taskID) {
-        this._taskID = taskID;
-    }
-    set task(value) {
-        this._task = value;
+    set locationID(locationID) {
+        this._locationID = locationID;
     }
 };
 __decorate([
-    typeorm_1.PrimaryColumn(),
+    typeorm_1.PrimaryColumn({ name: "ID" }),
     __metadata("design:type", Number)
-], Assignment.prototype, "_ID", void 0);
+], RemainingLocation.prototype, "_ID", void 0);
 __decorate([
-    typeorm_1.PrimaryColumn(),
+    typeorm_1.PrimaryColumn({ name: "locationID" }),
     __metadata("design:type", Number)
-], Assignment.prototype, "_taskID", void 0);
-Assignment = __decorate([
+], RemainingLocation.prototype, "_locationID", void 0);
+RemainingLocation = __decorate([
     typeorm_1.Entity(),
-    __metadata("design:paramtypes", [Number, Number, Array])
-], Assignment);
-exports.Assignment = Assignment;
-//# sourceMappingURL=Assignment.js.map
+    __metadata("design:paramtypes", [Number, Number])
+], RemainingLocation);
+exports.RemainingLocation = RemainingLocation;
+//# sourceMappingURL=RemainingLocation.js.map

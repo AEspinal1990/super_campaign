@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const Assignment_1 = require("./Assignment");
 let Campaign = class Campaign {
     constructor(ID, name, managers, canvassers, assignment, locations, startDate, endDate, avgDuration, questionaire, talkingPoints) {
         this._ID = ID;
@@ -113,7 +114,7 @@ __decorate([
 ], Campaign.prototype, "_avgDuration", void 0);
 Campaign = __decorate([
     typeorm_1.Entity(),
-    __metadata("design:paramtypes", [Number, String, Array, Array, Assignment, Array, Date, Date, Number, Array, Array])
+    __metadata("design:paramtypes", [Number, String, Array, Array, Assignment_1.Assignment, Array, Date, Date, Number, Array, Array])
 ], Campaign);
 exports.Campaign = Campaign;
 //# sourceMappingURL=Campaign.js.map

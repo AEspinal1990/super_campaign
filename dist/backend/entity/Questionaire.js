@@ -10,42 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let Assignment = class Assignment {
-    constructor(ID, taskID, task) {
-        this._ID = ID;
-        this._taskID = taskID;
-        this._task = task;
+let Questionaire = class Questionaire {
+    constructor(campaignID, question) {
+        this._campaignID = campaignID;
+        this._question = question;
     }
-    get ID() {
-        return this._ID;
+    get campaignID() {
+        return this._campaignID;
     }
-    get taskID() {
-        return this._taskID;
+    get question() {
+        return this._question;
     }
-    get task() {
-        return this._task;
+    set campaignID(campaignID) {
+        this._campaignID = campaignID;
     }
-    set ID(value) {
-        this._ID = value;
-    }
-    set taskID(taskID) {
-        this._taskID = taskID;
-    }
-    set task(value) {
-        this._task = value;
+    set question(question) {
+        this._question = question;
     }
 };
 __decorate([
-    typeorm_1.PrimaryColumn(),
+    typeorm_1.PrimaryColumn({ name: "campaignID" }),
     __metadata("design:type", Number)
-], Assignment.prototype, "_ID", void 0);
+], Questionaire.prototype, "_campaignID", void 0);
 __decorate([
-    typeorm_1.PrimaryColumn(),
-    __metadata("design:type", Number)
-], Assignment.prototype, "_taskID", void 0);
-Assignment = __decorate([
+    typeorm_1.PrimaryColumn({ name: "question" }),
+    __metadata("design:type", String)
+], Questionaire.prototype, "_question", void 0);
+Questionaire = __decorate([
     typeorm_1.Entity(),
-    __metadata("design:paramtypes", [Number, Number, Array])
-], Assignment);
-exports.Assignment = Assignment;
-//# sourceMappingURL=Assignment.js.map
+    __metadata("design:paramtypes", [Number, String])
+], Questionaire);
+exports.Questionaire = Questionaire;
+//# sourceMappingURL=Questionaire.js.map
