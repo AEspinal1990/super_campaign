@@ -1,52 +1,74 @@
-import {Column, Entity, PrimaryColumn} from "typeorm"
+import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne} from "typeorm"
+import { Canvasser } from "./Canvasser";
+import { Locations } from "./Locations";
+import { RemainingLocation } from "./RemainingLocation";
+import { CompletedLocation } from "./CompletedLocation";
+import { Assignment } from "./Assignment";
 
 @Entity()
 export class Task{
-    @PrimaryColumn({name: "ID"})
-    private _ID: number;
-    @Column({name: "canvasserID"})
-    private _canvaserID:number;
+    @PrimaryGeneratedColumn({name: "ID"})
+    private _ID!: number;
+    @ManyToOne(type => Canvasser, can => can.task)
+    private _canvaserID!:Canvasser;
     @Column({name: "campaignID"})
-    private _campaignID:number;
-    private _remainingLocations:number[];
-    private _completedLocations:number[];
-    @Column({name: "currentLocID"})
-    private _currentLocation:number;
-    private _recommendedRoute:number[];
+    private _campaignID!:number;
+    // cannot get the relation working so leave it as a normal column
+    @OneToMany(type => RemainingLocation, _remainingLocation => _remainingLocation.task)
+    private _remainingLocation!:RemainingLocation[];
+    private _remainingLocations!:number[];
+    // again, cannot get the relation working
+    @OneToMany(type => CompletedLocation, cL => cL.task)
+    private _completedLocation!:CompletedLocation[];
+    private _completedLocations!:number[];
+    @OneToOne(type => Locations)
+    private _currentLocation!:Locations;
+    private _recommendedRoute!:number[];
     @Column({name: "ofDate"})
-    private _scheduledOn:Date;
+    private _scheduledOn!:Date;
     @Column({name: "taskStatus"})
-    private _status:boolean;
+    private _status!:boolean;
+    @ManyToOne(type => Assignment, as => as.task)
+    private _assignment!:Assignment;
 
-    constructor(ID:number, canvasserID:number, campaignID:number, remainingLocations:number[], completedLocations:number[],
-        currentLocation:number, recommendedRoute:number[], scheduledOn:Date, status:boolean){
-            this._ID = ID;
-            this._canvaserID = canvasserID;
-            this._campaignID = campaignID;
-            this._remainingLocations = remainingLocations;
-            this._completedLocations = completedLocations;
-            this._currentLocation = currentLocation;
-            this._recommendedRoute = recommendedRoute;
-            this._scheduledOn = scheduledOn;
-            this._status = status;
-    }
+    // constructor(ID:number, canvasserID:Canvasser, campaignID:number, rL:RemainingLocation,
+    //      remainingLocations:number[], cL:CompletedLocation, completedLocations:number[],
+    //     currentLocation:Locations, recommendedRoute:number[], scheduledOn:Date, status:boolean){
+    //         this._ID = ID;
+    //         this._canvaserID = canvasserID;
+    //         this._campaignID = campaignID;
+    //         this._remainingLocation = rL;
+    //         this._remainingLocations = remainingLocations;
+    //         this._completedLocation = cL;
+    //         this._completedLocations = completedLocations;
+    //         this._currentLocation = currentLocation;
+    //         this._recommendedRoute = recommendedRoute;
+    //         this._scheduledOn = scheduledOn;
+    //         this._status = status;
+    // }
 
     public get ID():number{
         return this._ID;
     }
-    public get canvasserID():number{
+    public get canvasserID():Canvasser{
         return this._canvaserID;
     }
     public get campaignID():number{
         return this._campaignID;
     }
+    public get remainingLocation(): RemainingLocation[]{
+        return this._remainingLocation;
+    }
     public get remainingLocations():number[]{
         return this._remainingLocations;
+    }
+    public get completedLocation():CompletedLocation[]{
+        return this._completedLocation;
     }
     public get completedLocations():number[]{
         return this._completedLocations;
     }
-    public get currentLocation():number{
+    public get currentLocation():Locations{
         return this._currentLocation;
     }
     public get recommendedRoute():number[]{
@@ -58,22 +80,31 @@ export class Task{
     public get status():boolean{
         return this._status;
     }
+    public get assignment():Assignment{
+        return this._assignment;
+    }
     public set ID(ID:number){
         this._ID = ID;
     }
-    public set canvasserID(canvasserID:number){
+    public set canvasserID(canvasserID:Canvasser){
         this._canvaserID = canvasserID;
     }
     public set campaignID(campaignId:number){
         this._campaignID = campaignId;
     }
+    public set remainingLocation(value:RemainingLocation[]){
+        this._remainingLocation = value;
+    }
     public set remainingLocations(locations:number[]){
         this._remainingLocations = locations;
+    }
+    public set completedLocation(value:CompletedLocation[]){
+        this._completedLocation = value;
     }
     public set completedLocations(locations:number[]){
         this._completedLocations = locations;
     }
-    public set currentLocation(location:number){
+    public set currentLocation(location:Locations){
         this._currentLocation = location;
     }
     public set recommendedRoute(route:number[]){
@@ -84,6 +115,9 @@ export class Task{
     }
     public set status(stat:boolean){
         this._status = stat;
+    }
+    public set assignment(value:Assignment){
+        this._assignment = value;
     }
 
     /*

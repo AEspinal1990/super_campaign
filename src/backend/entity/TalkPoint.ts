@@ -1,16 +1,17 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Entity, PrimaryColumn, ManyToOne, JoinColumn} from "typeorm";
+import { Campaign } from "./Campaign";
 
 @Entity()
 export class TalkPoint{
-    @PrimaryColumn({name: "campaignID"})
-    private _campaignID:number;
+    @ManyToOne(type => Campaign, {primary: true})
+    private _campaignID!:Campaign;
     @PrimaryColumn({name: "talk"})
-    private _talk:string;
+    private _talk!:string;
     
-    constructor (campaignID:number, talk:string){
-        this._campaignID = campaignID;
-        this._talk = talk;
-    }
+    // constructor (campaignID:Campaign, talk:string){
+    //     this._campaignID = campaignID;
+    //     this._talk = talk;
+    // }
 
     public get campaignID(){
         return this._campaignID;
@@ -18,7 +19,7 @@ export class TalkPoint{
     public get talk(){
         return this._talk;
     }
-    public set campaignID(campaignID:number){
+    public set campaignID(campaignID:Campaign){
         this._campaignID = campaignID;
     }
     public set talk(talk:string){

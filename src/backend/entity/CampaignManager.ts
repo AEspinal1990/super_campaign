@@ -1,25 +1,38 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {OneToOne, JoinColumn, Entity, ManyToOne, ManyToMany, OneToMany} from "typeorm";
+import { User } from "./User";
+import { Campaign } from "./Campaign";
+import { Locations } from "./Locations";
+import { Assignment } from "./Assignment";
 
-@Entity()
+@Entity({name: "Manager"})
 export class CampaignManager {
-    @PrimaryGeneratedColumn()
-    private _ID: number;
-    @Column()
-    private _currentCampaigns: number[];
+    @OneToOne(type => User, {primary: true})
+    @JoinColumn()
+    private _ID!: User;
+    // @ManyToMany(type => Campaign, camp => camp.manager, {nullable: true})
+    private _campaignID!:Campaign[];
+    private _currentCampaigns!: number[];
 
-    constructor (ID:number, currentCampaigns:number[]){
-        this._ID = ID;
-        this._currentCampaigns = currentCampaigns;
-    }
+    // constructor (ID:User, campaignID:Campaign, currentCampaigns:number[]){
+    //     this._ID = ID;
+    //     this._campaignID = campaignID;
+    //     this._currentCampaigns = currentCampaigns;
+    // }
 
-    public get ID(): number {
+    public get ID(): User {
         return this._ID;
+    }
+    public get campaignID(): Campaign[] {
+        return this._campaignID;
     }
     public get currentCampaigns(): number[] {
         return this._currentCampaigns;
     }
-    public set ID(value: number) {
+    public set ID(value: User) {
         this._ID = value;
+    }
+    public set campaignID(value: Campaign[]) {
+        this._campaignID = value;
     }
     public set currentCampaigns(value: number[]) {
         this._currentCampaigns = value;
@@ -46,31 +59,31 @@ export class CampaignManager {
 
     // }
 
-    // public editAssignment(assignment:Assignment){
+    public editAssignment(assignment:Assignment){
 
-    // }
+    }
 
-    // public addManager(managerID:number, campaignID:number){
+    public addManager(managerID:number, campaignID:number){
         
-    // }
+    }
 
-    // public removeManager(managerID:number, campaignID:number){
+    public removeManager(managerID:number, campaignID:number){
 
-    // }
+    }
 
-    // public addCanvasser(canvasserID:number, campaignID:number){
+    public addCanvasser(canvasserID:number, campaignID:number){
 
-    // }
+    }
 
-    // public removeCanvasser(canvasserID:number, campaignID:number){
+    public removeCanvasser(canvasserID:number, campaignID:number){
 
-    // }
+    }
 
-    // public addLocation(location:Locations, campaignID:number){
+    public addLocation(location:Locations, campaignID:number){
 
-    // }
+    }
 
-    // public removeLocation(locationID:number, campaignID:number){
+    public removeLocation(locationID:number, campaignID:number){
 
-    // }
+    }
 }

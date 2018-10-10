@@ -1,56 +1,59 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable, JoinColumn, OneToOne} from "typeorm";
 import { Assignment } from "./Assignment";
+import { CampaignManager } from "./CampaignManager";
+import { Canvasser } from "./Canvasser";
+import { Locations } from "./Locations";
+import { Questionaire } from "./Questionaire";
+import { TalkPoint } from "./TalkPoint";
 
 @Entity()
 export class Campaign {
-
-    @PrimaryColumn({name: "ID"})
-    private _ID: number;
-    
+    @PrimaryGeneratedColumn({name: "ID"})
+    private _ID!: number;
     @Column({name: "campaignName"})
-    private _name:string;
-
-    // We reference the managers table and look for all that have a this campaign id?
-    private _managers:number[];
-
-    // We reference the canvassers table and look for all that have a this campaign id?
-    private _canvassers: number[];
-
-    // We reference the assignment table and look for an assignment with this campaign id
-    private _assignment: Assignment;
-
-    // We reference the locations table and look for all locations with this campaign id
-    private _locations:number[];
-    
+    private _name!:string;
+    // @ManyToMany(type => CampaignManager)
+    // @JoinTable()
+    private _manager!:CampaignManager[];
+    private _managers!:number[];
+    // @ManyToMany(type => Canvasser)
+    // @JoinTable()
+    private _canvasser!: Canvasser[];
+    private _canvassers!: number[];
+    @OneToOne(type => Assignment, {nullable: true})
+    private _assignment!: Assignment;
+    private _locations!:number[];
     @Column({name: "startDate"})
-    private _startDate:Date;
-    
+    private _startDate!:Date;
     @Column({name: "endDate"})
-    private _endDate:Date;
-    
+    private _endDate!:Date;
     @Column({name: "avgDuration"})
-    private _avgDuration:number;
+    private _avgDuration!:number;
+    @OneToMany(type => Questionaire, qt => qt.campaignID)
+    private _question!:Questionaire[];
+    private _questionaire!:string[];
+    @OneToMany(type => TalkPoint, tp => tp.campaignID)
+    private _talkingPoint!:TalkPoint[];
+    private _talkingPoints!:string[];
 
-    // We reference the questionaire table and look for all questions with this campaign id.
-    // Will they always come back in order? How do we ensure question1 matches with answer1 in result 
-    private _questionaire:string[];
-    private _talkingPoints:string[];
-
-    constructor (ID:number, name:string, managers:number[], canvassers:number[],
-        assignment:Assignment, locations:number[], startDate:Date, endDate:Date,
-        avgDuration:number, questionaire:string[], talkingPoints:string[]) {
-            this._ID = ID;
-            this._name = name;
-            this._managers = managers;
-            this._canvassers = canvassers;
-            this._assignment = assignment;
-            this._locations = locations;
-            this._startDate = startDate;
-            this._endDate = endDate;
-            this._avgDuration = avgDuration;
-            this._questionaire = questionaire;
-            this._talkingPoints = talkingPoints;
-    }
+    // constructor (ID:number, name:string, cm:CampaignManager, managers:number[], 
+    //     can:Canvasser, canvassers:number[],
+    //     assignment:Assignment, locations:number[], startDate:Date, endDate:Date,
+    //     avgDuration:number, questionaire:string[], talkingPoints:string[]) {
+    //         this._ID = ID;
+    //         this._name = name;
+    //         this._manager = cm;
+    //         this._managers = managers;
+    //         this._canvasser = can;
+    //         this._canvassers = canvassers;
+    //         this._assignment = assignment;
+    //         this._locations = locations;
+    //         this._startDate = startDate;
+    //         this._endDate = endDate;
+    //         this._avgDuration = avgDuration;
+    //         this._questionaire = questionaire;
+    //         this._talkingPoints = talkingPoints;
+    // }
 
     public get ID():number {
         return this._ID;
@@ -58,8 +61,14 @@ export class Campaign {
     public get name():string {
         return this._name;
     }
+    public get manager():CampaignManager[] {
+        return this._manager;
+    }
     public get managers():number[] {
         return this._managers;
+    }
+    public get canvasser():Canvasser[] {
+        return this._canvasser;
     }
     public get canvassers():number[] {
         return this._canvassers;
@@ -79,8 +88,14 @@ export class Campaign {
     public get avgDuration():number {
         return this._avgDuration;
     }
+    public get question():Questionaire[]{
+        return this._question;
+    }
     public get questionaire():string[] {
         return this._questionaire;
+    }
+    public get talkingPoint():TalkPoint[]{
+        return this._talkingPoint;
     }
     public get talkingPoints():string[] {
         return this._talkingPoints;
@@ -91,8 +106,14 @@ export class Campaign {
     public set name(name:string){
         this._name = name;
     }
+    public set manager(value:CampaignManager[]){
+        this._manager = value;
+    }
     public set managers(managers:number[]){
         this._managers = managers;
+    }
+    public set canvasser(value:Canvasser[]){
+        this._canvasser = value;
     }
     public set canvassers(canvassers:number[]){
         this._canvassers = canvassers;
@@ -112,8 +133,14 @@ export class Campaign {
     public set avgDuration(avgDuration:number){
         this._avgDuration = avgDuration;
     }
+    public set question(value:Questionaire[]){
+        this._question = value;
+    }
     public set questionaire(questionaire:string[]){
         this._questionaire = questionaire;
+    }
+    public set talkingPoint(value:TalkPoint[]){
+        this._talkingPoint = value;
     }
     public set talkingPoints(talkingPoints:string[]){
         this._talkingPoints = talkingPoints;

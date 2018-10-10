@@ -1,31 +1,50 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn, ManyToOne} from "typeorm";
+import { Task } from "./Task";
+import { CompletedLocation } from "./CompletedLocation";
+import { RemainingLocation } from "./RemainingLocation";
 
 @Entity()
 export class Locations{
-    @PrimaryColumn({name: "ID"})
-    private _ID: number;
+    @PrimaryGeneratedColumn({name: "ID"})
+    private _ID!: number;
     @Column({name: "num"})
-    private _streetNumber: number;
+    private _streetNumber!: number;
     @Column({name: "street"})
-    private _street: string;
-    @Column({name: "unit"})
-    private _unit: string;
+    private _street!: string;
+    @Column({name: "unit", nullable: true})
+    private _unit!: string;
     @Column({name: "city"})
-    private _city: string;
+    private _city!: string;
     @Column({name: "state"})
-    private _state: string;
+    private _state!: string;
     @Column({name: "zipcode"})
-    private _zipcode: number;
-
-    constructor (ID:number, num:number, street:string, unit:string, city:string, state:string, zipcode:number){
-        this._ID = ID;
-        this._streetNumber = num;
-        this._street = street;
-        this._unit = unit;
-        this._city = city;
-        this._state = state;
-        this._zipcode = zipcode;
+    private _zipcode!: number;
+    @ManyToOne(type => CompletedLocation, cl => cl.locationID)
+    private _completedLocation!: CompletedLocation;
+    @ManyToOne(type => RemainingLocation, rl => rl.locationID)
+    private _remainingLocation!: RemainingLocation;
+    public get remainingLocation(): RemainingLocation {
+        return this._remainingLocation;
     }
+    public set remainingLocation(value: RemainingLocation) {
+        this._remainingLocation = value;
+    }
+    public get completedLocation(): CompletedLocation {
+        return this._completedLocation;
+    }
+    public set completedLocation(value: CompletedLocation) {
+        this._completedLocation = value;
+    }
+
+    // constructor (ID:number, num:number, street:string, unit:string, city:string, state:string, zipcode:number){
+    //     this._ID = ID;
+    //     this._streetNumber = num;
+    //     this._street = street;
+    //     this._unit = unit;
+    //     this._city = city;
+    //     this._state = state;
+    //     this._zipcode = zipcode;
+    // }
 
     public get ID(): number {
         return this._ID;

@@ -1,24 +1,25 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Entity, PrimaryColumn, ManyToOne, JoinColumn} from "typeorm";
+import { Canvasser } from "./Canvasser";
 
 @Entity()
 export class Availability{
-    @PrimaryColumn({name: "canvasserID"})
-    private _canvasserID:number;
+    @ManyToOne(type => Canvasser, {primary: true})
+    private _canvasserID!:Canvasser;
     @PrimaryColumn({name: "availableDate"})
-    private _availableDate:Date;
+    private _availableDate!:Date;
 
-    constructor (canvasserID:number, availableDate:Date){
-        this._canvasserID = canvasserID;
-        this._availableDate = availableDate;
-    }
+    // constructor (canvasserID:Canvasser, availableDate:Date){
+    //     this._canvasserID = canvasserID;
+    //     this._availableDate = availableDate;
+    // }
 
-    public get canvasserID(){
+    public get canvasserID(): Canvasser{
         return this._canvasserID;
     }
     public get availableDate(){
         return this._availableDate;
     }
-    public set canvasserID(canvasserID:number){
+    public set canvasserID(canvasserID:Canvasser){
         this._canvasserID = canvasserID;
     }
     public set availableDate(availableDate:Date){

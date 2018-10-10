@@ -1,22 +1,21 @@
-import {Column, Entity, PrimaryColumn, JoinColumn} from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class User {
-    @PrimaryColumn({name: "username"})
-    private _username: string;
+    @PrimaryGeneratedColumn({name: "employeeID"})
+    _employeeID!: number;
+    @Column({name: "username"})
+    private _username!: string;
     @Column({name: "fullName"})
-    private _name: string;
+    private _name!: string;
     @Column({name: "permission"})
-    private _permission: number;
-    @Column({name: "employeeID"})
-    private _employeeID: number;
+    private _permission!: number;
 
-    constructor (username:string, name:string, permission:number, employeeID:number){
-        this._username = username;
-        this._name = name;
-        this._permission = permission;
-        this._employeeID = employeeID;
-    }
+    // constructor (username:string, name:string, permission:number){
+    //     this._username = username;
+    //     this._name = name;
+    //     this._permission = permission;
+    // }
 
     public get username(): string {
         return this._username;
