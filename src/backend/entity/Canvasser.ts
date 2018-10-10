@@ -12,6 +12,8 @@ export class Canvasser{
     @JoinColumn()
     private _ID!: User;
     // @ManyToMany(type => Campaign)
+
+    // Issue with Canvasser and Campaign relations
     private _campaignID!:number[];
     @OneToMany(type => Task, task => task.canvasserID, {nullable: true})
     private _task!:Task[];
@@ -25,12 +27,6 @@ export class Canvasser{
     private _datesAssigned!: Date[];
     @OneToMany(type => Results, rs => rs.canvasserID)
     private _results!: Results[];
-    public get results(): Results[] {
-        return this._results;
-    }
-    public set results(value: Results[]) {
-        this._results = value;
-    }
 
     // constructor (ID:User, campaignID:Campaign, tasksRemaining:number[], tasksCompleted:number[], 
     //     datesAvailable:Date[], datesAssigned:Date[]){
@@ -69,6 +65,9 @@ export class Canvasser{
     public get datesAssigned(): Date[] {
         return this._datesAssigned;
     }
+    public get results(): Results[] {
+        return this._results;
+    }
     public set ID(value: User) {
         this._ID = value;
     }
@@ -95,6 +94,9 @@ export class Canvasser{
     }
     public set datesAssigned(value: Date[]) {
         this._datesAssigned = value;
+    }
+    public set results(value: Results[]) {
+        this._results = value;
     }
 
     public editAvailability(date:Date){

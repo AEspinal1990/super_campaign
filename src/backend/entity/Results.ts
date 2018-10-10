@@ -21,12 +21,6 @@ export class Results{
     private _rating!: number;
     @ManyToOne(type => CompletedLocation, cl => cl.resultID, {nullable: true})
     private _completedLocation!: CompletedLocation;
-    public get completedLocation(): CompletedLocation {
-        return this._completedLocation;
-    }
-    public set completedLocation(value: CompletedLocation) {
-        this._completedLocation = value;
-    }
 
     // constructor (ID:number, location:Locations, canvasser:Canvasser, answer:boolean, 
     //     answerNumber:number, answers:boolean[], rating:number){
@@ -60,6 +54,9 @@ export class Results{
     public get rating(): number {
         return this._rating;
     }
+    public get completedLocation(): CompletedLocation {
+        return this._completedLocation;
+    }
     public set ID(value: number) {
         this._ID = value;
     }
@@ -81,5 +78,7 @@ export class Results{
     public set rating(value: number) {
         this._rating = value;
     }
-    
+    public set completedLocation(value: CompletedLocation) {
+        this._completedLocation = value;
+    }
 }

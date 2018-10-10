@@ -10,6 +10,7 @@ export class CampaignManager {
     @JoinColumn()
     private _ID!: User;
     // @ManyToMany(type => Campaign, camp => camp.manager, {nullable: true})
+    // Issue with CM and Campaign relation
     private _campaignID!:Campaign[];
     private _currentCampaigns!: number[];
 

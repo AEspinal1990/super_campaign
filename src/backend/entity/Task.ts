@@ -13,14 +13,12 @@ export class Task{
     private _canvaserID!:Canvasser;
     @Column({name: "campaignID"})
     private _campaignID!:number;
-    // cannot get the relation working so leave it as a normal column
     @OneToMany(type => RemainingLocation, _remainingLocation => _remainingLocation.task)
     private _remainingLocation!:RemainingLocation[];
-    private _remainingLocations!:number[];
-    // again, cannot get the relation working
+    // private _remainingLocations!:number[];
     @OneToMany(type => CompletedLocation, cL => cL.task)
     private _completedLocation!:CompletedLocation[];
-    private _completedLocations!:number[];
+    // private _completedLocations!:number[];
     @OneToOne(type => Locations)
     private _currentLocation!:Locations;
     private _recommendedRoute!:number[];

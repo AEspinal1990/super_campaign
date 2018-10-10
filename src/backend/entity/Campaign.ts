@@ -14,14 +14,20 @@ export class Campaign {
     private _name!:string;
     // @ManyToMany(type => CampaignManager)
     // @JoinTable()
+    
+    // Cannot get the CM and Campaign relation to work.
+    // For now, we could use a array of ID or CM Objects
     private _manager!:CampaignManager[];
     private _managers!:number[];
     // @ManyToMany(type => Canvasser)
     // @JoinTable()
+
+    // Same issue with CM relation...
     private _canvasser!: Canvasser[];
     private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     private _assignment!: Assignment;
+    // TODO: add locations relation [@OneToMany]
     private _locations!:number[];
     @Column({name: "startDate"})
     private _startDate!:Date;
@@ -31,10 +37,10 @@ export class Campaign {
     private _avgDuration!:number;
     @OneToMany(type => Questionaire, qt => qt.campaignID)
     private _question!:Questionaire[];
-    private _questionaire!:string[];
+    // private _questionaire!:string[];
     @OneToMany(type => TalkPoint, tp => tp.campaignID)
     private _talkingPoint!:TalkPoint[];
-    private _talkingPoints!:string[];
+    // private _talkingPoints!:string[];
 
     // constructor (ID:number, name:string, cm:CampaignManager, managers:number[], 
     //     can:Canvasser, canvassers:number[],
