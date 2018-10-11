@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne} from "typeorm"
+import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne, ManyToMany, JoinTable} from "typeorm"
 import { Canvasser } from "./Canvasser";
 import { Locations } from "./Locations";
 import { RemainingLocation } from "./RemainingLocation";
@@ -10,23 +10,27 @@ export class Task{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
     @ManyToOne(type => Canvasser, can => can.task)
+    @JoinColumn({name: "canvasser"})
     private _canvaserID!:Canvasser;
     @Column({name: "campaignID"})
     private _campaignID!:number;
-    @OneToMany(type => RemainingLocation, _remainingLocation => _remainingLocation.task)
-    private _remainingLocation!:RemainingLocation[];
+    @OneToOne(type => RemainingLocation, {nullable: true, cascade: true})
+    // @JoinColumn({name: "remainingLocations"})
+    private _remainingLocations!:RemainingLocation;
     // private _remainingLocations!:number[];
-    @OneToMany(type => CompletedLocation, cL => cL.task)
-    private _completedLocation!:CompletedLocation[];
+    @OneToOne(type => CompletedLocation, {nullable: true, cascade: true})
+    // @JoinColumn({name: "completedLocations"})
+    private _completedLocations!:CompletedLocation;
     // private _completedLocations!:number[];
-    @OneToOne(type => Locations)
-    private _currentLocation!:Locations;
+    @Column({name: "currentLocation", nullable: true})
+    private _currentLocation!:number;
     private _recommendedRoute!:number[];
     @Column({name: "ofDate"})
     private _scheduledOn!:Date;
     @Column({name: "taskStatus"})
     private _status!:boolean;
     @ManyToOne(type => Assignment, as => as.task)
+    // @JoinColumn({name: "assignment"})
     private _assignment!:Assignment;
 
     // constructor(ID:number, canvasserID:Canvasser, campaignID:number, rL:RemainingLocation,
@@ -54,19 +58,19 @@ export class Task{
     public get campaignID():number{
         return this._campaignID;
     }
-    public get remainingLocation(): RemainingLocation[]{
-        return this._remainingLocation;
-    }
-    public get remainingLocations():number[]{
+    public get remainingLocations(): RemainingLocation{
         return this._remainingLocations;
     }
-    public get completedLocation():CompletedLocation[]{
-        return this._completedLocation;
-    }
-    public get completedLocations():number[]{
+    // public get remainingLocations():number[]{
+    //     return this._remainingLocations;
+    // }
+    public get completedLocations():CompletedLocation{
         return this._completedLocations;
     }
-    public get currentLocation():Locations{
+    // public get completedLocations():number[]{
+    //     return this._completedLocations;
+    // }
+    public get currentLocation():number{
         return this._currentLocation;
     }
     public get recommendedRoute():number[]{
@@ -90,19 +94,19 @@ export class Task{
     public set campaignID(campaignId:number){
         this._campaignID = campaignId;
     }
-    public set remainingLocation(value:RemainingLocation[]){
-        this._remainingLocation = value;
+    public set remainingLocations(value:RemainingLocation){
+        this._remainingLocations = value;
     }
-    public set remainingLocations(locations:number[]){
-        this._remainingLocations = locations;
+    // public set remainingLocations(locations:number[]){
+    //     this._remainingLocations = locations;
+    // }
+    public set completedLocations(value:CompletedLocation){
+        this._completedLocations = value;
     }
-    public set completedLocation(value:CompletedLocation[]){
-        this._completedLocation = value;
-    }
-    public set completedLocations(locations:number[]){
-        this._completedLocations = locations;
-    }
-    public set currentLocation(location:Locations){
+    // public set completedLocations(locations:number[]){
+    //     this._completedLocations = locations;
+    // }
+    public set currentLocation(location:number){
         this._currentLocation = location;
     }
     public set recommendedRoute(route:number[]){
@@ -121,20 +125,20 @@ export class Task{
     /*
         returns: -1 for invalid locationID, 0 for successfully marking complete, 1 for completed task
     */
-    public markCompleted(locationID:number):number{
-        var index = this._remainingLocations.indexOf(locationID);
-        if (index != -1){
-            this._remainingLocations.splice(index, 1);
-            this._completedLocations.push(locationID);
-        }else {
-            return -1;
-        }
+    // public markCompleted(locationID:Locations):number{
+    //     var index = this._remainingLocation.indexOf(locationID);
+    //     if (index != -1){
+    //         this._remainingLocation.splice(index, 1);
+    //         this._completedLocation.push(locationID);
+    //     }else {
+    //         return -1;
+    //     }
 
-        if (this._remainingLocations.length == 0){
-            this._status = true;
-            return 1;
-        }
+    //     if (this._remainingLocation.length == 0){
+    //         this._status = true;
+    //         return 1;
+    //     }
 
-        return 0;
-    }
+    //     return 0;
+    // }
 }

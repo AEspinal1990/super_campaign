@@ -25,7 +25,8 @@ export class Canvasser{
     @OneToMany(type => AssignedDate, ad => ad.canvasserID, {nullable:true})
     private _assignedDate!:AssignedDate[];
     private _datesAssigned!: Date[];
-    @OneToMany(type => Results, rs => rs.canvasserID)
+    @ManyToMany(type => Results)
+    @JoinTable()
     private _results!: Results[];
 
     // constructor (ID:User, campaignID:Campaign, tasksRemaining:number[], tasksCompleted:number[], 

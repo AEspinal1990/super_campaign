@@ -6,9 +6,9 @@ import { Campaign } from "./Campaign";
 export class Assignment {
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
-    @OneToMany(type => Task, task => task.assignment)
+    @OneToMany(type => Task, task => task.assignment, {cascade: true})
     private _taskID!:Task[];
-    @OneToOne(type => Campaign)
+    @OneToOne(type => Campaign, {cascade: true})
     private _campaignID!:Campaign;
     private _task!: number[];
 

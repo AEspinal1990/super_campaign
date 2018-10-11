@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, Column, OneToMany} from "typeorm";
+import {Entity, ManyToMany, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, Column, OneToMany, JoinTable} from "typeorm";
 import { Locations } from "./Locations";
 import { Results } from "./Results";
 import { Task } from "./Task";
@@ -7,11 +7,13 @@ import { Task } from "./Task";
 export class CompletedLocation {
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!:number;
-    @OneToMany(type => Locations, loc => loc.completedLocation)
+    @ManyToMany(type => Locations, {primary: true})
+    @JoinTable()
     private _locationID!:Locations[];
     @OneToMany(type => Results, res => res.completedLocation)
     private _resultID!:Results[];
-    @ManyToOne(type => Task)
+    @OneToOne(type => Task)
+    @JoinColumn()
     private _task!:Task;
 
     // constructor (ID:number, locationID:Locations, resultID:Results, task:Task){

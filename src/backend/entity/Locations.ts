@@ -2,6 +2,7 @@ import {Column, Entity, PrimaryGeneratedColumn, ManyToOne} from "typeorm";
 import { Task } from "./Task";
 import { CompletedLocation } from "./CompletedLocation";
 import { RemainingLocation } from "./RemainingLocation";
+import { Campaign } from "./Campaign";
 
 @Entity()
 export class Locations{
@@ -19,22 +20,18 @@ export class Locations{
     private _state!: string;
     @Column({name: "zipcode"})
     private _zipcode!: number;
-    @ManyToOne(type => CompletedLocation, cl => cl.locationID)
-    private _completedLocation!: CompletedLocation;
-    @ManyToOne(type => RemainingLocation, rl => rl.locationID)
-    private _remainingLocation!: RemainingLocation;
-    public get remainingLocation(): RemainingLocation {
-        return this._remainingLocation;
-    }
-    public set remainingLocation(value: RemainingLocation) {
-        this._remainingLocation = value;
-    }
-    public get completedLocation(): CompletedLocation {
-        return this._completedLocation;
-    }
-    public set completedLocation(value: CompletedLocation) {
-        this._completedLocation = value;
-    }
+    // @ManyToOne(type => CompletedLocation, cl => cl.locationID, {nullable: true})
+    // private _completedLocation!: CompletedLocation;
+    // @ManyToOne(type => RemainingLocation, rl => rl.locationID, {nullable: true})
+    // private _remainingLocation!: RemainingLocation;
+    // @ManyToOne(type => Campaign, camp => camp.locations, { nullable: true })
+    // private _campaign!: Campaign;
+    // public get campaign(): Campaign {
+    //     return this._campaign;
+    // }
+    // public set campaign(value: Campaign) {
+    //     this._campaign = value;
+    // }
 
     // constructor (ID:number, num:number, street:string, unit:string, city:string, state:string, zipcode:number){
     //     this._ID = ID;
@@ -67,6 +64,12 @@ export class Locations{
     public get zipcode(): number {
         return this._zipcode;
     }
+    // public get remainingLocation(): RemainingLocation {
+    //     return this._remainingLocation;
+    // }
+    // public get completedLocation(): CompletedLocation {
+    //     return this._completedLocation;
+    // }
     public set ID(value: number) {
         this._ID = value;
     }
@@ -88,5 +91,10 @@ export class Locations{
     public set zipcode(value: number) {
         this._zipcode = value;
     }
-
+    // public set remainingLocation(value: RemainingLocation) {
+    //     this._remainingLocation = value;
+    // }
+    // public set completedLocation(value: CompletedLocation) {
+    //     this._completedLocation = value;
+    // }
 }

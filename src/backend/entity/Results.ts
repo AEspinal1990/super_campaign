@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne} from "typeorm";
+import {Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, ManyToMany, JoinTable} from "typeorm";
 import { Locations } from "./Locations";
 import { Canvasser } from "./Canvasser";
 import { CompletedLocation } from "./CompletedLocation";
@@ -7,14 +7,15 @@ import { CompletedLocation } from "./CompletedLocation";
 export class Results{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
-    @OneToOne(type => Locations)
-    @JoinColumn()
+    @ManyToMany(type => Locations)
+    @JoinTable()
     private _locationID!: Locations;
-    @ManyToOne(type => Canvasser, can => can.results)
-    private _canvasserID!: Canvasser;
+    // @ManyToOne(type => Canvasser, can => can.results)
+    // @JoinColumn()
+    // private _canvasserID!: Canvasser;
     @Column({name: "result"})
     private _answer!:boolean;
-    @Column({name: "resultNum", primary: true})
+    @Column({name: "resultNum"})
     private _answerNumber!:number;
     private _answers!: boolean[];
     @Column({name: "rating"})
@@ -39,9 +40,9 @@ export class Results{
     public get location(): Locations {
         return this._locationID;
     }
-    public get canvasserID(): Canvasser {
-        return this._canvasserID;
-    }
+    // public get canvasserID(): Canvasser {
+    //     return this._canvasserID;
+    // }
     public get answer(): boolean {
         return this._answer;
     }
@@ -63,9 +64,9 @@ export class Results{
     public set location(value: Locations) {
         this._locationID = value;
     }
-    public set canvasserID(value: Canvasser) {
-        this._canvasserID = value;
-    }
+    // public set canvasserID(value: Canvasser) {
+    //     this._canvasserID = value;
+    // }
     public set answer(answer:boolean) {
         this._answer = answer;
     }

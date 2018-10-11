@@ -27,8 +27,10 @@ export class Campaign {
     private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     private _assignment!: Assignment;
-    // TODO: add locations relation [@OneToMany]
-    private _locations!:number[];
+    // @OneToMany(type => Locations, loc => loc.campaign)
+    @ManyToMany(type => Locations)
+    @JoinTable()
+    private _locations!:Locations[];
     @Column({name: "startDate"})
     private _startDate!:Date;
     @Column({name: "endDate"})
@@ -82,7 +84,7 @@ export class Campaign {
     public get assignment():Assignment {
         return this._assignment;
     }
-    public get locations():number[] {
+    public get locations():Locations[] {
         return this._locations;
     }
     public get startDate():Date {
@@ -97,15 +99,15 @@ export class Campaign {
     public get question():Questionaire[]{
         return this._question;
     }
-    public get questionaire():string[] {
-        return this._questionaire;
-    }
+    // public get questionaire():string[] {
+    //     return this._questionaire;
+    // }
     public get talkingPoint():TalkPoint[]{
         return this._talkingPoint;
     }
-    public get talkingPoints():string[] {
-        return this._talkingPoints;
-    }
+    // public get talkingPoints():string[] {
+    //     return this._talkingPoints;
+    // }
     public set ID(ID:number){
         this._ID = ID;
     }
@@ -127,7 +129,7 @@ export class Campaign {
     public set assignment(assignemnt:Assignment){
         this._assignment = assignemnt;
     }
-    public set locations(locations:number[]){
+    public set locations(locations:Locations[]){
         this._locations = locations;
     }
     public set startDate(startDate:Date){
@@ -142,13 +144,15 @@ export class Campaign {
     public set question(value:Questionaire[]){
         this._question = value;
     }
-    public set questionaire(questionaire:string[]){
-        this._questionaire = questionaire;
-    }
+    // public set questionaire(questionaire:string[]){
+    //     this._questionaire = questionaire;
+    // }
     public set talkingPoint(value:TalkPoint[]){
         this._talkingPoint = value;
     }
-    public set talkingPoints(talkingPoints:string[]){
-        this._talkingPoints = talkingPoints;
-    }
+    // public set talkingPoints(talkingPoints:string[]){
+    //     this._talkingPoints = talkingPoints;
+    // }
+
+    
 }
