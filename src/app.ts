@@ -8,8 +8,6 @@ import * as campaignRoutes from './routes/campaign'
 
 const app = express();
 
-
-
 /**
  * Configurations
  */
@@ -21,7 +19,8 @@ app.use(express.static('public'));
  * Primary app routes
  */
 app.get('/', adminRoutes.home);
-app.get('/createcampaign', campaignRoutes.createCampaign);
+app.get('/createcampaign', campaignRoutes.createCampaignGET);
+app.post('/createCampaignGET', campaignRoutes.createCampaignPOST);
 // app.post('/adduser', adminRoutes.addUser);
 
 
