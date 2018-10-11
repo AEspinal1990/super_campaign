@@ -7,12 +7,12 @@ import { Task } from "./Task";
 export class CompletedLocation {
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!:number;
-    @ManyToMany(type => Locations, {primary: true})
+    @ManyToMany(type => Locations)
     @JoinTable()
     private _locationID!:Locations[];
     @OneToMany(type => Results, res => res.completedLocation)
     private _resultID!:Results[];
-    @OneToOne(type => Task)
+    @OneToOne(type => Task, {primary: true, cascade: true})
     @JoinColumn()
     private _task!:Task;
 

@@ -12,20 +12,22 @@ export class Campaign {
     private _ID!: number;
     @Column({name: "campaignName"})
     private _name!:string;
-    // @ManyToMany(type => CampaignManager)
-    // @JoinTable()
+    @ManyToMany(type => CampaignManager, {cascade: true})
+    @JoinTable()
+    private _manager:CampaignManager[];
     
     // Cannot get the CM and Campaign relation to work.
     // For now, we could use a array of ID or CM Objects
-    private _manager!:CampaignManager[];
+    // private _manager!:CampaignManager[];
     private _managers!:number[];
-    // @ManyToMany(type => Canvasser)
+    // @ManyToMany(type => Canvasser, {nullable: true, cascade: true})
     // @JoinTable()
 
     // Same issue with CM relation...
-    private _canvasser!: Canvasser[];
+    // private _canvasser!: Canvasser[];
     private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
+    @JoinColumn()
     private _assignment!: Assignment;
     // @OneToMany(type => Locations, loc => loc.campaign)
     @ManyToMany(type => Locations)
@@ -75,9 +77,9 @@ export class Campaign {
     public get managers():number[] {
         return this._managers;
     }
-    public get canvasser():Canvasser[] {
-        return this._canvasser;
-    }
+    // public get canvasser():Canvasser[] {
+    //     return this._canvasser;
+    // }
     public get canvassers():number[] {
         return this._canvassers;
     }
@@ -120,9 +122,9 @@ export class Campaign {
     public set managers(managers:number[]){
         this._managers = managers;
     }
-    public set canvasser(value:Canvasser[]){
-        this._canvasser = value;
-    }
+    // public set canvasser(value:Canvasser[]){
+    //     this._canvasser = value;
+    // }
     public set canvassers(canvassers:number[]){
         this._canvassers = canvassers;
     }

@@ -10,16 +10,15 @@ export class Task{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
     @ManyToOne(type => Canvasser, can => can.task)
-    @JoinColumn({name: "canvasser"})
     private _canvaserID!:Canvasser;
     @Column({name: "campaignID"})
     private _campaignID!:number;
     @OneToOne(type => RemainingLocation, {nullable: true, cascade: true})
-    // @JoinColumn({name: "remainingLocations"})
+    @JoinColumn()
     private _remainingLocations!:RemainingLocation;
     // private _remainingLocations!:number[];
     @OneToOne(type => CompletedLocation, {nullable: true, cascade: true})
-    // @JoinColumn({name: "completedLocations"})
+    @JoinColumn()
     private _completedLocations!:CompletedLocation;
     // private _completedLocations!:number[];
     @Column({name: "currentLocation", nullable: true})

@@ -14,8 +14,8 @@ export class Canvasser{
     // @ManyToMany(type => Campaign)
 
     // Issue with Canvasser and Campaign relations
-    private _campaignID!:number[];
-    @OneToMany(type => Task, task => task.canvasserID, {nullable: true})
+    // private _campaignID!:Campaign[];
+    @OneToMany(type => Task, task => task.canvasserID, {cascade: true})
     private _task!:Task[];
     // private _tasksRemaining!: number[];
     // private _tasksCompleted!: number[];
@@ -42,9 +42,9 @@ export class Canvasser{
     public get ID(): User {
         return this._ID;
     }
-    public get campaignID(): number[] {
-        return this._campaignID;
-    }
+    // public get campaignID(): Campaign[] {
+    //     return this._campaignID;
+    // }
     // public get tasksRemaining(): number[] {
     //     return this._tasksRemaining;
     // }
@@ -72,9 +72,9 @@ export class Canvasser{
     public set ID(value: User) {
         this._ID = value;
     }
-    public set campaignID(value: number[]) {
-        this._campaignID = value;
-    }
+    // public set campaignID(value: Campaign[]) {
+    //     this._campaignID = value;
+    // }
     // public set tasksRemaining(value: number[]) {
     //     this._tasksRemaining = value;
     // }

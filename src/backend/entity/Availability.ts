@@ -1,11 +1,11 @@
-import {Entity, PrimaryColumn, ManyToOne, JoinColumn} from "typeorm";
+import {Entity, Column, ManyToOne, JoinColumn} from "typeorm";
 import { Canvasser } from "./Canvasser";
 
 @Entity()
 export class Availability{
     @ManyToOne(type => Canvasser, {primary: true})
     private _canvasserID!:Canvasser;
-    @PrimaryColumn({name: "availableDate"})
+    @Column({name: "availableDate", primary: true})
     private _availableDate!:Date;
 
     // constructor (canvasserID:Canvasser, availableDate:Date){
