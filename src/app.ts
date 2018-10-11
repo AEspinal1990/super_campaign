@@ -1,12 +1,15 @@
 import "reflect-metadata";
 
 import * as express from 'express';
+import * as bodyPraser from 'body-parser';
 
-// Import route hanlders
+// Import route handlers
 import * as adminRoutes from './routes/admin'
 import * as campaignRoutes from './routes/campaign'
 
 const app = express();
+
+
 
 /**
  * Configurations
@@ -14,13 +17,14 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use(bodyPraser.urlencoded({extended: true}));
 
 /**
  * Primary app routes
  */
 app.get('/', adminRoutes.home);
 app.get('/createcampaign', campaignRoutes.createCampaignGET);
-app.post('/createCampaignGET', campaignRoutes.createCampaignPOST);
+app.post('/createCampaignPOST',campaignRoutes.createCampaignPOST);
 // app.post('/adduser', adminRoutes.addUser);
 
 
