@@ -1,21 +1,49 @@
 <% include ./partials/header %>
 
 <div class="ui main text container segment">
-    <div class="ui huge header">TEST</div>
-    <form class="ui form" action="/newcampaign" method="POST">
+    <div class="ui huge header">Campaign</div>
+    <form class="ui form" action="/createCampaignPOST" method="POST">
         <div class="field">
-            <label>Title</label>
-            <input type="text" name="blog[title]" placeholder="title">       
+            <label>Campaign Name</label>
+            <input type="text" name="campaign[name]" placeholder="Name">       
         </div>
         
         <div class="field">
-            <label>Image</label>
-            <input type="text" name="blog[image]" placeholder="image">
+            <label>Creator</label>
+            <input type="text" name="campaign[creator]" placeholder="Creator">
         </div>
 
         <div class="field">
-            <label>Blog Content</label>
-            <textarea name="blog[body]" cols="30" rows="10" required></textarea>
+            <label>Canvassers</label>            
+            <input type="text" name="campaign[canvassers]" placeholder="Canvasser">
+        </div>
+        
+        <h3>Start Date</h3>
+        <div class="ui calendar" id="example5">
+            <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input type="text" name="campaign[startDate]" placeholder="Date" value="5/30/2015">
+            </div>
+        </div>
+        <br/>
+
+        <h3>End Date</h3>
+        <div class="ui calendar" id="example5">
+            <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input type="text" name="campaign[endDate]" placeholder="Date" value="5/30/2015">
+            </div>
+        </div>
+        <br/>
+    
+        <div class="field">
+            <label>Average Expected Duration at Each location</label>            
+            <input type="text" name="campaign[avgDuration]" placeholder="Average Duration">
+        </div>
+
+        <div class="field">
+            <label>Locations</label>
+            <textarea name="campaign[locations]" cols="30" rows="10" required></textarea>
         </div>
 
         <input class="ui violet big basic button" type="submit">
