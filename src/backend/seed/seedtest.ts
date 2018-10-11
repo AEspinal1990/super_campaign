@@ -116,34 +116,35 @@ createConnection().then(async connection => {
     // task1.remainingLocations = RL1;
     // task1.completedLocations = CL1;
     // ASSIGNMENT 1
-    const assignment1 = new Assignment();
-    assignment1.taskID = [task1];
-    assignment1.campaignID = campaign1;
-    console.log("Before Assignment Save======");
-    await connection.manager.save(assignment1);
-    console.log ("After Assignment Save ======");
-    // QUESTIONAIRE 1
-    const qt1 = new Questionaire();
-    qt1.question = "Question1";
-    // QUESITONAIRE 2
-    const qt2 = new Questionaire();
-    qt2.question = "Question2";
-    qt1.campaignID = campaign1;
-    await connection.manager.save(qt1);
-    qt2.campaignID = campaign1;
-    await connection.manager.save(qt2);
-    cm1.campaignID = [campaign1];
-    await connection.manager.save(cm1);
-    // TALKINGPOINT 1
-    const tp1 = new TalkPoint();
-    tp1.campaignID = campaign1;
-    tp1.talk = "Talk1";
-    await connection.manager.save(tp1);
-    // TALKPINGOINT 2
-    const tp2 = new TalkPoint();
-    tp2.campaignID = campaign1;
-    tp2.talk = "Talk2";
-    await connection.manager.save(tp2);
+    // const assignment1 = new Assignment();
+    // assignment1.taskID = [task1];
+    // assignment1.campaignID = campaign1;
+    // console.log("Before Assignment Save======");
+    // await connection.manager.save(assignment1);
+    // console.log ("After Assignment Save ======");
+    // // QUESTIONAIRE 1
+    // const qt1 = new Questionaire();
+    // qt1.question = "Question1";
+    // // QUESITONAIRE 2
+    // const qt2 = new Questionaire();
+    // qt2.question = "Question2";
+    // qt1.campaignID = campaign1;
+    // await connection.manager.save(qt1);
+    // qt2.campaignID = campaign1;
+    // await connection.manager.save(qt2);
+    // cm1.campaignID = [campaign1];
+    // await connection.manager.save(cm1);
+    // // TALKINGPOINT 1
+    // const tp1 = new TalkPoint();
+    // tp1.campaignID = campaign1;
+    // tp1.talk = "Talk1";
+    // await connection.manager.save(tp1);
+    // // TALKPINGOINT 2
+    // const tp2 = new TalkPoint();
+    // tp2.campaignID = campaign1;
+    // tp2.talk = "Talk2";
+    // await connection.manager.save(tp2);
 
+    console.log("End of Seed");
 }).catch(error => console.log(error));
 
