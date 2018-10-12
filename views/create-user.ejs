@@ -1,0 +1,36 @@
+<% include ./partials/header %>
+
+<div class="ui main text container segment">
+    <div class="ui huge header">Users</div>
+    <form class="ui form" action="/createuser" method="POST">
+        <div class="field">
+            <label>Name</label>
+            <input type="text" name="campaign[name]" placeholder="Name">       
+        </div>
+        
+        <div class="field">
+            <label>UserName</label>
+            <input type="text" name="campaign[creator]" placeholder="Creator">
+        </div>
+
+        <div class="field">
+            <label>Password</label>            
+            <input type="text" name="campaign[canvassers]" placeholder="Canvasser">
+        </div>        
+        
+
+        <div class="ui selection dropdown">
+            <input name="gender" type="hidden">
+            <i class="dropdown icon"></i>
+            <div class="default text">Gender</div>
+            <div class="menu">
+                <div class="item" data-value="1">Male</div>
+                <div class="item" data-value="0">Female</div>
+            </div>
+        </div>
+
+        <input class="ui button" type="submit">
+    </form>
+</div>
+
+<% include ./partials/footer %>

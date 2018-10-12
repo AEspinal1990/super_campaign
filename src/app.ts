@@ -1,14 +1,20 @@
 import "reflect-metadata";
 
+/**
+ * Import Libraries
+ */
 import * as express from 'express';
-import * as bodyPraser from 'body-parser';
+import * as bodyParser from 'body-parser';
 
-// Import route handlers
+
+/**
+ * Import Route Handlers
+ */
 import * as adminRoutes from './routes/admin'
 import * as campaignRoutes from './routes/campaign'
 
-const app = express();
 
+const app = express();
 
 
 /**
@@ -17,19 +23,19 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-app.use(bodyPraser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
 
 /**
  * Primary app routes
  */
+// Admin
 app.get('/', adminRoutes.home);
-app.get('/createcampaign', campaignRoutes.createCampaignGET);
-app.post('/createCampaignPOST',campaignRoutes.createCampaignPOST);
-// app.post('/adduser', adminRoutes.addUser);
+app.get('/adduser', adminRoutes.createUserPage);
+// Campaign
+app.get('/createcampaign', campaignRoutes.createCampaignPage);
+app.post('/createcampaign',campaignRoutes.createCampaign);
 
-
-// const server = app.listen(app.get('port'), () => {
-//     console.log('App is running on port', app.get('port'), app.get('env'))
-// })
 
 export default app;

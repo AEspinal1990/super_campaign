@@ -7,6 +7,15 @@ export const home = (req: Request, res: Response) => {
     res.send('Hello!');
 };
 
+export const createUserPage = (req: Request, res: Response) => {
+    res.render('create-user');
+};
+
+export const createUser = (req: Request, res: Response) => {
+    console.log(req.body);
+    res.status(200).send('Received');
+};
+
 // export const addUser = async (req: Request, res: Response) => {
 //     const user = new CampaignManager(3,[1,2,3]);
 //     console.log('test')
