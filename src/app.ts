@@ -35,8 +35,10 @@ app.get('/', adminRoutes.home);
 app.get('/adduser', adminRoutes.createUserPage);
 app.post('/adduser', adminRoutes.createUser);
 // Campaign
-app.get('/createcampaign', campaignRoutes.createCampaignPage);
-app.post('/createcampaign',campaignRoutes.createCampaign);
+// app.get('/createcampaign', campaignRoutes.createCampaignPage);
+// app.post('/createcampaign',campaignRoutes.createCampaign);
 
+const campaignRoute = require("./routes/campaign");
+app.use('/campaign', campaignRoute);
 
 export default app;
