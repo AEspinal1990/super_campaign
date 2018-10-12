@@ -16,7 +16,7 @@ export const createUserPage = (req: Request, res: Response) => {
     res.render('create-user');
 };
 
-export const createUser = (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
     let newUser:User;
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
 
@@ -30,7 +30,7 @@ export const createUser = (req: Request, res: Response) => {
      */    
     roledUser = createUserSytem.createRoledUser(newUser.permission, newUser);
 
-    createConnection()
+    await createConnection()
         .then(async connection => {
             await connection.manager.save(newUser);
             await connection.manager.save(roledUser);
