@@ -10,6 +10,8 @@ export class User {
     private _name!: string;
     @Column({name: "permission"})
     private _permission!: number;
+    @Column({ name: "passwd" })
+    private _password!: string;
 
     // constructor (username:string, name:string, permission:number){
     //     this._username = username;
@@ -29,6 +31,10 @@ export class User {
     public get employeeID(): number {
         return this._employeeID;
     }
+    public get password(): string {
+        return this._password!;
+    }
+
     public set username(value: string) {
         this._username = value;
     }
@@ -41,5 +47,7 @@ export class User {
     public set employeeID(value: number) {
         this._employeeID = value;
     }
-    
+    public set password(value: string) {
+        this._password = value;
+    }
 }

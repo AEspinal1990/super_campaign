@@ -23,12 +23,14 @@ createConnection().then(async connection => {
     user1.username = "user1";
     user1.permission = 1;
     user1.name = "John Smith";
+    user1.password = "test1";
     await connection.manager.save(user1);
     // USER 2
     const user2 = new User();
     user2.username = "user2";
     user2.permission = 2;
     user2.name = "Jane Smith";
+    user2.password = 'test2';
     await connection.manager.save(user2);
     // CM 1
     const cm1:CampaignManager = new CampaignManager();

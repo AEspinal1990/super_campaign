@@ -31,7 +31,6 @@ app.use(bodyParser.json());
  * Primary app routes
  */
 // Admin
-app.get('/', adminRoutes.home);
 app.get('/adduser', adminRoutes.createUserPage);
 app.post('/adduser', adminRoutes.createUser);
 // Campaign
