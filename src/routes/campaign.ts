@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { request } from 'http';
 import { Resolver } from 'dns';
-import { Any, createConnection, getConnection } from 'typeorm';
+import { Any, createConnection, getConnection, Connection } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 
 const router: Router = Router();
@@ -37,8 +37,6 @@ router.get('/:id/view', async(req: Request, res: Response) => {
         // res.render('view_campaign', {});
         res.send('hold');
     }).catch(e => console.log(e));
-
-
     
     // createConnection().then(async connection => {
     //     const campaign = await connection.manager.findOne(Campaign, req.params);
