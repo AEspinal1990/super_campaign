@@ -7,9 +7,7 @@ export class SystemAdmin{
     @JoinColumn()
     private _ID:User;
 
-
-    constructor (ID:User){
-        this._ID = ID;
+    constructor (){
     }
 
     public get ID():User {
