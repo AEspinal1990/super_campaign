@@ -33,6 +33,7 @@ app.use(bodyParser.json());
 // Admin
 app.get('/', adminRoutes.home);
 app.get('/adduser', adminRoutes.createUserPage);
+app.post('/adduser', adminRoutes.createUser);
 // Campaign
 app.get('/createcampaign', campaignRoutes.createCampaignPage);
 app.post('/createcampaign',campaignRoutes.createCampaign);

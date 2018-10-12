@@ -1,36 +1,37 @@
 <% include ./partials/header %>
 
-<div class="ui main text container segment">
-    <div class="ui huge header">Users</div>
-    <form class="ui form" action="/createuser" method="POST">
-        <div class="field">
-            <label>Name</label>
-            <input type="text" name="campaign[name]" placeholder="Name">       
-        </div>
-        
-        <div class="field">
-            <label>UserName</label>
-            <input type="text" name="campaign[creator]" placeholder="Creator">
-        </div>
+	<div class="container">
 
-        <div class="field">
-            <label>Password</label>            
-            <input type="text" name="campaign[canvassers]" placeholder="Canvasser">
-        </div>        
+        <h1>Add a User</h1>
         
-
-        <div class="ui selection dropdown">
-            <input name="gender" type="hidden">
-            <i class="dropdown icon"></i>
-            <div class="default text">Gender</div>
-            <div class="menu">
-                <div class="item" data-value="1">Male</div>
-                <div class="item" data-value="0">Female</div>
+		<form action="/adduser" method="POST">
+	  		<div class="form-group">
+			    <label>Username</label>
+			    <input type="text" name="user[username]" class="form-control" placeholder="Username">
+              </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="user[name]" class="form-control" placeholder="Username">
             </div>
-        </div>
+		    <div class="form-group">
+			    <label>Password</label>
+			    <input type="password" name="user[password]" class="form-control" placeholder="Password">
+              </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Role</label>
+                </div>
+                <select name="user[role]" class="custom-select" id="inputGroupSelect01">
+                    <option selected>Choose...</option>
+                    <option value="1">Campaign Manager</option>
+                    <option value="2">Canvasser</option>
+                    <option value="3">System Administrator</option>
+                </select>
+            </div>
+		  	
+		  <button type="submit" class="btn btn-default">Submit</button>
+		</form>
 
-        <input class="ui button" type="submit">
-    </form>
-</div>
+	</div><!-- Close container -->
 
 <% include ./partials/footer %>
