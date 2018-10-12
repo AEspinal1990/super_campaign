@@ -37,9 +37,9 @@ router.get('/:id/view', async(req: Request, res: Response) => {
         // res.render('view_campaign', {});
         res.send('hold');
     }).catch(e => console.log(e));
-    
-       
 
+
+    
     // createConnection().then(async connection => {
     //     const campaign = await connection.manager.findOne(Campaign, req.params);
     //     // res.render{'view_campaign', {campaign}};

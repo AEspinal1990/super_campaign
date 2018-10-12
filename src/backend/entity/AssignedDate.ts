@@ -1,11 +1,14 @@
-import {Entity, PrimaryColumn, ManyToOne, JoinColumn} from "typeorm";
+import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn} from "typeorm";
 import { Canvasser } from "./Canvasser";
 
 @Entity()
 export class AssignedDate{
-    @ManyToOne(type => Canvasser, {primary: true})
+    @PrimaryGeneratedColumn({ name: "ID" })
+    private _ID: number;
+    @ManyToOne(type => Canvasser, can => can.ID)
+    @JoinColumn()
     private _canvasserID!:Canvasser;
-    @PrimaryColumn({name: "assignedDate"})
+    @Column({name: "assignedDate"})
     private _assignedDate!:Date;
 
     // constructor (canvasserID:Canvasser, assignedDate:Date){
@@ -18,6 +21,12 @@ export class AssignedDate{
     }
     public get assignedDate(): Date{
         return this._assignedDate;
+    }
+    public get ID(): number {
+        return this._ID;
+    }
+    public set ID(value: number) {
+        this._ID = value;
     }
     public set canvasserID(canvasserID:Canvasser){
         this._canvasserID = canvasserID;

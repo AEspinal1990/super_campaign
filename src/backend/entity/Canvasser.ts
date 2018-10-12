@@ -19,10 +19,11 @@ export class Canvasser{
     private _task!:Task[];
     // private _tasksRemaining!: number[];
     // private _tasksCompleted!: number[];
-    @OneToMany(type => Availability, av => av.canvasserID, {nullable: true})
+    @OneToMany(type => Availability, av => av.canvasserID)
     private _availableDate!: Availability[];
     private _datesAvailable!: Date[];
-    @OneToMany(type => AssignedDate, ad => ad.canvasserID, {nullable:true})
+    @ManyToMany(type => AssignedDate)
+    @JoinTable()
     private _assignedDate!:AssignedDate[];
     private _datesAssigned!: Date[];
     @ManyToMany(type => Results)

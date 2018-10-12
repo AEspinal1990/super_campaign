@@ -42,6 +42,7 @@ createConnection().then(async connection => {
     canvasser1.ID = user1;
     canvasser1.datesAssigned = [new Date()];
     canvasser1.datesAvailable = [new Date()];
+    await connection.manager.save(canvasser1);
     // AVAILABILITY 1
     const av1 = new Availability();
     av1.availableDate = new Date();
@@ -52,7 +53,6 @@ createConnection().then(async connection => {
     ad1.assignedDate = new Date();
     ad1.canvasserID = canvasser1;
     await connection.manager.save(ad1);
-    await connection.manager.save(canvasser1);
     // LOCATIONS !
     const location1 = new Locations();
     location1.streetNumber = 1;

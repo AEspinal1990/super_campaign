@@ -32,9 +32,9 @@ export class User {
         return this._employeeID;
     }
     public get password(): string {
-        return this._password!;
+        return this._password;
     }
-
+    
     public set username(value: string) {
         this._username = value;
     }
