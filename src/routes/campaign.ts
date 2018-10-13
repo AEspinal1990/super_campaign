@@ -1,7 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { request } from 'http';
-import { Resolver } from 'dns';
-import { Any, createConnection, getConnection, Connection } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 
 const router: Router = Router();
@@ -23,16 +21,16 @@ router.get('/:id/view', async(req: Request, res: Response) => {
     console.log("before connection");
     createConnection().then(async connection => {
         const campaign = await getConnection()
-        .createQueryBuilder()
-        .select("campaign")
-        .from(Campaign, "campaign")
-        .getOne()
-        .then((camp) =>{
-            console.log('GOt one');
-        })
-        .catch(e => {
-            console.log('Oh shit',e)
-        })
+            .createQueryBuilder()
+            .select("campaign")
+            .from(Campaign, "campaign")
+            .getOne()
+            .then((camp) =>{
+                console.log(camp);
+            })
+            .catch(e => {
+                console.log('Oh shit',e)
+            })
         console.log("after connection");
         // res.render('view_campaign', {});
         res.send('hold');
@@ -45,4 +43,4 @@ router.get('/:id/view', async(req: Request, res: Response) => {
     // });
 });
 
-module.exports = router;
+export {router as campaignRoute}

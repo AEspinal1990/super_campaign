@@ -5,17 +5,17 @@ import "reflect-metadata";
  */
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import {createConnection, Connection} from "typeorm";
 
 
 /**
  * Import Route Handlers
  */
-import * as adminRoutes from './routes/admin'
-import * as campaignRoutes from './routes/campaign'
-
+import * as adminRoutes from './routes/admin';
+import { authRouter } from './routes/authentication';
+import { campaignRoute } from './routes/campaign';
 
 const app = express();
-
 
 /**
  * Configurations
@@ -37,7 +37,8 @@ app.post('/adduser', adminRoutes.createUser);
 // app.get('/createcampaign', campaignRoutes.createCampaignPage);
 // app.post('/createcampaign',campaignRoutes.createCampaign);
 
-const campaignRoute = require("./routes/campaign");
+
 app.use('/campaign', campaignRoute);
+app.use('/login', authRouter)
 
 export default app;
