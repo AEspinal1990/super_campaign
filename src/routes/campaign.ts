@@ -4,6 +4,21 @@ import { Campaign } from '../backend/entity/Campaign';
 
 const router: Router = Router();
 
+const typeorm_1 = require("typeorm");
+const User_1 = require("../backend/entity/User");
+const Canvasser_1 = require("../backend/entity/Canvasser");
+const Campaign_1 = require("../backend/entity/Campaign");
+const CampaignManager_1 = require("../backend/entity/CampaignManager");
+const Assignment_1 = require("../backend/entity/Assignment");
+const Task_1 = require("../backend/entity/Task");
+const RemainingLocation_1 = require("../backend/entity/RemainingLocation");
+const Locations_1 = require("../backend/entity/Locations");
+const CompletedLocation_1 = require("../backend/entity/CompletedLocation");
+const Results_1 = require("../backend/entity/Results");
+const Questionaire_1 = require("../backend/entity/Questionaire");
+const TalkPoint_1 = require("../backend/entity/TalkPoint");
+const Availability_1 = require("../backend/entity/Availability");
+const AssignedDate_1 = require("../backend/entity/AssignedDate");
 
 router
     /**
@@ -26,6 +41,18 @@ router
         let locations = req.body.camapign.locations;
         //store somehow in a different table?
         let canvassers = req.body.campaign.canvassers;
+
+        const newCampaign = new Campaign_1.Campaign();
+        newCampaign.name = "campaign1";
+        newCampaign.manager = [];
+        // campaign1.canvasser = [canvasser1];
+        newCampaign.startDate = new Date();
+        newCampaign.endDate = new Date();
+        newCampaign.avgDuration = 1;
+        newCampaign.locations;
+        //yield connection.manager.save(campaign1);
+
+
         console.log(req.body.campaign);
         res.status(200).send('Done');
     })
