@@ -19,7 +19,7 @@ router.get('/user/new', async(req: Request, res: Response) => {
     res.render('create-user');
 });    
     
-router.post('/user', async(req: Request, res: Response) => {
+router.post('/', async(req: Request, res: Response) => {
     let newUser:User;
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
 

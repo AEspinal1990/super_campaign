@@ -2,10 +2,10 @@
    "type": "mysql",
    "host": "localhost",
    "port": 3306,
-   "username": "host",
-   "password": "asd",
+   "username": "alex",
+   "password": "hitman2690",
    "database": "supercampaign",
-   "synchronize": false,
+   "synchronize": true,
    "logging": false,
    "entities": [
       "dist/backend/entity/*.js"

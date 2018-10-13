@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 /**
  * Use route handlers
  */
+app.use('/user', adminRouter);
 app.use('/admin', adminRouter);
 app.use('/campaign', campaignRouter);
 app.use('/login', authRouter)
