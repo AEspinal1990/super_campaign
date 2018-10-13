@@ -3,9 +3,8 @@ import "reflect-metadata";
 /**
  * Import Libraries
  */
-import * as express                     from 'express';
-import * as bodyParser                  from 'body-parser';
-import {createConnection, Connection}   from "typeorm";
+import * as express     from 'express';
+import * as bodyParser  from 'body-parser';
 
 /**
  * Import Route Handlers
@@ -29,7 +28,7 @@ app.use(bodyParser.json());
 /**
  * Use route handlers
  */
-app.use('/user', adminRouter);
+app.use('/admin', adminRouter);
 app.use('/campaign', campaignRouter);
 app.use('/login', authRouter)
 
