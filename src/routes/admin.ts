@@ -15,7 +15,7 @@ const router: Router = Router();
 /**
  * Create/Edit/Delete User 
  */
-router.get('/user/new', async(req: Request, res: Response) => {
+router.get('/new', async(req: Request, res: Response) => {
     res.render('create-user');
 });    
     
@@ -46,7 +46,7 @@ router.post('/', async(req: Request, res: Response) => {
     res.status(200).redirect('/adduser');
 });
 
-router.get('/user/:username',  async(req: Request, res: Response) => {
+router.get('/:username',  async(req: Request, res: Response) => {
     let username = req.params.username;
     let user;
     await createConnection().then(async () => {
@@ -74,7 +74,7 @@ router.get('/user/:username',  async(req: Request, res: Response) => {
 });
 
 
-router.post('/user/:username', async(req: Request, res: Response) => {
+router.post('/:username', async(req: Request, res: Response) => {
     // Parse the body
     // Create user with data
 
@@ -85,7 +85,7 @@ router.post('/user/:username', async(req: Request, res: Response) => {
 });
 
 
-router.delete('/user/:username', async(req: Request, res: Response) => {
+router.delete('/:username', async(req: Request, res: Response) => {
     let user:string = req.params.username;
     await createConnection()
         .then( async () => {
