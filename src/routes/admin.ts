@@ -43,7 +43,7 @@ router.post('/', async(req: Request, res: Response) => {
             res.send('Error');
         });
     
-    res.status(200).redirect('/adduser');
+    res.status(200).redirect('/user/new'); //remember to change
 });
 
 router.get('/:username',  async(req: Request, res: Response) => {
