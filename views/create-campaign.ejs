@@ -19,28 +19,27 @@
             </div>           
             <div class="form-group">
                 <label for="talkingPoints">Talking Points</label>
-                <textarea class="form-control" id="talkingPoints" name="user[talkingPoints]" rows="3"></textarea>
+                <textarea class="form-control" id="talkingPoints" name="campaign[talkingPoints]" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label for="questionaire">Questionaire</label>
-                <textarea class="form-control" placeholder="One question per line." id="questionaire" name="user[questionaire]" rows="3"></textarea>
+                <textarea class="form-control" placeholder="One question per line." id="questionaire" name="campaign[questionaire]" rows="3"></textarea>
             </div>		
             <div class="form-group">
                 <label>Expected Visit Duration</label>
-                <input type="text" name="user[averageExpectedDuration]" class="form-control" placeholder="YYYY-MM-DD">
+                <input type="text" name="campaign[averageExpectedDuration]" class="form-control" placeholder="Number of Minutes">
             </div>      		 
             <div class="form-group">
                 <label for="locations">Locations</label>
-                <textarea class="form-control" id="locations" name="user[locations]" rows="3"></textarea>
+                <textarea class="form-control" id="locations" name="campaign[locations]" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label for="locations">Canvassers</label>
-                <textarea class="form-control" placeholder="ID of each canvasser seperated by space" id="canvassers" name="user[canvassers]" rows="3"></textarea>
+                <textarea class="form-control" placeholder="ID of each canvasser seperated by space" id="canvassers" name="campaign[canvassers]" rows="3"></textarea>
             </div>      
   	
 		  <button type="submit" class="btn btn-default">Submit</button>
 		</form>
 
-	</div><!-- Close container -->
-
+	</div>
 <% include ./partials/footer %>

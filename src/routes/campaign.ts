@@ -14,8 +14,19 @@ router
     })
     
     .post('/', async(req: Request, res: Response)=>{
-        let campaignName = req.body.campaign.name;
-        console.log(campaignName);
+        let campaignName = req.body.campaign.campaignName;
+        //make date object for mysql
+        let startDate = req.body.campaign.startDate;
+        let endDate = req.body.campaign.endDate;
+        let talkingPoints = req.body.campaign.talkingPoints;
+        //seperate questions and place them in table with primary key being the question and the campaign ID
+        let questionaire = req.body.campaign.questionaire;
+        let averageExpectedDuration = req.body.campaign.averageExpectedDuration;
+        //parse location by lines
+        let locations = req.body.camapign.locations;
+        //store somehow in a different table?
+        let canvassers = req.body.campaign.canvassers;
+        console.log(req.body.campaign);
         res.status(200).send('Done');
     })
 
