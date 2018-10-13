@@ -3,17 +3,16 @@ import "reflect-metadata";
 /**
  * Import Libraries
  */
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import {createConnection, Connection} from "typeorm";
-
+import * as express                     from 'express';
+import * as bodyParser                  from 'body-parser';
+import {createConnection, Connection}   from "typeorm";
 
 /**
  * Import Route Handlers
  */
-import * as adminRoutes from './routes/admin';
-import { authRouter } from './routes/authentication';
-import { campaignRoute } from './routes/campaign';
+import { adminRouter }      from './routes/admin';
+import { authRouter }       from './routes/authentication';
+import { campaignRouter }   from './routes/campaign';
 
 const app = express();
 
@@ -28,17 +27,10 @@ app.use(bodyParser.json());
 
 
 /**
- * Primary app routes
+ * Use route handlers
  */
-// Admin
-app.get('/adduser', adminRoutes.createUserPage);
-app.post('/adduser', adminRoutes.createUser);
-// Campaign
-// app.get('/createcampaign', campaignRoutes.createCampaignPage);
-// app.post('/createcampaign',campaignRoutes.createCampaign);
-
-
-app.use('/campaign', campaignRoute);
+app.use('/user', adminRouter);
+app.use('/campaign', campaignRouter);
 app.use('/login', authRouter)
 
 export default app;

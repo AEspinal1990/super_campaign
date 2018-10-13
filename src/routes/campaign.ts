@@ -4,18 +4,25 @@ import { Campaign } from '../backend/entity/Campaign';
 
 const router: Router = Router();
 
-export const createCampaignGET = (req: Request, res: Response) => {
-    res.render('test');
-}
 
-export const createCampaignPOST = (req: Request, res: Response) => {
-    // console.log(req.body.campaign);
-    let campaignName = req.body.campaign.name;
-    console.log(campaignName);
-    res.status(200).send('Done');
-}
+router
+    /**
+     * GET/ POST for create Campaign
+     */
+    .get('/new', async(req: Request, res: Response) =>{
+        res.render('create-campaign');
+    })
+    
+    .post('/', async(req: Request, res: Response)=>{
+        let campaignName = req.body.campaign.name;
+        console.log(campaignName);
+        res.status(200).send('Done');
+    })
 
-router.get('/:id/view', async(req: Request, res: Response) => {
+    /**
+     * GET for view campaign
+     */
+    .get('/:id/view', async(req: Request, res: Response) => {
 
     let { campaignID } = req.params;
     console.log("before connection");
@@ -43,4 +50,4 @@ router.get('/:id/view', async(req: Request, res: Response) => {
     // });
 });
 
-export {router as campaignRoute}
+export {router as campaignRouter}
