@@ -13,7 +13,7 @@ export class Campaign {
     @Column({name: "campaignName"})
     private _name!:string;
     @ManyToMany(type => CampaignManager, {cascade: true})
-    @JoinTable()
+    @JoinTable({name: "campaign_location_mapping"})
     private _manager:CampaignManager[];
     
     // Cannot get the CM and Campaign relation to work.

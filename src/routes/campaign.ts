@@ -5,27 +5,34 @@ import { Campaign } from '../backend/entity/Campaign';
 import * as createCampaign from '../util/createCampaign';
 
 const router: Router = Router();
-router
     /**
      * GET and POST for create Campaign
      */
-    .get('/new', async(req: Request, res: Response) =>{
+    router.get('/new', async(req: Request, res: Response) =>{
         res.render('create-campaign');
-    })
+    });
     
-    .post('/', async(req: Request, res: Response)=>{
+    router.post('/', async(req: Request, res: Response)=>{
         createCampaign.createCampaign(req.body.campaign);
         if (res.status(200))
             res.send("Campaign Created!");
         else
             res.send("Error!");
-    })
+    });
+
+    /**
+     * GET and POST for edit Campaign
+     */
+    router.get('/:id/edit', async(req: Request, res: Response) => {
+
+    });
 
     /**
      * GET for view campaign
      */
-    .get('/:id/view', async(req: Request, res: Response) => {
+    router.get('/:id/view', async(req: Request, res: Response) => {
 
+    /** 
     let { campaignID } = req.params;
     console.log("before connection");
     createConnection().then(async connection => {
@@ -44,12 +51,13 @@ router
         // res.render('view_campaign', {});
         res.send('hold');
     }).catch(e => console.log(e));
-    
+    **/
+
     // createConnection().then(async connection => {
     //     const campaign = await connection.manager.findOne(Campaign, req.params);
     //     // res.render{'view_campaign', {campaign}};
     //     res.send(campaign.name);
     // });
-});
+    });
 
 export {router as campaignRouter}
