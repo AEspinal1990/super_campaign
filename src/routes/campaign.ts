@@ -2,6 +2,8 @@ import { Request, Response, Router } from 'express';
 import { createConnection, getConnection } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 
+import * as createCampaign from '../util/createCampaign';
+
 const router: Router = Router();
 
 const typeorm_1 = require("typeorm");
@@ -29,32 +31,21 @@ router
     })
     
     .post('/', async(req: Request, res: Response)=>{
-        let campaignName = req.body.campaign.campaignName;
-        //make date object for mysql
-        let startDate = req.body.campaign.startDate;
-        let endDate = req.body.campaign.endDate;
-        let talkingPoints = req.body.campaign.talkingPoints;
-        //seperate questions and place them in table with primary key being the question and the campaign ID
-        let questionaire = req.body.campaign.questionaire;
-        let averageExpectedDuration = req.body.campaign.averageExpectedDuration;
-        //parse location by lines
-        let locations = req.body.camapign.locations;
-        //store somehow in a different table?
-        let canvassers = req.body.campaign.canvassers;
+        //req.body.user.manager = 'hi';
 
-        const newCampaign = new Campaign_1.Campaign();
-        newCampaign.name = "campaign1";
-        newCampaign.manager = [];
-        // campaign1.canvasser = [canvasser1];
-        newCampaign.startDate = new Date();
-        newCampaign.endDate = new Date();
-        newCampaign.avgDuration = 1;
-        newCampaign.locations;
-        //yield connection.manager.save(campaign1);
+        let newCampaign:Campaign;
+        newCampaign = createCampaign.createBaseCampaign(req.body.campaign);
 
-
-        console.log(req.body.campaign);
-        res.status(200).send('Done');
+        await createConnection()
+        .then(async connection => {
+            await connection.manager.save(newCampaign);
+        })
+        .catch(e => {
+            console.log(e);
+            res.send('Error');
+        });
+    
+    res.status(200).redirect('/user/new'); //remember to change
     })
 
     /**
