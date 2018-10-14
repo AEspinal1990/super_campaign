@@ -1,10 +1,10 @@
 import { Campaign } from '../backend/entity/Campaign';
-import { createConnection } from 'typeorm';
+import { createConnection, getManager } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
 
-
 export const createCampaign = async campaignData => {
+    const Manager = getManager();
 
     //ASSIGN campaignData to variables
     let campaignName = campaignData.campaignName;
@@ -33,26 +33,17 @@ export const createCampaign = async campaignData => {
     newCampaign.startDate = startDate;
     newCampaign.endDate = endDate;
     newCampaign.avgDuration = averageExpectedDuration;
-        //Save Campaign Object to database and get ID back
-        //create variable to store ID of the campaign Object
-    let newCampaignID;
-    await createConnection()
-    .then(async connection => {
-        await connection.manager
-            .save(newCampaign)
-            .then(newCampaign => newCampaignID = newCampaign.ID);
-    })
-    .catch(e => {
-        console.log(e);
-    });        
+        //Save Campaign Object to database
+    await Manager.save(newCampaign);
 
     //For Questionaire Objects
         //Parse Questionaire for Questionaire table
     questionaire = questionaire.split("\n");
     for (let i in questionaire) {
         let newQuestionaire:Questionaire = new Questionaire();
-        newQuestionaire.campaignID = newCampaignID;
+        newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
+        await Manager.save(newQuestionaire);
     }
 
     //For Location Objects
@@ -61,7 +52,7 @@ export const createCampaign = async campaignData => {
     for (let i in locations) {
         //create location object
         let locationParse = locations[i];
-        locationParse = locations.split(", ");
+        locationParse = locationParse.split(", ");
         let newLocation:Locations = new Locations();
         newLocation.streetNumber = parseInt(locationParse[0]);
         newLocation.street = locationParse[1];
@@ -70,9 +61,6 @@ export const createCampaign = async campaignData => {
         newLocation.state = locationParse[4]; 
         newLocation.zipcode = parseInt(locationParse[5]);
         //check if location[i] is already in database
-        
-
-
     }
 
 

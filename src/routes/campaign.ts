@@ -7,7 +7,7 @@ import * as createCampaign from '../util/createCampaign';
 const router: Router = Router();
 router
     /**
-     * GET/ POST for create Campaign
+     * GET and POST for create Campaign
      */
     .get('/new', async(req: Request, res: Response) =>{
         res.render('create-campaign');
@@ -15,7 +15,10 @@ router
     
     .post('/', async(req: Request, res: Response)=>{
         createCampaign.createCampaign(req.body.campaign);
-        res.status(200).redirect('/user/new'); //remember to change
+        if (res.status(200))
+            res.send("Campaign Created!");
+        else
+            res.send("Error!");
     })
 
     /**
