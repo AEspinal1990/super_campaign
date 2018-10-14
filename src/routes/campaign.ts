@@ -24,7 +24,7 @@ const router: Router = Router();
      * GET and POST for edit Campaign
      */
     router.get('/:id/edit', async(req: Request, res: Response) => {
-
+        res.render('edit-campaign')
     });
 
     /**

@@ -29,7 +29,7 @@ export const createCampaign = async campaignData => {
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
         //Assign parsed data to new campaign object
     const newCampaign:Campaign = new Campaign();
-    newCampaign.name = campaignData.campaignName;
+    newCampaign.name = campaignName;
     newCampaign.startDate = startDate;
     newCampaign.endDate = endDate;
     newCampaign.avgDuration = averageExpectedDuration;
@@ -50,7 +50,7 @@ export const createCampaign = async campaignData => {
         //Parse Locations for All Locations of Campaign Table
     locations = locations.split("\n");
 
-    //Initialize array of campaign locations
+        //Initialize array of campaign locations
     newCampaign.locations = [];
 
     for (let i in locations) {
@@ -75,7 +75,7 @@ export const createCampaign = async campaignData => {
         }
     }
 
-    await Manager.save(newCampaign);
+    //For Canvasser Objects 
 
 
 }

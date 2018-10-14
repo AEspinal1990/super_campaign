@@ -1,6 +1,5 @@
 import {Entity, ManyToMany, OneToOne, JoinColumn, OneToMany, JoinTable} from "typeorm"
 import { User } from "./User";
-import { Campaign } from "./Campaign";
 import { Availability } from "./Availability";
 import { AssignedDate } from "./AssignedDate";
 import { Task } from "./Task";
