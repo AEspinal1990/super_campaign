@@ -20,11 +20,9 @@ export class Campaign {
     // For now, we could use a array of ID or CM Objects
     // private _manager!:CampaignManager[];
     private _managers!:number[];
-    @ManyToMany(type => Canvasser, {cascade: true})
-    @JoinTable()
-
-    // Same issue with CM relation...
-    private _canvasser!: Canvasser[];
+    // @ManyToMany(type => Canvasser)
+    // @JoinTable()
+    // private _canvasser!: Canvasser[];
     private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
