@@ -26,6 +26,9 @@ const router: Router = Router();
     router.get('/:id/edit', async(req: Request, res: Response) => {
         res.render('edit-campaign')
     });
+    router.post('/', async(req: Request, res: Response) => {
+
+    });
 
     /**
      * GET for view campaign
