@@ -75,7 +75,7 @@ router.get('/:username',  async(req: Request, res: Response) => {
 });
 
 router.post('/:username', async(req: Request, res: Response) => {
-    const userRepository = getRepository(User);
+    //const userRepository = getRepository(User);
 
     const username = req.params.username;
     console.log('Old username',username);

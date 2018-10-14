@@ -7,7 +7,7 @@
             <h2><%= missing %> not found</h2>
         <% } %>
         
-		<form action="/<%= username %>" method="POST">
+		<form action="/user/<%= username %>" method="POST">
 	  		<div class="form-group">
 			    <label>Username</label>
 			    <input type="text" name="user[username]" class="form-control" value="<%= username %>">
