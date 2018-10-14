@@ -3,7 +3,7 @@ import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 @Entity()
 export class User {
     @PrimaryGeneratedColumn({name: "employeeID"})
-    _employeeID!: number;
+    private _employeeID!: number;
     @Column({name: "username"})
     private _username!: string;
     @Column({name: "fullName"})
@@ -34,7 +34,7 @@ export class User {
     public get password(): string {
         return this._password;
     }
-    
+
     public set username(value: string) {
         this._username = value;
     }

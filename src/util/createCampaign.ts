@@ -43,7 +43,7 @@ export const createCampaign = async campaignData => {
         let newQuestionaire:Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
-        await Manager.save(newQuestionaire);
+        await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
 
     //For Location Objects
@@ -69,7 +69,7 @@ export const createCampaign = async campaignData => {
             //associate this new location to array
             newCampaign.locations.push(newLocation);
             //save location to location table
-            await Manager.save(newLocation);
+            await Manager.save(newLocation).catch(e => console.log(e));
 
             //check if location[i] is already in database
         }
