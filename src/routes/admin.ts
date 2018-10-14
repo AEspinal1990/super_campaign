@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { createConnection, getManager }     from "typeorm";
+import { createConnection, getManager, getConnection }     from "typeorm";
 import * as fs from 'fs';
 
 import { CampaignManager }      from '../backend/entity/CampaignManager';
@@ -11,28 +11,31 @@ import * as createUserSytem from '../util/createUser';
 
 const router: Router = Router();
 
-
 /**
  * Create/Edit/Delete User 
  */
 router.get('/new', async(req: Request, res: Response) => {
     res.render('create-user');
 });    
-    
+
 router.post('/', async(req: Request, res: Response) => {
-    let newUser:User;
+    let newUser: User;
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
 
     /**
-     * Create User from data passed in.
+     * Create User from data in request from client.
      */
     newUser = createUserSytem.createBaseUser(req.body.user);
     
     /**
-     * Create specialized user based off role.
+     * Create specialized user based off permission of user.
      */    
     roledUser = createUserSytem.createRoledUser(newUser.permission, newUser);
 
+    /**
+     * Save the new user into user table and table for 
+     * their specific role.
+     */
     await createConnection()
         .then(async connection => {
             await connection.manager.save(newUser);
@@ -49,30 +52,30 @@ router.post('/', async(req: Request, res: Response) => {
 router.get('/:username',  async(req: Request, res: Response) => {
     let username = req.params.username;
     let user;
-    await createConnection().then(async () => {
-        user = await getManager()
-            .createQueryBuilder(User, 'user')
-            .where(`username = :username`, {username})
-            .getOne()
-            .then(found => {
-                if(found === undefined){
-                    console.log('Could not find that user');
-                } else {
+    const connection = getConnection();
+    // await createConnection().then(async () => {
+    //     user = await getManager()
+    //         .createQueryBuilder(User, 'user')
+    //         .where(`username = :username`, {username})
+    //         .getOne()
+    //         .then(found => {
+    //             if(found === undefined){
+    //                 console.log('Could not find that user');
+    //             } else {
                     
-                    res.status(200).render('view-user', {
-                        username,
-                        name: found.name,
-                        role: found.permission,
-                        id: found._employeeID                         
-                    });
+    //                 res.status(200).render('view-user', {
+    //                     username,
+    //                     name: found.name,
+    //                     role: found.permission,
+    //                     id: found._employeeID                         
+    //                 });
                     
-                }                
-            });            
-    }).catch(e => console.log(e))
+    //             }                
+    //         });            
+    // }).catch(e => console.log(e))
 
-    //res.status(200).send('Nothing probably broke');
+    res.status(200).send('Nothing probably broke');
 });
-
 
 router.post('/:username', async(req: Request, res: Response) => {
     // Parse the body
@@ -83,7 +86,6 @@ router.post('/:username', async(req: Request, res: Response) => {
     //      Insert into new role table
 
 });
-
 
 router.delete('/:username', async(req: Request, res: Response) => {
     let user:string = req.params.username;

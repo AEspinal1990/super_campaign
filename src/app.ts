@@ -3,9 +3,8 @@ import "reflect-metadata";
 /**
  * Import Libraries
  */
-import * as express     from 'express';
-import * as bodyParser  from 'body-parser';
-
+import * as express                     from 'express';
+import * as bodyParser                  from 'body-parser';
 /**
  * Import Route Handlers
  */
@@ -14,6 +13,7 @@ import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 
 const app = express();
+
 
 /**
  * Configurations
@@ -31,6 +31,6 @@ app.use(bodyParser.json());
 app.use('/user', adminRouter);
 app.use('/admin', adminRouter);
 app.use('/campaign', campaignRouter);
-app.use('/login', authRouter)
+app.use('/login', authRouter);
 
 export default app;
