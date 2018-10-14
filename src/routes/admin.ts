@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { createConnection, getManager, getConnection }     from "typeorm";
+import { createConnection, getManager, getConnection, getRepository }     from "typeorm";
 import * as fs from 'fs';
 
 import { CampaignManager }      from '../backend/entity/CampaignManager';
@@ -15,7 +15,7 @@ const router: Router = Router();
  * Create/Edit/Delete User 
  */
 router.get('/new', async(req: Request, res: Response) => {
-    res.render('create-user');
+    res.status(200).render('create-user');
 });    
 
 router.post('/', async(req: Request, res: Response) => {
@@ -36,45 +36,35 @@ router.post('/', async(req: Request, res: Response) => {
      * Save the new user into user table and table for 
      * their specific role.
      */
-    await createConnection()
-        .then(async connection => {
-            await connection.manager.save(newUser);
-            await connection.manager.save(roledUser);
-        })
-        .catch(e => {
-            console.log(e);
-            res.send('Error');
-        });
-    
-    res.status(200).redirect('/user/new'); //remember to change
+    const entityManager = getManager();
+    await entityManager.save(newUser)
+        .then(user => console.log('Saved:',user))
+        .catch(e => console.log(e));
+    await entityManager.save(roledUser)
+        .then(user => console.log('Saved:',user))
+        .catch(e => console.log(e));
+
+    res.status(200).redirect('/user/new'); 
 });
 
 router.get('/:username',  async(req: Request, res: Response) => {
-    let username = req.params.username;
-    let user;
-    const connection = getConnection();
-    // await createConnection().then(async () => {
-    //     user = await getManager()
-    //         .createQueryBuilder(User, 'user')
-    //         .where(`username = :username`, {username})
-    //         .getOne()
-    //         .then(found => {
-    //             if(found === undefined){
-    //                 console.log('Could not find that user');
-    //             } else {
-                    
-    //                 res.status(200).render('view-user', {
-    //                     username,
-    //                     name: found.name,
-    //                     role: found.permission,
-    //                     id: found._employeeID                         
-    //                 });
-                    
-    //             }                
-    //         });            
-    // }).catch(e => console.log(e))
+    const userRepository = getRepository(User);
+    const username = req.params.username;
+    
+    const user = await userRepository.find({where: {"_username": username}})
+        .catch(e => console.log(e));
+    
+    if(user == undefined) {
 
-    res.status(200).send('Nothing probably broke');
+    } else {
+        res.status(200).render('view-user', {
+            username,
+            name: user[0]._name,
+            role: user[0]._permission,
+            id: user[0]._employeeID
+        });
+    }
+
 });
 
 router.post('/:username', async(req: Request, res: Response) => {

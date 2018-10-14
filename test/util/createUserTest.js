@@ -1,8 +1,14 @@
 //import "../../dist/util/createUser.js"
+//import { CampaignManager }      from '../backend/entity/CampaignManager';
+//import { Canvasser }      from '../backend/entity/Canvasser'; 
+//import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
+//import { User } from '../backend/entity/User';
+
 const assert = require('chai').assert;
 const createBaseUserFunct = require('../../dist/util/createUser.js').createBaseUser;
-
- describe('CreateUser',function(){
+const createRoledUserFunct = require('../../dist/util/createUser.js').createRoledUser;
+// Tests CreateBaseUser Function
+ describe('CreateBaseUser Test',function(){
     let someUserData = { username: 'blah', name: 'asd', password: 'asdf', role: '1' };
     let createdUser = createBaseUserFunct(someUserData);
     it('CreateBaseUser should return User Object', function(){
@@ -21,3 +27,26 @@ const createBaseUserFunct = require('../../dist/util/createUser.js').createBaseU
         assert.equal(createdUser.permission,someUserData["role"]);
      });
  });
+
+//Tests CreateRoledUser Function
+ describe('CreateRoledUser Test',function(){
+     let campaignRole = 1;
+     let canvasserRole = 2;
+     let SystemAdminRole = 3; //anything other than 1 or 2
+     let someUserData = {username: 'blah', name: 'asd', password: 'asdf', role: '1' };
+     let tempUser = createBaseUserFunct(someUserData);
+     let createdRoleUser1 = createRoledUserFunct(campaignRole,tempUser);
+     let createdRoleUser2 = createRoledUserFunct(canvasserRole,tempUser);
+     let createdRoleUser3 = createRoledUserFunct(SystemAdminRole,tempUser);
+     
+     it('CreateRoledUser should return Campaign Manager Object', function(){
+         assert.equals(typeof(createdRoleUser1), typeof(new CampaignManager() ))
+     });
+     it('CreateRoledUser should return Canvasser Object', function(){
+        assert.equals(typeof(createdRoleUser2), typeof(new Canvasser() ))
+    });
+     it('CreateRoledUser should return System Admin Object', function(){
+        assert.equals(typeof(createdRoleUser3), typeof(new SystemAdmin() ))
+    });
+});
+ 
