@@ -35,7 +35,6 @@ const router: Router = Router();
      */
     router.get('/:id/view', async(req: Request, res: Response) => {
 
-    /** 
     let { campaignID } = req.params;
     console.log("before connection");
     createConnection().then(async connection => {
@@ -52,9 +51,9 @@ const router: Router = Router();
             })
         console.log("after connection");
         res.render('view_campaign', {campaign: "campaign.json"});
+        
         // res.send('hold');
     }).catch(e => console.log(e));
-    **/
 
     // createConnection().then(async connection => {
     //     const campaign = await connection.manager.findOne(Campaign, req.params);

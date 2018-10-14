@@ -3,6 +3,9 @@
 	<div class="container">
 
         <h1>View User</h1>
+        <% if (username === "") { %>
+            <h2><%= missing %> not found</h2>
+        <% } %>
         
 		<form action="/<%= username %>" method="POST">
 	  		<div class="form-group">
