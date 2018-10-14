@@ -12,7 +12,7 @@ export class Campaign {
     private _ID!: number;
     @Column({name: "campaignName"})
     private _name!:string;
-    @ManyToMany(type => CampaignManager, {cascade: true})
+    @ManyToMany(type => CampaignManager,)
     @JoinTable({name: "campaign_location_mapping"})
     private _manager:CampaignManager[];
     
@@ -20,18 +20,18 @@ export class Campaign {
     // For now, we could use a array of ID or CM Objects
     // private _manager!:CampaignManager[];
     private _managers!:number[];
-    // @ManyToMany(type => Canvasser, {nullable: true, cascade: true})
-    // @JoinTable()
+    @ManyToMany(type => Canvasser, {cascade: true})
+    @JoinTable()
 
     // Same issue with CM relation...
-    // private _canvasser!: Canvasser[];
+    private _canvasser!: Canvasser[];
     private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
     // @OneToMany(type => Locations, loc => loc.campaign)
     @ManyToMany(type => Locations)
-    @JoinTable()
+    @JoinTable({name: "campaign_locations_mapping"})
     private _locations!:Locations[];
     @Column({name: "startDate"})
     private _startDate!:Date;

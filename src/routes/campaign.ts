@@ -24,7 +24,7 @@ const router: Router = Router();
      * GET and POST for edit Campaign
      */
     router.get('/:id/edit', async(req: Request, res: Response) => {
-
+        res.render('edit-campaign')
     });
 
     /**
@@ -48,8 +48,8 @@ const router: Router = Router();
                 console.log('Oh shit',e)
             })
         console.log("after connection");
-        // res.render('view_campaign', {});
-        res.send('hold');
+        res.render('view_campaign', {campaign: "campaign.json"});
+        // res.send('hold');
     }).catch(e => console.log(e));
     **/
 

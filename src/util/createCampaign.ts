@@ -29,7 +29,7 @@ export const createCampaign = async campaignData => {
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
         //Assign parsed data to new campaign object
     const newCampaign:Campaign = new Campaign();
-    newCampaign.name = campaignData.campaignName;
+    newCampaign.name = campaignName;
     newCampaign.startDate = startDate;
     newCampaign.endDate = endDate;
     newCampaign.avgDuration = averageExpectedDuration;
@@ -43,14 +43,14 @@ export const createCampaign = async campaignData => {
         let newQuestionaire:Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
-        await Manager.save(newQuestionaire);
+        await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
 
     //For Location Objects
         //Parse Locations for All Locations of Campaign Table
     locations = locations.split("\n");
 
-    //Initialize array of campaign locations
+        //Initialize array of campaign locations
     newCampaign.locations = [];
 
     for (let i in locations) {
@@ -69,13 +69,13 @@ export const createCampaign = async campaignData => {
             //associate this new location to array
             newCampaign.locations.push(newLocation);
             //save location to location table
-            await Manager.save(newLocation);
+            await Manager.save(newLocation).catch(e => console.log(e));
 
             //check if location[i] is already in database
         }
     }
 
-    await Manager.save(newCampaign);
+    //For Canvasser Objects 
 
 
 }
