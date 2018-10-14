@@ -53,9 +53,16 @@ router.get('/:username',  async(req: Request, res: Response) => {
     
     const user = await userRepository.find({where: {"_username": username}})
         .catch(e => console.log(e));
-    
-    if(user == undefined) {
 
+    if(user[0] === undefined) {
+        console.log('not found')
+        res.status(200).render('view-user',{
+            missing: username,
+            username: "",
+            name: "",
+            role: "",
+            id: 0
+        });
     } else {
         res.status(200).render('view-user', {
             username,
@@ -68,13 +75,21 @@ router.get('/:username',  async(req: Request, res: Response) => {
 });
 
 router.post('/:username', async(req: Request, res: Response) => {
-    // Parse the body
-    // Create user with data
+    const userRepository = getRepository(User);
 
-    //  If role has changed
-    //      Remove from old role table
-    //      Insert into new role table
+    const username = req.params.username;
+    console.log('Old username',username);
+    console.log(req.body.user);
+    // let user = req.body.user;
+    // console.log(username);
+    // console.log(user.name)
+    // console.log(user.role)
+    
+    // await userRepository.update({username},{})
+    //     .then(user => console.log(user))
+    //     .catch(e => console.log(e));
 
+    res.send('hello');
 });
 
 router.delete('/:username', async(req: Request, res: Response) => {
