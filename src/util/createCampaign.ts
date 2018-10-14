@@ -1,6 +1,7 @@
 import { Campaign } from '../backend/entity/Campaign';
 import { createConnection } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
+import { Locations } from '../backend/entity/Locations';
 
 
 export const createCampaign = async campaignData => {
@@ -52,6 +53,26 @@ export const createCampaign = async campaignData => {
         let newQuestionaire:Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaignID;
         newQuestionaire.question = questionaire[i];
+    }
+
+    //For Location Objects
+        //Parse Locations for All Locations of Campaign Table
+    locations = locations.split("\n");
+    for (let i in locations) {
+        //create location object
+        let locationParse = locations[i];
+        locationParse = locations.split(", ");
+        let newLocation:Locations = new Locations();
+        newLocation.streetNumber = parseInt(locationParse[0]);
+        newLocation.street = locationParse[1];
+        newLocation.unit = locationParse[2];
+        newLocation.city = locationParse[3];
+        newLocation.state = locationParse[4]; 
+        newLocation.zipcode = parseInt(locationParse[5]);
+        //check if location[i] is already in database
+        
+
+
     }
 
 
