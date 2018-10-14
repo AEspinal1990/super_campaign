@@ -1,3 +1,5 @@
 - In createCampaign.ts, need to deal with if new lines are entered in questionaire field instead of a question
-- Only 1 primary column
+- Only 1 primary column for some tables? (question and campaign ID)
 - Need to change location table
+- Edit global parameters (saved in json?)
+- The results object dont know which question each answer refers to
