@@ -1,39 +1,58 @@
 import { Campaign } from '../backend/entity/Campaign';
+import { createConnection } from 'typeorm';
+import { Questionaire } from '../backend/entity/Questionaire';
 
 
-export const createBaseCampaign = campaignData => {
+export const createCampaign = async campaignData => {
 
-    //PARSE THE DATA
-    ///////////////////////////////////
+    //ASSIGN campaignData to variables
     let campaignName = campaignData.campaignName;
     let campaignManager;
-
-    //Parse date from format YYYY-MM-DD
     let startDate = campaignData.startDate;
-    startDate = startDate.split("-");
-    startDate = new Date(startDate[0], startDate[1], startDate[2]);
     let endDate = campaignData.endDate;
-    endDate =  endDate.split("-");
-    endDate = new Date(endDate[0], endDate[1], endDate[2]);
-
     let talkingPoints = campaignData.talkingPoints;
-    //seperate questions and place them in table with primary key being the question and the campaign ID
     let questionaire = campaignData.questionaire;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
-    //parse location by lines
     let locations = campaignData.locations;
-    //store somehow in a different table?
     let canvassers = campaignData.canvassers;
-    
-    //Assign parsed data to new campaign object
+
+    ///////////////////////////////////
+    //PARSE THE DATA
+    ///////////////////////////////////
+
+    //For Camapaign Object
+        //Parse date from format YYYY-MM-DD
+    startDate = startDate.split("-");
+    startDate = new Date(startDate[0], startDate[1], startDate[2]);
+    endDate =  endDate.split("-");
+    endDate = new Date(endDate[0], endDate[1], endDate[2]);
+        //Assign parsed data to new campaign object
     const newCampaign:Campaign = new Campaign();
     newCampaign.name = campaignData.campaignName;
-    //newCampaign.manager = campaignData.username;
     newCampaign.startDate = startDate;
     newCampaign.endDate = endDate;
-    //newCampaign.talkingPoint = talkingPoints;
     newCampaign.avgDuration = averageExpectedDuration;
-    //newCampaign.locations = locations;
+        //Save Campaign Object to database and get ID back
+        //create variable to store ID of the campaign Object
+    let newCampaignID;
+    await createConnection()
+    .then(async connection => {
+        await connection.manager
+            .save(newCampaign)
+            .then(newCampaign => newCampaignID = newCampaign.ID);
+    })
+    .catch(e => {
+        console.log(e);
+    });        
 
-    return newCampaign;
-};
+    //For Questionaire Objects
+        //Parse Questionaire for Questionaire table
+    questionaire = questionaire.split("\n");
+    for (let i in questionaire) {
+        let newQuestionaire:Questionaire = new Questionaire();
+        newQuestionaire.campaignID = newCampaignID;
+        newQuestionaire.question = questionaire[i];
+    }
+
+
+}

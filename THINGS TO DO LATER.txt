@@ -1,0 +1,2 @@
+- In createCampaign.ts, need to deal with if new lines are entered in questionaire field instead of a question
+- Only 1 primary column
