@@ -4,6 +4,9 @@
 const assert = require('chai').assert;
 
 const createCampaignFunct = require('../../dist/util/createCampaign.js').createCampaign;
+const createQuestionnairesFunct = require('../../dist/util/createCampaign.js').createQuestionaires;
+const createLocationsFunct = require('../../dist/util/createCampaign.js').createLocations;
+
 
 describe('CreateCampaign Test', function(){
     campaignDataExample = { campaignName: 'SomeCampaign', startDate: '2012-03-31',
