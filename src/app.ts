@@ -19,24 +19,6 @@ import { campaignRouter }   from './routes/campaign';
 const app = express();
 
 
-<<<<<<< HEAD
-/////EXPERIMENT WITH MORGAN
-/*
-var fs = require('fs');
-var morgan = require('morgan');
-var path = require('path');
-
-//Creating stream
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags:'a'});
-//setup the logger
-app.use(morgan('combined', {stream:accessLogStream}))
-*/
-
-
-
-/////////////////////
-=======
->>>>>>> 1ad117bfb8d69944ddf7153b68be0c980982c100
 /**
  * Configurations
  */

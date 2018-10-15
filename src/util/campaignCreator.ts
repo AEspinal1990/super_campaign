@@ -1,5 +1,5 @@
 import { Campaign } from '../backend/entity/Campaign';
-import { createConnection, getManager } from 'typeorm';
+import { createConnection, getManager, getRepository } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
 import { Canvasser } from '../backend/entity/Canvasser';
@@ -44,6 +44,7 @@ export const createCampaign = async campaignData => {
         let newQuestionaire:Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
+        console.log(questionaire[i]);
         await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
 
@@ -79,15 +80,12 @@ export const createCampaign = async campaignData => {
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Canvasser Objects 
-        //initialize array for Campaign canvassers
-    //newCampaign.canvassers = [];
+        //access Canvasser database
+        let canvasserRepository = getRepository(Canvasser);
         //Parse Locations for All Locations of Campaign Table
-    canvassers = canvassers.split(" ");
-
-    for (let i in canvassers) {
-        let canvasserParse = canvassers[i];
-        
-    }
+    canvassers = parseInt(canvassers.split(" "));
+    canvassers = canvasserRepository.findByIds(canvassers).catch(e => console.log(e));
+    console.log(canvassers);
 
 
 };
