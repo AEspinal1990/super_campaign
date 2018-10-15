@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { createConnection, getConnection } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 
-import * as createCampaign from '../util/campaignCreator';
+import * as campaignCreator from '../util/campaignCreator';
 
 const router: Router = Router();
     /**
@@ -13,10 +13,11 @@ const router: Router = Router();
     });
     
     router.post('/', async(req: Request, res: Response)=>{
-        let newCampaignObject = createCampaign.createCampaign(req.body.campaign);
+        /** let newCampaignObject = createCampaign.createCampaign(req.body.campaign);
         createCampaign.createQuestionaires(req.body.campaign, newCampaignObject);
         createCampaign.createLocations(req.body.campaign, newCampaignObject);
-        
+        */
+       campaignCreator.createCampaign(req.body.campaign);
         if (res.status(200))
             res.send("Campaign Created!");
         else
