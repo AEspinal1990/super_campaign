@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { createConnection, getManager, getRepository, getConnection }     from "typeorm";
+import { getManager, getRepository }     from "typeorm";
 import * as fs from 'fs';
 
 import { CampaignManager }      from '../backend/entity/CampaignManager';
@@ -7,7 +7,7 @@ import { Canvasser }      from '../backend/entity/Canvasser';
 import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
 import { User } from '../backend/entity/User';
 
-import * as userManager from '../util/createUser';
+import * as userManager from '../util/userManagementSystem';
 
 const router: Router = Router();
 
