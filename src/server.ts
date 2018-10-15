@@ -23,7 +23,7 @@ import { createConnection, Connection, getConnection, getRepository } from "type
  * Create Connection to the Database
  */
 let server;
- const connection = createConnection().then(async (connection) => {
+const connection = createConnection().then(async (connection) => {
      console.log(`Connection to ${connection.options.database} established`);
      server = app.listen(app.get('port'), () => {
          console.log('App is running on port', app.get('port'), app.get('env'))

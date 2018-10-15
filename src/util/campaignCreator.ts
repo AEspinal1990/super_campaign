@@ -78,6 +78,15 @@ export const createCampaign = async campaignData => {
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Canvasser Objects 
+        //initialize array for Campaign canvassers
+    newCampaign.canvassers = [];
+        //Parse Locations for All Locations of Campaign Table
+    canvassers = canvassers.split(" ");
+
+    for (let i in canvassers) {
+        let canvasserParse = canvassers[i];
+        
+    }
 
 
 };
