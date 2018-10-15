@@ -15,9 +15,9 @@ export class Campaign {
     @ManyToMany(type => CampaignManager, {cascade: true})
     @JoinTable({name: "campaign_manager_mapping"})
     private _manager:CampaignManager[];
-    // @ManyToMany(type => Canvasser, {cascade: true})
+    @ManyToMany(type => Canvasser, {cascade: true})
     // @JoinTable({name: "campaign_canvasser_mapping"})
-    // private _canvasser!: Canvasser[];
+    private _canvasser!: Canvasser[];
     // private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()

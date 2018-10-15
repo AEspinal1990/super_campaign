@@ -11,11 +11,13 @@ export class Canvasser{
     @OneToOne(type => User, {primary: true})
     @JoinColumn()
     private _ID!: User;
-    // @ManyToMany(type => Campaign, {nullable: true, cascade: true})
-    // private _campaignID!: Campaign[];
-    @OneToMany(type => Task, task => task.canvasserID, {cascade: false})
+    @ManyToMany(type => Campaign, {nullable: true, cascade: true})
+    @JoinTable({name: "campaign_canvasser_mapping"})
+    private _campaignID!: Campaign[];
+    @OneToMany(type => Task, task => task.canvasserID, {cascade: true})
     private _task!:Task[];
-    @OneToMany(type => Availability, av => av.canvasserID)
+    @ManyToMany(type => Availability, av => av.canvasserID, {cascade: true, nullable: true})
+    @JoinTable({name: "canvasser_availability_mapping"})
     private _availableDate!: Availability[];
     @ManyToMany(type => AssignedDate)
     @JoinTable({name: "canvasser_assignedDate_mapping"})
@@ -37,18 +39,15 @@ export class Canvasser{
     public get ID(): User {
         return this._ID;
     }
-    // public get campaignID(): Campaign[] {
-    //     return this._campaignID;
-    // }
+    public get campaignID(): Campaign[] {
+        return this._campaignID;
+    }
     public get task():Task[] {
         return this._task;
     }
     public get availableDate():Availability[]{
         return this._availableDate;
     }
-    // public get datesAvailable(): Date[] {
-    //     return this._datesAvailable;
-    // }
     public get assignedDate(): AssignedDate[]{
         return this._assignedDate;
     }
@@ -58,9 +57,9 @@ export class Canvasser{
     public set ID(value: User) {
         this._ID = value;
     }
-    // public set campaignID(value: Campaign[]) {
-    //     this._campaignID = value;
-    // }
+    public set campaignID(value: Campaign[]) {
+        this._campaignID = value;
+    }
     public set task(value:Task[]){
         this._task = value;
     }
