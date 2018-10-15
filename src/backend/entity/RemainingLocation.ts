@@ -7,7 +7,7 @@ export class RemainingLocation{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!:number;
     @ManyToMany(type => Locations, {primary: true})
-    @JoinTable()
+    @JoinTable({name: "remaining_locations_mapping"})
     private _locationID!:Locations[];
     @OneToOne(type => Task)
     @JoinColumn()

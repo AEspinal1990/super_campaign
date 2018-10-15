@@ -3,9 +3,12 @@ import "reflect-metadata";
 /**
  * Import Libraries
  */
-import * as express                     from 'express';
-import * as bodyParser                  from 'body-parser';
-import * as morgan                      from 'morgan';
+import * as express         from 'express';
+import * as bodyParser      from 'body-parser';
+// import * as morgan          from 'morgan';
+import * as methodOverride  from 'method-override'
+
+
 /**
  * Import Route Handlers
  */
@@ -16,6 +19,7 @@ import { campaignRouter }   from './routes/campaign';
 const app = express();
 
 
+<<<<<<< HEAD
 /////EXPERIMENT WITH MORGAN
 /*
 var fs = require('fs');
@@ -31,6 +35,8 @@ app.use(morgan('combined', {stream:accessLogStream}))
 
 
 /////////////////////
+=======
+>>>>>>> 1ad117bfb8d69944ddf7153b68be0c980982c100
 /**
  * Configurations
  */
@@ -39,6 +45,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(methodOverride('_method'));
 
 
 /**

@@ -16,11 +16,9 @@ export class Task{
     @OneToOne(type => RemainingLocation, {nullable: true, cascade: true})
     @JoinColumn()
     private _remainingLocations!:RemainingLocation;
-    // private _remainingLocations!:number[];
     @OneToOne(type => CompletedLocation, {nullable: true, cascade: true})
     @JoinColumn()
     private _completedLocations!:CompletedLocation;
-    // private _completedLocations!:number[];
     @Column({name: "currentLocation", nullable: true})
     private _currentLocation!:number;
     private _recommendedRoute!:number[];
@@ -60,15 +58,9 @@ export class Task{
     public get remainingLocations(): RemainingLocation{
         return this._remainingLocations;
     }
-    // public get remainingLocations():number[]{
-    //     return this._remainingLocations;
-    // }
     public get completedLocations():CompletedLocation{
         return this._completedLocations;
     }
-    // public get completedLocations():number[]{
-    //     return this._completedLocations;
-    // }
     public get currentLocation():number{
         return this._currentLocation;
     }
@@ -96,15 +88,9 @@ export class Task{
     public set remainingLocations(value:RemainingLocation){
         this._remainingLocations = value;
     }
-    // public set remainingLocations(locations:number[]){
-    //     this._remainingLocations = locations;
-    // }
     public set completedLocations(value:CompletedLocation){
         this._completedLocations = value;
     }
-    // public set completedLocations(locations:number[]){
-    //     this._completedLocations = locations;
-    // }
     public set currentLocation(location:number){
         this._currentLocation = location;
     }

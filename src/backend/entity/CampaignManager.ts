@@ -1,17 +1,13 @@
 import {OneToOne, JoinColumn, Entity, ManyToOne, ManyToMany, OneToMany} from "typeorm";
 import { User } from "./User";
-import { Campaign } from "./Campaign";
 import { Locations } from "./Locations";
 import { Assignment } from "./Assignment";
 
 @Entity({name: "Manager"})
 export class CampaignManager {
-    @OneToOne(type => User, {primary: true})
+    @OneToOne(type => User, {primary: true, cascade: true})
     @JoinColumn()
     private _ID!: User;
-    // @ManyToMany(type => Campaign, camp => camp.manager, {nullable: true})
-    // // Issue with CM and Campaign relation
-    // private _campaignID!:Campaign[];
     private _currentCampaigns!: number[];
 
     // constructor (ID:User, campaignID:Campaign, currentCampaigns:number[]){
@@ -23,18 +19,12 @@ export class CampaignManager {
     public get ID(): User {
         return this._ID;
     }
-    // public get campaignID(): Campaign[] {
-    //     return this._campaignID;
-    // }
     public get currentCampaigns(): number[] {
         return this._currentCampaigns;
     }
     public set ID(value: User) {
         this._ID = value;
     }
-    // public set campaignID(value: Campaign[]) {
-    //     this._campaignID = value;
-    // }
     public set currentCampaigns(value: number[]) {
         this._currentCampaigns = value;
     }

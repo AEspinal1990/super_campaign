@@ -8,7 +8,7 @@ export class CompletedLocation {
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!:number;
     @ManyToMany(type => Locations)
-    @JoinTable()
+    @JoinTable({name: "completed_locations_mapping"})
     private _locationID!:Locations[];
     @OneToMany(type => Results, res => res.completedLocation)
     private _resultID!:Results[];

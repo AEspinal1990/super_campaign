@@ -2,6 +2,7 @@ import { Campaign } from '../backend/entity/Campaign';
 import { createConnection, getManager } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
+import { Canvasser } from '../backend/entity/Canvasser';
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
@@ -63,7 +64,7 @@ export const createCampaign = async campaignData => {
             newLocation.street = locationParse[1];
             newLocation.unit = locationParse[2];
             newLocation.city = locationParse[3];
-            newLocation.state = locationParse[4]; 
+            newLocation.state = locationParse[4];
             newLocation.zipcode = parseInt(locationParse[5]);
 
             //associate this new location to array
@@ -79,7 +80,7 @@ export const createCampaign = async campaignData => {
 
     //For Canvasser Objects 
         //initialize array for Campaign canvassers
-    newCampaign.canvassers = [];
+    //newCampaign.canvassers = [];
         //Parse Locations for All Locations of Campaign Table
     canvassers = canvassers.split(" ");
 

@@ -12,22 +12,16 @@ export class Campaign {
     private _ID!: number;
     @Column({name: "campaignName"})
     private _name!:string;
-    @ManyToMany(type => CampaignManager,)
-    @JoinTable({name: "campaign_location_mapping"})
+    @ManyToMany(type => CampaignManager, {cascade: true})
+    @JoinTable({name: "campaign_manager_mapping"})
     private _manager:CampaignManager[];
-    
-    // Cannot get the CM and Campaign relation to work.
-    // For now, we could use a array of ID or CM Objects
-    // private _manager!:CampaignManager[];
-    private _managers!:number[];
-    // @ManyToMany(type => Canvasser)
-    // @JoinTable()
-    // private _canvasser!: Canvasser[];
-    private _canvassers!: number[];
+    @ManyToMany(type => Canvasser, {cascade: true})
+    // @JoinTable({name: "campaign_canvasser_mapping"})
+    private _canvasser!: Canvasser[];
+    // private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
-    // @OneToMany(type => Locations, loc => loc.campaign)
     @ManyToMany(type => Locations)
     @JoinTable({name: "campaign_locations_mapping"})
     private _locations!:Locations[];
@@ -39,10 +33,8 @@ export class Campaign {
     private _avgDuration!:number;
     @OneToMany(type => Questionaire, qt => qt.campaignID)
     private _question!:Questionaire[];
-    // private _questionaire!:string[];
     @OneToMany(type => TalkPoint, tp => tp.campaignID)
     private _talkingPoint!:TalkPoint[];
-    // private _talkingPoints!:string[];
 
     // constructor (ID:number, name:string, cm:CampaignManager, managers:number[], 
     //     can:Canvasser, canvassers:number[],
@@ -72,15 +64,12 @@ export class Campaign {
     public get manager():CampaignManager[] {
         return this._manager;
     }
-    public get managers():number[] {
-        return this._managers;
-    }
     // public get canvasser():Canvasser[] {
     //     return this._canvasser;
     // }
-    public get canvassers():number[] {
-        return this._canvassers;
-    }
+    // public get canvassers():number[] {
+    //     return this._canvassers;
+    // }
     public get assignment():Assignment {
         return this._assignment;
     }
@@ -105,9 +94,6 @@ export class Campaign {
     public get talkingPoint():TalkPoint[]{
         return this._talkingPoint;
     }
-    // public get talkingPoints():string[] {
-    //     return this._talkingPoints;
-    // }
     public set ID(ID:number){
         this._ID = ID;
     }
@@ -117,15 +103,12 @@ export class Campaign {
     public set manager(value:CampaignManager[]){
         this._manager = value;
     }
-    public set managers(managers:number[]){
-        this._managers = managers;
-    }
     // public set canvasser(value:Canvasser[]){
     //     this._canvasser = value;
     // }
-    public set canvassers(canvassers:number[]){
-        this._canvassers = canvassers;
-    }
+    // public set canvassers(canvassers:number[]){
+    //     this._canvassers = canvassers;
+    // }
     public set assignment(assignemnt:Assignment){
         this._assignment = assignemnt;
     }
@@ -150,9 +133,5 @@ export class Campaign {
     public set talkingPoint(value:TalkPoint[]){
         this._talkingPoint = value;
     }
-    // public set talkingPoints(talkingPoints:string[]){
-    //     this._talkingPoints = talkingPoints;
-    // }
 
-    
 }

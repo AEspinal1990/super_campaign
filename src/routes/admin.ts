@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { createConnection, getManager, getConnection, getRepository }     from "typeorm";
+import { getManager, getRepository }     from "typeorm";
 import * as fs from 'fs';
 
 import { CampaignManager }      from '../backend/entity/CampaignManager';
@@ -7,7 +7,7 @@ import { Canvasser }      from '../backend/entity/Canvasser';
 import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
 import { User } from '../backend/entity/User';
 
-import * as createUserSytem from '../util/createUser';
+import * as userManager from '../util/userManagementSystem';
 
 const router: Router = Router();
 
@@ -25,12 +25,12 @@ router.post('/', async(req: Request, res: Response) => {
     /**
      * Create User from data in request from client.
      */
-    newUser = createUserSytem.createBaseUser(req.body.user);
+    newUser = userManager.createBaseUser(req.body.user);
     
     /**
      * Create specialized user based off permission of user.
      */    
-    roledUser = createUserSytem.createRoledUser(newUser.permission, newUser);
+    roledUser = userManager.createRoledUser(newUser.permission, newUser);
 
     /**
      * Save the new user into user table and table for 
@@ -56,7 +56,7 @@ router.get('/:username',  async(req: Request, res: Response) => {
 
     if(user[0] === undefined) {
         console.log('not found')
-        res.status(200).render('view-user',{
+        res.status(404).render('view-user', {
             missing: username,
             username: "",
             name: "",
@@ -75,40 +75,86 @@ router.get('/:username',  async(req: Request, res: Response) => {
 });
 
 router.post('/:username', async(req: Request, res: Response) => {
+    let originalUsername = req.params.username;
     const userRepository = getRepository(User);
+    const unchangedUser = await userRepository.find({where: {"_username": req.params.username}})
+        .catch(e => console.log(e));
 
-    const username = req.params.username;
-    console.log('Old username',username);
-    console.log(req.body.user);
-    // let user = req.body.user;
-    // console.log(username);
-    // console.log(user.name)
-    // console.log(user.role)
+    let user = req.body.user;
+    user.password = "";         // TODO: Find a legit fix to how we create a new roled user for update
+    let name = user.name;
+    let username = user.username;
+    let role = user.role;
     
-    // await userRepository.update({username},{})
-    //     .then(user => console.log(user))
-    //     .catch(e => console.log(e));
+    /**
+     * Update the user on the database
+     */
+    await userRepository.query(
+        `Update supercampaign.user 
+        SET username = '${username}', fullname = '${name}', permission = '${role}'
+        WHERE username = '${originalUsername}';`
+    ).catch(e => console.log(e));
+
+   
+    /**
+     * If role has changed, erase from orignal 
+     * role table and add to new
+     */
+    let id = unchangedUser[0]._employeeID;
+    let originalRole = unchangedUser[0]._permission;
+    if(role !== originalRole) {         
+        // Delete this user from old role table 
+        userManager.deleteUserFromRole(unchangedUser[0]._permission,id);
+
+        // Add this user to their new role table
+        let updatedUser = userManager.createBaseUser(user);
+        updatedUser.employeeID = id;
+        let updatedRoledUser = userManager.createRoledUser(role, updatedUser);
+        console.log(updatedRoledUser)
+        const entityManager = getManager();
+        await entityManager
+            .save(updatedRoledUser)
+            .then(user2 => console.log('Saved:',user2))
+            .catch(e => console.log(e));
+    }
 
     res.send('hello');
 });
 
 router.delete('/:username', async(req: Request, res: Response) => {
-    let user:string = req.params.username;
-    await createConnection()
-        .then( async () => {
-            await getManager()
-            .createQueryBuilder()
-            .delete()
-            .from(User)
-            .where("username = :username", {username: user})
-            .execute();           
-        })
-        .catch(e =>{
-            console.log(e);
-            res.send('Error');
-        });
     
-    res.status(200).redirect('/user');
+    
+    // EmployeeID is required to remove user from roled table
+    const userRepository = getRepository(User);    
+    const user = await userRepository.find({where: {"_username": req.params.username}})
+        .catch(e => console.log(e));
+    console.log('Deleting:',user);
+
+    /**
+     * Delete User from Specific Role Table
+     * This record must be deleted first due
+     * to foreign key constraing. THEN
+     * Delete User from User table
+     */
+    await userRepository.query(
+        `DELETE FROM supercampaign.system_admin             
+        WHERE ID_employeeID = '${user[0]._employeeID}';`
+    )
+    .catch(e => console.log(e));
+    
+    await userRepository.query(
+        `DELETE FROM supercampaign.user
+        WHERE employeeID = '${user[0]._employeeID}';`
+    )
+    .catch(e => console.log(e));
+    
+
+    /**
+     * Sanity Check
+     * If page loads with user, user was not deleted from the DB
+     * else it was successfull.
+     */
+    res.status(200).redirect('/user/' + req.params.username);
 });
 
 
