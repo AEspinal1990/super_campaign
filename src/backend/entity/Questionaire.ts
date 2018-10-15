@@ -1,13 +1,13 @@
-import {Entity, Column, ManyToOne} from "typeorm";
+import {Entity, PrimaryColumn, ManyToOne} from "typeorm";
 import { Campaign } from "./Campaign";
 
 @Entity()
 export class Questionaire{
     @ManyToOne(type => Campaign, {primary: true, eager: true})
     private _campaignID!:Campaign;
-    @Column({name: "question"})
+    @PrimaryColumn({name: "question"})
     private _question!:string;
-    
+
     // constructor (campaignID:Campaign, question:string){
     //     this._campaignID = campaignID;
     //     this._question = question;
