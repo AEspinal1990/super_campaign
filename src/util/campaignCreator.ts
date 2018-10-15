@@ -2,6 +2,7 @@ import { Campaign } from '../backend/entity/Campaign';
 import { createConnection, getManager } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
+import { Canvasser } from '../backend/entity/Canvasser';
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
@@ -74,8 +75,8 @@ export const createCampaign = async campaignData => {
             //check if location[i] is already in database
         }
     }
+    //MAYBE MUST SAVE NEW CAMPAIGN OBJECT AGAIN AFTER SAVING THE OBJECTS SO THAT THE CAMPAIGN-LOCATION TABLE RELATION UPDATES
+    await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Canvasser Objects 
-
-
-}
+};

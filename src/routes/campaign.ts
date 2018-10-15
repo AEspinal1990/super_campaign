@@ -1,8 +1,8 @@
 import { Request, Response, Router } from 'express';
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection, getConnection, getManager, getRepository } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 
-import * as createCampaign from '../util/createCampaign';
+import * as campaignCreator from '../util/campaignCreator';
 
 const router: Router = Router();
     /**
@@ -13,7 +13,11 @@ const router: Router = Router();
     });
     
     router.post('/', async(req: Request, res: Response)=>{
-        createCampaign.createCampaign(req.body.campaign);
+        /** let newCampaignObject = createCampaign.createCampaign(req.body.campaign);
+        createCampaign.createQuestionaires(req.body.campaign, newCampaignObject);
+        createCampaign.createLocations(req.body.campaign, newCampaignObject);
+        */
+       campaignCreator.createCampaign(req.body.campaign);
         if (res.status(200))
             res.send("Campaign Created!");
         else
@@ -26,31 +30,42 @@ const router: Router = Router();
     router.get('/:id/edit', async(req: Request, res: Response) => {
         res.render('edit-campaign')
     });
+    router.post('/', async(req: Request, res: Response) => {
+
+    });
 
     /**
      * GET for view campaign
      */
     router.get('/:id/view', async(req: Request, res: Response) => {
-
     let { campaignID } = req.params;
-    console.log("before connection");
-    createConnection().then(async connection => {
-        const campaign = await getConnection()
-            .createQueryBuilder()
-            .select("campaign")
-            .from(Campaign, "campaign")
-            .getOne()
-            .then((camp) =>{
-                console.log(camp);
-            })
-            .catch(e => {
-                console.log('Oh shit',e)
-            })
-        console.log("after connection");
-        res.render('view_campaign', {campaign: "campaign.json"});
+
+    const campaignRepo = getRepository(Campaign);
+        const campaign = await campaignRepo.find({where: {"ID": campaignID}}).catch(e => console.log(e));
+            // .createQueryBuilder()
+            // .select("campaign")
+            // .from(Campaign, "campaign")
+            // .getOne()
+            // .then((camp) =>{
+            //     console.log(camp);
+            // })
+            // .catch(e => {
+            //     console.log('Oh shit',e)
+            // })
         
+        res.render('view-campaign', {
+            id: campaign[0].ID,
+            name: campaign[0].name,
+            managers: campaign[0].manager,
+            assignment: campaign[0].assignment,
+            locations: campaign[0].locations,
+            sDate: campaign[0].startDate,
+            eDate: campaign[0].endDate,
+            duration: campaign[0].avgDuration,
+            questions: campaign[0].question,
+            points: campaign[0].talkingPoint
+        });
         // res.send('hold');
-    }).catch(e => console.log(e));
 
     // createConnection().then(async connection => {
     //     const campaign = await connection.manager.findOne(Campaign, req.params);

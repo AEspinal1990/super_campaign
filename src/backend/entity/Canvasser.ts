@@ -4,29 +4,24 @@ import { Availability } from "./Availability";
 import { AssignedDate } from "./AssignedDate";
 import { Task } from "./Task";
 import { Results } from "./Results";
+import { Campaign } from "./Campaign";
 
 @Entity()
 export class Canvasser{
     @OneToOne(type => User, {primary: true})
     @JoinColumn()
     private _ID!: User;
-    // @ManyToMany(type => Campaign)
-
-    // Issue with Canvasser and Campaign relations
-    // private _campaignID!:Campaign[];
-    @OneToMany(type => Task, task => task.canvasserID, {cascade: true})
+    // @ManyToMany(type => Campaign, {nullable: true, cascade: true})
+    // private _campaignID!: Campaign[];
+    @OneToMany(type => Task, task => task.canvasserID, {cascade: false})
     private _task!:Task[];
-    // private _tasksRemaining!: number[];
-    // private _tasksCompleted!: number[];
     @OneToMany(type => Availability, av => av.canvasserID)
     private _availableDate!: Availability[];
-    private _datesAvailable!: Date[];
     @ManyToMany(type => AssignedDate)
-    @JoinTable()
+    @JoinTable({name: "canvasser_assignedDate_mapping"})
     private _assignedDate!:AssignedDate[];
-    private _datesAssigned!: Date[];
     @ManyToMany(type => Results)
-    @JoinTable()
+    @JoinTable({name: "canvasser_results_mapping"})
     private _results!: Results[];
 
     // constructor (ID:User, campaignID:Campaign, tasksRemaining:number[], tasksCompleted:number[], 
@@ -45,26 +40,17 @@ export class Canvasser{
     // public get campaignID(): Campaign[] {
     //     return this._campaignID;
     // }
-    // public get tasksRemaining(): number[] {
-    //     return this._tasksRemaining;
-    // }
-    // public get tasksCompleted(): number[] {
-    //     return this._tasksCompleted;
-    // }
     public get task():Task[] {
         return this._task;
     }
     public get availableDate():Availability[]{
         return this._availableDate;
     }
-    public get datesAvailable(): Date[] {
-        return this._datesAvailable;
-    }
+    // public get datesAvailable(): Date[] {
+    //     return this._datesAvailable;
+    // }
     public get assignedDate(): AssignedDate[]{
         return this._assignedDate;
-    }
-    public get datesAssigned(): Date[] {
-        return this._datesAssigned;
     }
     public get results(): Results[] {
         return this._results;
@@ -75,26 +61,14 @@ export class Canvasser{
     // public set campaignID(value: Campaign[]) {
     //     this._campaignID = value;
     // }
-    // public set tasksRemaining(value: number[]) {
-    //     this._tasksRemaining = value;
-    // }
-    // public set tasksCompleted(value: number[]) {
-    //     this._tasksCompleted = value;
-    // }
     public set task(value:Task[]){
         this._task = value;
     }
     public set availableDate(value:Availability[]){
         this._availableDate = value;
     }
-    public set datesAvailable(value: Date[]) {
-        this._datesAvailable = value;
-    }
     public set assignedDate(value:AssignedDate[]){
         this._assignedDate = value;
-    }
-    public set datesAssigned(value: Date[]) {
-        this._datesAssigned = value;
     }
     public set results(value: Results[]) {
         this._results = value;

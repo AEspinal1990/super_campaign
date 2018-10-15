@@ -8,7 +8,7 @@ export class Results{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
     @ManyToMany(type => Locations)
-    @JoinTable()
+    @JoinTable({name: "results_locations_mapping"})
     private _locationID!: Locations;
     // @ManyToOne(type => Canvasser, can => can.results)
     // @JoinColumn()

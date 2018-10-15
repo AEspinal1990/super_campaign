@@ -7,7 +7,7 @@ import { SystemAdmin }      from '../backend/entity/SystemAdmin';
 import { User } from '../backend/entity/User';
 
 export const createBaseUser = userData => {
-    //console.log(userData);
+    console.log(userData);
     const newUser: User = new User();
     newUser.name = userData.name;
     newUser.username = userData.username;
