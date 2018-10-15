@@ -18,8 +18,6 @@ import { campaignRouter }   from './routes/campaign';
 
 const app = express();
 
-
-<<<<<<< HEAD
 /////EXPERIMENT WITH MORGAN
 /*
 var fs = require('fs');
@@ -32,11 +30,6 @@ var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
 app.use(morgan('combined', {stream:accessLogStream}))
 */
 
-
-
-/////////////////////
-=======
->>>>>>> 1ad117bfb8d69944ddf7153b68be0c980982c100
 /**
  * Configurations
  */

@@ -11,8 +11,11 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
     <style>
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid black;
         }
     </style>
@@ -66,13 +69,13 @@
 
     <h3>Questionaire</h3>
     <table align="left">
-        
+
     </table>
     <br>
 
     <h3>Talking Points</h3>
     <table align="left">
-        
+
         <tr>
             <td>
 
@@ -118,6 +121,7 @@
 
 
     <div id="map">
+        <% var map = async new google.maps.Map(height: "400px", width: "100%", zoom: 4 }); %>
     </div>
     <script>
         function mapper() {
@@ -127,7 +131,6 @@
             var marker = new google.maps.Marker({ position: uluru, map: map });
         };
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=mapper"></script>
 
 </body>
 
