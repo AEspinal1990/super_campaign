@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, OneToOne, ManyToMany, JoinColumn, OneToMany, Column, JoinTable} from "typeorm"
+import {Entity, PrimaryGeneratedColumn, OneToOne, ManyToMany, JoinColumn, JoinTable} from "typeorm"
 import { Locations } from "./Locations";
 import { Task } from "./Task";
 

@@ -1,4 +1,4 @@
-import {OneToOne, JoinColumn, Entity, ManyToOne, ManyToMany, OneToMany} from "typeorm";
+import {OneToOne, JoinColumn, Entity} from "typeorm";
 import { User } from "./User";
 import { Locations } from "./Locations";
 import { Assignment } from "./Assignment";

@@ -1,127 +1,134 @@
 <html>
-    <head>
-        <title>Super Campaign</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"></link>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script>
-            function managers(CMJSON){
-                var CM = JSON.parse(CMJSON);
-                var table = document.createElement('table'), tr, td, row, cell;
-                for(row=0;row<CM.length;row++){
-                    tr = document.createElement('tr');
-                    for(cell=0;cell<2;cell++){
-                        td = document.createElement('td');
-                        tr.appendChild(td);
-                        var index;
-                        if (cell === 0){
-                            td.innerHTML = CM[row][0][0];
-                        } else{
-                            td.innerHTML = CM[row][0][2];
-                        }
-                    }
-                    table.appendChild(tr);
-                }
-            }
-            document.getElementById('manger').appendChild(table);
-        </script>
-        <script>
-            function canvassers(CJSON){
-                var can = JSON.parse(CJSON);
-                var table = document.createElement('table'), tr, td, row, cell;
-                for (row=0;row<can.length;row++){
-                    tr = document.createElement('tr');
-                    for(cell=0;cell<2;cell++){
-                        td = document.createElement('td');
-                        tr.appendChild(td);
-                        var index;
-                        if (cell === 0){
-                            td.innerHTML = can[row][0][0];
-                        } else{
-                            td.innerHTML = can[row][0][2];
-                        }
-                    }
-                    table.appendChild(tr);
-                }
-            }
-            document.getElementById('canvas').appendChild(table);
-        </script>
-        <script>
-            function questions(QJSON){
-                var que = JSON.parse(QJSON);
-                var table = document.createElement('table'), tr, br, td, row;
-                for (row=0;row<que.length;row++){
-                    tr = document.createElement('tr');
-                    td = document.createElement('td');
-                    tr.appendChild(td);
-                    td.innerHTML = que[row];
-                }
 
-                table.appendChild(tr);
-            }
-            document.getElementById('queue').appendChild(table);
-        </script>
-        <script>
-            function talkingpoints(TJSON){
-                var tkpt = JSON.parse(TJSON);
-                var table = document.createElement('table'), tr, br, td, row;
-                for (row=0;row<tkpt.length;row++){
-                    tr = document.createElement('tr');
-                    td = document.createElement('td');
-                    tr.appendChild(td);
-                    td.innerHTML = tkpt[row];
-                }
+<head>
+    <title>Super Campaign</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    </link>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
 
-                table.appendChild(tr);
-            }
-            document.getElementById('tkpnt').appendChild(table);
-        </script>
-        <script>
-            function locations(LJSON){
-                
-            }
-            document.getElementById('loca').appendChild(table);
-        </script>
-    </head>
+<body>
+    <h1>View a Campaign</h1>
 
-    <body>
-        <h1>View a Campaign</h1>
+    <h3>Campaign ID</h3>
+    <p>
+        <%= id %>
+    </p>
 
-        <h3>Campaign ID</h3>
-        <p><%=id%></p>
+    <h3>Campaign Name</h3>
+    <p>
+        <%= name %>
+    </p>
 
-        <h3>Campaign Name</h3>
-        <p><%=name%></p>
+    <h3>Start Date</h3>
+    <p>
+        <%= sDate %>
+    </p>
 
-        <h3>Start Date</h3>
-        <p><%=sDate%></p>
+    <h3>End Date</h3>
+    <p>
+        <%= eDate %>
+    </p>
 
-        <h3>End Date</h3>
-        <p><%=eDate%></p>
+    <h3>Campaign Managers</h3>
+    <table align="left">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+    </table>
 
-        <h3>Campaign Managers</h3>
-        <button onclick="managers('<%=manager%>')">Load Table</button>
-        <p id="manger"></p>
+    <h3>Canvassers</h3>
+    <table align="left">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+    </table>
+    <br>
 
-        <h3>Canvassers</h3>
-        <button onclick="canvassers('<%=canvasser%>')">Load Table</button>
-        <p id="canvas"></p>
+    <h3>Assignment</h3>
+    <p>
+        <%= assignment %>
+    </p>
+    <br>
 
-        <h3>Assignment</h3>
-        <p><%=assignment%></p>
+    <h3>Questionaire</h3>
+    <table align="left">
+        
+    </table>
+    <br>
 
-        <h3>Questionaire</h3>
-        <button onClick="questions('<%=question%>')">Load Table</button>
-        <p id="queue"></p>
+    <h3>Talking Points</h3>
+    <table align="left">
+        
+        <tr>
+            <td>
 
-        <h3>Talking Points</h3>
-        <button onClick="talkingpoints('<%=points%')">Load Table</button>
-        <p id="tkpnt"></p>
+            </td>
+        </tr>
+    </table>
+    <br>
 
-        <h3>Locations</h3>
-        <button onClick="locations('<%=location%>')">Load Table</button>
-        <p id="loca"></p>
+    <h3>Locations</h3>
+    <table align="left">
+        <tr>
+            <th>Street Number</th>
+            <th>Street</th>
+            <th>Unit</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip Code</th>
+        </tr>
+        <% for(var i=0; i < location.length; i++){ %>
+        <tr>
+            <!-- <td><%= location[i]._id %></td> -->
+            <td>
+                <%= location[i]._streetNumber %>
+            </td>
+            <td>
+                <%= location[i]._street %>
+            </td>
+            <td>
+                <%= location[i]._unit %>
+            </td>
+            <td>
+                <%= location[i]._city %>
+            </td>
+            <td>
+                <%= location[i]._state %>
+            </td>
+            <td>
+                <%= location[i]._zipcode %>
+            </td>
+        </tr>
+        <% } %>
+    </table>
 
-    </body>
+
+    <div id="map">
+    </div>
+    <script>
+        function mapper() {
+            var uluru = { lat: -25.344, lng: 131.036 };
+            var map = new google.maps.Map(
+                { height: "400px", width: "100%", zoom: 4, center: uluru });
+            var marker = new google.maps.Marker({ position: uluru, map: map });
+        };
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=mapper"></script>
+
+</body>
+
 </html>

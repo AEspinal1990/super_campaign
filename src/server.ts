@@ -28,7 +28,7 @@ const connection = createConnection().then(async (connection) => {
      server = app.listen(app.get('port'), () => {
          console.log('App is running on port', app.get('port'), app.get('env'))
      });
- });
+ }).catch(e => console.log(e));
 
 //let server3 = app.listen(app.get('port'), () => {
 //    console.log('App is running on port', app.get('port'), app.get('env'))

@@ -12,17 +12,15 @@ export class Campaign {
     private _ID!: number;
     @Column({name: "campaignName"})
     private _name!:string;
-    @ManyToMany(type => CampaignManager, {cascade: true})
+    @ManyToMany(type => CampaignManager, {cascade: true, eager: true})
     @JoinTable({name: "campaign_manager_mapping"})
     private _manager:CampaignManager[];
     @ManyToMany(type => Canvasser, {cascade: true})
-    // @JoinTable({name: "campaign_canvasser_mapping"})
     private _canvasser!: Canvasser[];
-    // private _canvassers!: number[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
-    @ManyToMany(type => Locations)
+    @ManyToMany(type => Locations, {eager: true})
     @JoinTable({name: "campaign_locations_mapping"})
     private _locations!:Locations[];
     @Column({name: "startDate"})
@@ -64,12 +62,9 @@ export class Campaign {
     public get manager():CampaignManager[] {
         return this._manager;
     }
-    // public get canvasser():Canvasser[] {
-    //     return this._canvasser;
-    // }
-    // public get canvassers():number[] {
-    //     return this._canvassers;
-    // }
+    public get canvasser():Canvasser[] {
+        return this._canvasser;
+    }
     public get assignment():Assignment {
         return this._assignment;
     }
@@ -88,9 +83,6 @@ export class Campaign {
     public get question():Questionaire[]{
         return this._question;
     }
-    // public get questionaire():string[] {
-    //     return this._questionaire;
-    // }
     public get talkingPoint():TalkPoint[]{
         return this._talkingPoint;
     }
@@ -103,12 +95,9 @@ export class Campaign {
     public set manager(value:CampaignManager[]){
         this._manager = value;
     }
-    // public set canvasser(value:Canvasser[]){
-    //     this._canvasser = value;
-    // }
-    // public set canvassers(canvassers:number[]){
-    //     this._canvassers = canvassers;
-    // }
+    public set canvasser(value:Canvasser[]){
+        this._canvasser = value;
+    }
     public set assignment(assignemnt:Assignment){
         this._assignment = assignemnt;
     }
@@ -127,9 +116,6 @@ export class Campaign {
     public set question(value:Questionaire[]){
         this._question = value;
     }
-    // public set questionaire(questionaire:string[]){
-    //     this._questionaire = questionaire;
-    // }
     public set talkingPoint(value:TalkPoint[]){
         this._talkingPoint = value;
     }

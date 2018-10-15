@@ -1,8 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn, ManyToOne} from "typeorm";
-import { Task } from "./Task";
-import { CompletedLocation } from "./CompletedLocation";
-import { RemainingLocation } from "./RemainingLocation";
-import { Campaign } from "./Campaign";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class Locations{

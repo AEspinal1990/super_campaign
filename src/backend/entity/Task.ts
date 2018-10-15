@@ -1,6 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne, ManyToMany, JoinTable} from "typeorm"
+import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne} from "typeorm"
 import { Canvasser } from "./Canvasser";
-import { Locations } from "./Locations";
 import { RemainingLocation } from "./RemainingLocation";
 import { CompletedLocation } from "./CompletedLocation";
 import { Assignment } from "./Assignment";
@@ -27,7 +26,6 @@ export class Task{
     @Column({name: "taskStatus"})
     private _status!:boolean;
     @ManyToOne(type => Assignment, as => as.task)
-    // @JoinColumn({name: "assignment"})
     private _assignment!:Assignment;
 
     // constructor(ID:number, canvasserID:Canvasser, campaignID:number, rL:RemainingLocation,

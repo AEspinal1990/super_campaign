@@ -1,11 +1,11 @@
-import {Entity, PrimaryColumn, ManyToOne, JoinColumn} from "typeorm";
+import {Entity, Column, ManyToOne} from "typeorm";
 import { Campaign } from "./Campaign";
 
 @Entity()
 export class Questionaire{
-    @ManyToOne(type => Campaign, {primary: true})
+    @ManyToOne(type => Campaign, {primary: true, eager: true})
     private _campaignID!:Campaign;
-    @PrimaryColumn({name: "question"})
+    @Column({name: "question"})
     private _question!:string;
     
     // constructor (campaignID:Campaign, question:string){
