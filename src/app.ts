@@ -46,6 +46,7 @@ app.use(methodOverride('_method'));
  */
 app.use('/user', adminRouter);
 app.use('/admin', adminRouter);
+app.use('/global', adminRouter);
 app.use('/campaign', campaignRouter);
 //app.use(morgan('/campaign' stream:__dirname + '/../log/morgan.log'), campaignRouter);
 app.use('/login', authRouter);
