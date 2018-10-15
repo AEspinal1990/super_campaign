@@ -3,7 +3,7 @@
 //import { Canvasser }      from '../backend/entity/Canvasser'; 
 //import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
 //import { User } from '../backend/entity/User';
-
+const User = require('../../dist/backend/entity/User');
 const assert = require('chai').assert;
 const createBaseUserFunct = require('../../dist/util/createUser.js').createBaseUser;
 const createRoledUserFunct = require('../../dist/util/createUser.js').createRoledUser;
@@ -11,9 +11,15 @@ const createRoledUserFunct = require('../../dist/util/createUser.js').createRole
  describe('CreateBaseUser Test',function(){
     let someUserData = { username: 'blah', name: 'asd', password: 'asdf', role: '1' };
     let createdUser = createBaseUserFunct(someUserData);
-    // it('CreateBaseUser should return User Object', function(){
-    //     assert.equals(typeof(createdUser),typeof(new User()) );
-    // });
+    it('CreateBaseUser should return User Object', function(){
+        assert.typeOf(createdUser,'Object');
+        assert.property(createdUser, 'username');
+        assert.property(createdUser, 'name');
+        assert.property(createdUser, 'password');
+        assert.property(createdUser, 'permission');
+        
+        //assert.is
+    });
      it('CreateBaseUser should return blah for username', function(){
          assert.equal(createdUser.username,someUserData["username"]);
      }); //it refers to goal
@@ -29,24 +35,37 @@ const createRoledUserFunct = require('../../dist/util/createUser.js').createRole
  });
 
 //Tests CreateRoledUser Function
-//  describe('CreateRoledUser Test',function(){
-//      let campaignRole = 1;
-//      let canvasserRole = 2;
-//      let SystemAdminRole = 3; //anything other than 1 or 2
-//      let someUserData = {username: 'blah', name: 'asd', password: 'asdf', role: '1' };
-//      let tempUser = createBaseUserFunct(someUserData);
-//      let createdRoleUser1 = createRoledUserFunct(campaignRole,tempUser);
-//      let createdRoleUser2 = createRoledUserFunct(canvasserRole,tempUser);
-//      let createdRoleUser3 = createRoledUserFunct(SystemAdminRole,tempUser);
+ describe('CreateRoledUser Test',function(){
+     let campaignRole = 1;
+     let canvasserRole = 2;
+     let SystemAdminRole = 3; //anything other than 1 or 2
      
-//      it('CreateRoledUser should return Campaign Manager Object', function(){
-//          assert.equals(typeof(createdRoleUser1), typeof(new CampaignManager() ))
-//      });
-//      it('CreateRoledUser should return Canvasser Object', function(){
-//         assert.equals(typeof(createdRoleUser2), typeof(new Canvasser() ))
-//     });
-//      it('CreateRoledUser should return System Admin Object', function(){
-//         assert.equals(typeof(createdRoleUser3), typeof(new SystemAdmin() ))
-//     });
-// });
+     it('CreateRoledUser should return Campaign Manager Object', function(){
+        let someUserData = {username: 'blah', name: 'asd', password: 'asdf', role: '1' };
+        let tempUser = createBaseUserFunct(someUserData);
+        let createdRoleUser = createRoledUserFunct(campaignRole,tempUser);
+         assert.typeOf(createdRoleUser, 'object');
+         assert.property(createdRoleUser,'ID');
+         assert.propertyVal(createdRoleUser,'ID',tempUser);
+         assert.equal(campaignRole, tempUser.permission);
+     });
+     it('CreateRoledUser should return Canvasser Object', function(){
+        let someUserData = {username: 'blah', name: 'asd', password: 'asdf', role: '2' };
+        let tempUser = createBaseUserFunct(someUserData);
+        let createdRoleUser = createRoledUserFunct(canvasserRole,tempUser);
+        assert.typeOf(createdRoleUser, 'object');
+        assert.property(createdRoleUser,'ID');
+        assert.propertyVal(createdRoleUser,'ID',tempUser);
+        assert.equal(canvasserRole, tempUser.permission);
+    });
+     it('CreateRoledUser should return System Admin Object', function(){
+        let someUserData = {username: 'blah', name: 'asd', password: 'asdf', role: '3' };
+        let tempUser = createBaseUserFunct(someUserData);
+        let createdRoleUser = createRoledUserFunct(SystemAdminRole,tempUser);
+        assert.typeOf(createdRoleUser, 'object');
+        assert.property(createdRoleUser,'ID');
+        assert.propertyVal(createdRoleUser,'ID',tempUser);
+        assert.equal(SystemAdminRole, tempUser.permission);
+    });
+});
  
