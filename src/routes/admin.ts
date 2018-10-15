@@ -81,6 +81,7 @@ router.post('/:username', async(req: Request, res: Response) => {
         .catch(e => console.log(e));
 
     let user = req.body.user;
+    user.password = "";         // TODO: Find a legit fix to how we create a new roled user for update
     let name = user.name;
     let username = user.username;
     let role = user.role;
@@ -93,17 +94,28 @@ router.post('/:username', async(req: Request, res: Response) => {
         SET username = '${username}', fullname = '${name}', permission = '${role}'
         WHERE username = '${originalUsername}';`
     ).catch(e => console.log(e));
+
+   
     /**
      * If role has changed, erase from orignal 
      * role table and add to new
      */
-    if(role !== unchangedUser[0]._permission) {
-        let id = unchangedUser[0]._employeeID; 
-        // Delete this user from role table
-        let repo = userManager.deleteUserFromRole(role);
-        await repo.delete({'ID_employeeID': id});
-        console.log('Deleted from role table')
-       // Add this user to unchangedUser[0]._permission table
+    let id = unchangedUser[0]._employeeID;
+    let originalRole = unchangedUser[0]._permission;
+    if(role !== originalRole) {         
+        // Delete this user from old role table 
+        userManager.deleteUserFromRole(unchangedUser[0]._permission,id);
+
+        // Add this user to their new role table
+        let updatedUser = userManager.createBaseUser(user);
+        updatedUser.employeeID = id;
+        let updatedRoledUser = userManager.createRoledUser(role, updatedUser);
+        console.log(updatedRoledUser)
+        const entityManager = getManager();
+        await entityManager
+            .save(updatedRoledUser)
+            .then(user2 => console.log('Saved:',user2))
+            .catch(e => console.log(e));
     }
 
     res.send('hello');
@@ -111,20 +123,21 @@ router.post('/:username', async(req: Request, res: Response) => {
 
 router.delete('/:username', async(req: Request, res: Response) => {
     let user:string = req.params.username;
-    await createConnection()
-        .then( async () => {
-            await getManager()
-            .createQueryBuilder()
-            .delete()
-            .from(User)
-            .where("username = :username", {username: user})
-            .execute();           
-        })
-        .catch(e =>{
-            console.log(e);
-            res.send('Error');
-        });
+    const userRepository = getRepository(User);
+
+    /**
+     * Delete User from User Table
+     */
+    await userRepository.query(
+        `Update supercampaign.user 
+        SET username = '${username}', fullname = '${name}', permission = '${role}'
+        WHERE username = '${originalUsername}';`
+    ).catch(e => console.log(e));
     
+    /**
+     * Delete User from Specific Role Table
+     */
+
     res.status(200).redirect('/user');
 });
 

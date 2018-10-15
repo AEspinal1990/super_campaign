@@ -56,25 +56,24 @@ export const getRepo = roleNumber => {
 
 export const deleteUserFromRole = async (roleNumber,id) => {
 
-    let repo = getRepo(roleNumber);
     if(roleNumber === 1){
         await getRepository(CampaignManager)
             .query(`DELETE FROM Manager WHERE ID_employeeID = ${id}`);
 
-        console.log('returning campaign manager repo');
-    }
-        
+        console.log(`Deleted employee: ${id} from Manager Table`);
+    }     
+
     else if(roleNumber === 2){
         await getRepository(Canvasser)
             .query(`DELETE FROM canvasser WHERE ID_employeeID = ${id}`);
 
-        console.log('returning campaign manager repo');
-    }
-        
+        console.log(`Deleted employee: ${id} from Canvasser Table`);
+    }       
+
     else{
         await getRepository(SystemAdmin)
             .query(`DELETE FROM system_admin WHERE ID_employeeID = ${id}`);
 
-        console.log(`Deleted employee: ${id} from System Admin Table campaign manager repo`);
+        console.log(`Deleted employee: ${id} from System Admin Table`);
     }
 }
