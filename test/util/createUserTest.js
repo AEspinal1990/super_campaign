@@ -1,8 +1,3 @@
-//import "../../dist/util/createUser.js"
-//import { CampaignManager }      from '../backend/entity/CampaignManager';
-//import { Canvasser }      from '../backend/entity/Canvasser'; 
-//import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
-//import { User } from '../backend/entity/User';
 const User = require('../../dist/backend/entity/User');
 const assert = require('chai').assert;
 const createBaseUserFunct = require('../../dist/util/createUser.js').createBaseUser;
@@ -18,11 +13,10 @@ const createRoledUserFunct = require('../../dist/util/createUser.js').createRole
         assert.property(createdUser, 'password');
         assert.property(createdUser, 'permission');
         
-        //assert.is
     });
      it('CreateBaseUser should return blah for username', function(){
          assert.equal(createdUser.username,someUserData["username"]);
-     }); //it refers to goal
+     }); 
      it('CreateBaseUser should return asd for name', function(){
         assert.equal(createdUser.name,someUserData["name"]);
      });
@@ -38,7 +32,7 @@ const createRoledUserFunct = require('../../dist/util/createUser.js').createRole
  describe('CreateRoledUser Test',function(){
      let campaignRole = 1;
      let canvasserRole = 2;
-     let SystemAdminRole = 3; //anything other than 1 or 2
+     let SystemAdminRole = 3; 
      
      it('CreateRoledUser should return Campaign Manager Object', function(){
         let someUserData = {username: 'blah', name: 'asd', password: 'asdf', role: '1' };

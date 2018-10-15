@@ -64,7 +64,7 @@ export const createCampaign = async campaignData => {
             newLocation.street = locationParse[1];
             newLocation.unit = locationParse[2];
             newLocation.city = locationParse[3];
-            newLocation.state = locationParse[4]; 
+            newLocation.state = locationParse[4];
             newLocation.zipcode = parseInt(locationParse[5]);
 
             //associate this new location to array
