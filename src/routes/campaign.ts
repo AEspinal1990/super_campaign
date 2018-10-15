@@ -7,6 +7,7 @@ import { CampaignManager } from '../backend/entity/CampaignManager';
 import { User } from '../backend/entity/User';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
+import { getRepo } from '../util/userManagementSystem';
 
 const router: Router = Router();
 /**
@@ -49,12 +50,11 @@ router.get('/:id/view', async (req: Request, res: Response) => {
     // relations: ["_question", "_talkingPoint"]})
     .catch(e => console.log(e));
 
-    // const campaign = await campaignRepo
-    //     .createQueryBuilder()
-    //     .relation(Questionaire, "_campaignID")
-    //     .of({ campaignID: campaignID })
-    //     .relation(TalkPoint, )
-    //     .loadOne();
+    const qRepo = getRepository(Questionaire);
+    const questionaire = await qRepo.find({where: {"campaignID": campaignID}})
+
+    campaign[0].question = questionaire;
+    // console.log(questionaire);
 
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");

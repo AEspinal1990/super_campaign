@@ -11,14 +11,20 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
     <style>
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid black;
         }
     </style>
 </head>
 
 <body>
+    <% if (id === ""){ %>
+    <h2>Campaign was not found.</h2>
+    <% } %>
     <h1>View a Campaign</h1>
 
     <h3>Campaign ID</h3>
@@ -41,6 +47,17 @@
         <%= eDate %>
     </p>
 
+    <h3>Estimated Visit Duration</h3>
+    <p>
+        <%= duration %>
+    </p>
+
+    <h3>Assignment</h3>
+    <p>
+        <%= assignment %>
+    </p>
+    <br></br>
+
     <h3>Campaign Managers</h3>
     <table align="left">
         <tr>
@@ -48,6 +65,7 @@
             <th>Name</th>
         </tr>
     </table>
+    <br></br>
 
     <h3>Canvassers</h3>
     <table align="left">
@@ -56,30 +74,25 @@
             <th>Name</th>
         </tr>
     </table>
-    <br>
-
-    <h3>Assignment</h3>
-    <p>
-        <%= assignment %>
-    </p>
-    <br>
+    <br></br>
 
     <h3>Questionaire</h3>
     <table align="left">
-        
+        <% for(var i=0; i < question.length; i++){ %>
+        <tr>
+            <td>
+                <%= question[i].question %>
+            </td>
+        </tr>
+        <% } %>
     </table>
-    <br>
+    <br></br>
 
     <h3>Talking Points</h3>
     <table align="left">
-        
-        <tr>
-            <td>
 
-            </td>
-        </tr>
     </table>
-    <br>
+    <br></br>
 
     <h3>Locations</h3>
     <table align="left">
@@ -127,7 +140,6 @@
             var marker = new google.maps.Marker({ position: uluru, map: map });
         };
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=mapper"></script>
 
 </body>
 
