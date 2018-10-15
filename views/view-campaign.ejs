@@ -47,6 +47,42 @@
             }
             document.getElementById('canvas').appendChild(table);
         </script>
+        <script>
+            function questions(QJSON){
+                var que = JSON.parse(QJSON);
+                var table = document.createElement('table'), tr, br, td, row;
+                for (row=0;row<que.length;row++){
+                    tr = document.createElement('tr');
+                    td = document.createElement('td');
+                    tr.appendChild(td);
+                    td.innerHTML = que[row];
+                }
+
+                table.appendChild(tr);
+            }
+            document.getElementById('queue').appendChild(table);
+        </script>
+        <script>
+            function talkingpoints(TJSON){
+                var tkpt = JSON.parse(TJSON);
+                var table = document.createElement('table'), tr, br, td, row;
+                for (row=0;row<tkpt.length;row++){
+                    tr = document.createElement('tr');
+                    td = document.createElement('td');
+                    tr.appendChild(td);
+                    td.innerHTML = tkpt[row];
+                }
+
+                table.appendChild(tr);
+            }
+            document.getElementById('tkpnt').appendChild(table);
+        </script>
+        <script>
+            function locations(LJSON){
+                
+            }
+            document.getElementById('loca').appendChild(table);
+        </script>
     </head>
 
     <body>
@@ -76,7 +112,16 @@
         <p><%=assignment%></p>
 
         <h3>Questionaire</h3>
-        
+        <button onClick="questions('<%=question%>')">Load Table</button>
+        <p id="queue"></p>
+
+        <h3>Talking Points</h3>
+        <button onClick="talkingpoints('<%=points%')">Load Table</button>
+        <p id="tkpnt"></p>
+
+        <h3>Locations</h3>
+        <button onClick="locations('<%=location%>')">Load Table</button>
+        <p id="loca"></p>
 
     </body>
 </html>
