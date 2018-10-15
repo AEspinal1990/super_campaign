@@ -22,7 +22,6 @@ export class Campaign {
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
-    // @OneToMany(type => Locations, loc => loc.campaign)
     @ManyToMany(type => Locations)
     @JoinTable({name: "campaign_locations_mapping"})
     private _locations!:Locations[];
