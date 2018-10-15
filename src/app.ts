@@ -5,6 +5,7 @@ import "reflect-metadata";
  */
 import * as express                     from 'express';
 import * as bodyParser                  from 'body-parser';
+import * as morgan                      from 'morgan';
 /**
  * Import Route Handlers
  */
@@ -13,8 +14,6 @@ import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 
 const app = express();
-
-
 /**
  * Configurations
  */
