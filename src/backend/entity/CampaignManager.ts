@@ -9,8 +9,7 @@ export class CampaignManager {
     @OneToOne(type => User, {primary: true})
     @JoinColumn()
     private _ID!: User;
-    // @ManyToMany(type => Campaign, camp => camp.manager, {nullable: true})
-    // // Issue with CM and Campaign relation
+    // @ManyToMany(type => Campaign, cm => cm.manager, {nullable: true, cascade: true})
     // private _campaignID!:Campaign[];
     private _currentCampaigns!: number[];
 

@@ -1,28 +1,19 @@
 <% include ./partials/header %>
-    
-    <head>
-        <style>
-            #map {
-                height: 400px;
-                width: 100%;
-            }
-        </style>
-    </head>
 
-    <body>
-        <h3>MapView</h3>
-        <div id = "map"><</div>
-        <script>
-function initMap(){
-    var map = new google.maps.Map(
-        document.getElementById('map'), {zoom: 6, center: {lat: 40.7128, long: -74.0060}});
+    <h6>View a Campaign</h6>
 
-    
-}
-        </script>
-        <script async defer
-        src = https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap">
-        </script>
-    </body>
+    <h3>Campaign ID</h3>
+    <p><%=id%</p>
+
+    <h3>Campaign Name</h3>
+    <p><%=name%></p>
+
+    <h3>Campaign Managers</h3>
+    <script>
+        
+    </script>
+    <table>
+
+    </table>
 
 <% include ./partials/footer %>
