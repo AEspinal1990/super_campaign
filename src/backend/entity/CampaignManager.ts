@@ -6,7 +6,7 @@ import { Assignment } from "./Assignment";
 
 @Entity({name: "Manager"})
 export class CampaignManager {
-    @OneToOne(type => User, {primary: true})
+    @OneToOne(type => User, {primary: true, cascade: true})
     @JoinColumn()
     private _ID!: User;
     // @ManyToMany(type => Campaign, camp => camp.manager, {nullable: true})

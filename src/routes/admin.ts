@@ -7,7 +7,7 @@ import { Canvasser }      from '../backend/entity/Canvasser';
 import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
 import { User } from '../backend/entity/User';
 
-import * as createUserSytem from '../util/createUser';
+import * as userManager from '../util/createUser';
 
 const router: Router = Router();
 
@@ -25,12 +25,12 @@ router.post('/', async(req: Request, res: Response) => {
     /**
      * Create User from data in request from client.
      */
-    newUser = createUserSytem.createBaseUser(req.body.user);
+    newUser = userManager.createBaseUser(req.body.user);
     
     /**
      * Create specialized user based off permission of user.
      */    
-    roledUser = createUserSytem.createRoledUser(newUser.permission, newUser);
+    roledUser = userManager.createRoledUser(newUser.permission, newUser);
 
     /**
      * Save the new user into user table and table for 
@@ -93,15 +93,17 @@ router.post('/:username', async(req: Request, res: Response) => {
         SET username = '${username}', fullname = '${name}', permission = '${role}'
         WHERE username = '${originalUsername}';`
     ).catch(e => console.log(e));
-    
     /**
      * If role has changed, erase from orignal 
      * role table and add to new
      */
     if(role !== unchangedUser[0]._permission) {
+        let id = unchangedUser[0]._employeeID; 
         // Delete this user from role table
-        getRepository(CampaignManager)
-        // Add this user to unchangedUser[0]._permission table
+        let repo = userManager.deleteUserFromRole(role);
+        await repo.delete({'ID_employeeID': id});
+        console.log('Deleted from role table')
+       // Add this user to unchangedUser[0]._permission table
     }
 
     res.send('hello');
