@@ -122,23 +122,39 @@ router.post('/:username', async(req: Request, res: Response) => {
 });
 
 router.delete('/:username', async(req: Request, res: Response) => {
-    let user:string = req.params.username;
-    const userRepository = getRepository(User);
-
-    /**
-     * Delete User from User Table
-     */
-    await userRepository.query(
-        `Update supercampaign.user 
-        SET username = '${username}', fullname = '${name}', permission = '${role}'
-        WHERE username = '${originalUsername}';`
-    ).catch(e => console.log(e));
     
+    
+    // EmployeeID is required to remove user from roled table
+    const userRepository = getRepository(User);    
+    const user = await userRepository.find({where: {"_username": req.params.username}})
+        .catch(e => console.log(e));
+    console.log('Deleting:',user);
+
     /**
      * Delete User from Specific Role Table
+     * This record must be deleted first due
+     * to foreign key constraing. THEN
+     * Delete User from User table
      */
+    await userRepository.query(
+        `DELETE FROM supercampaign.system_admin             
+        WHERE ID_employeeID = '${user[0]._employeeID}';`
+    )
+    .catch(e => console.log(e));
+    
+    await userRepository.query(
+        `DELETE FROM supercampaign.user
+        WHERE employeeID = '${user[0]._employeeID}';`
+    )
+    .catch(e => console.log(e));
+    
 
-    res.status(200).redirect('/user');
+    /**
+     * Sanity Check
+     * If page loads with user, user was not deleted from the DB
+     * else it was successfull.
+     */
+    res.status(200).redirect('/user/' + req.params.username);
 });
 
 

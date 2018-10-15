@@ -3,9 +3,12 @@ import "reflect-metadata";
 /**
  * Import Libraries
  */
-import * as express                     from 'express';
-import * as bodyParser                  from 'body-parser';
-import * as morgan                      from 'morgan';
+import * as express         from 'express';
+import * as bodyParser      from 'body-parser';
+import * as morgan          from 'morgan';
+import * as methodOverride  from 'method-override'
+
+
 /**
  * Import Route Handlers
  */
@@ -14,6 +17,8 @@ import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 
 const app = express();
+
+
 /**
  * Configurations
  */
@@ -22,6 +27,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(methodOverride('_method'));
 
 
 /**
