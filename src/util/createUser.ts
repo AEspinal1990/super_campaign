@@ -30,3 +30,4 @@ export const createRoledUser = (roleNumber,user): CampaignManager | Canvasser | 
 
     return roledUser
 };
+

@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { createConnection, getManager, getConnection, getRepository }     from "typeorm";
+import { createConnection, getManager, getRepository, getConnection }     from "typeorm";
 import * as fs from 'fs';
 
 import { CampaignManager }      from '../backend/entity/CampaignManager';
@@ -56,7 +56,7 @@ router.get('/:username',  async(req: Request, res: Response) => {
 
     if(user[0] === undefined) {
         console.log('not found')
-        res.status(200).render('view-user',{
+        res.status(404).render('view-user', {
             missing: username,
             username: "",
             name: "",
@@ -75,19 +75,34 @@ router.get('/:username',  async(req: Request, res: Response) => {
 });
 
 router.post('/:username', async(req: Request, res: Response) => {
-    //const userRepository = getRepository(User);
+    let originalUsername = req.params.username;
+    const userRepository = getRepository(User);
+    const unchangedUser = await userRepository.find({where: {"_username": req.params.username}})
+        .catch(e => console.log(e));
 
-    const username = req.params.username;
-    console.log('Old username',username);
-    console.log(req.body.user);
-    // let user = req.body.user;
-    // console.log(username);
-    // console.log(user.name)
-    // console.log(user.role)
+    let user = req.body.user;
+    let name = user.name;
+    let username = user.username;
+    let role = user.role;
     
-    // await userRepository.update({username},{})
-    //     .then(user => console.log(user))
-    //     .catch(e => console.log(e));
+    /**
+     * Update the user on the database
+     */
+    await userRepository.query(
+        `Update supercampaign.user 
+        SET username = '${username}', fullname = '${name}', permission = '${role}'
+        WHERE username = '${originalUsername}';`
+    ).catch(e => console.log(e));
+    
+    /**
+     * If role has changed, erase from orignal 
+     * role table and add to new
+     */
+    if(role !== unchangedUser[0]._permission) {
+        // Delete this user from role table
+        getRepository(CampaignManager)
+        // Add this user to unchangedUser[0]._permission table
+    }
 
     res.send('hello');
 });
