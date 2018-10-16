@@ -35,17 +35,13 @@ router.post('/', async (req: Request, res: Response) => {
  * GET and POST for edit Campaign
  */
 router.get('/:id/edit', async (req: Request, res: Response) => {
-    res.render('edit-campaign')
-});
-router.post('/:id', async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
-    const campaignID = parseInt(req.params.id);
+    const campaignID = req.params.id;
 
-    const campaign = await campaignRepository.findOne(campaignID).catch(e => console.log(e));
-
-    if(campaign[0] === undefined) {
+    const campaign = await campaignRepository.find({where: {"_ID": campaignID}}).catch(e => console.log(e));
+    if(campaign === undefined) {
         console.log('not found')
-        res.status(404).render('view-user', {
+        res.status(404).render('edit-campaign', {
             missing: campaignID,
             username: "",
             name: "",
@@ -54,13 +50,50 @@ router.post('/:id', async (req: Request, res: Response) => {
         });
     } 
     else {
-        res.status(200).render('view-user', {
-            username,
-            name: user[0]._name,
-            role: user[0]._permission,
-            id: user[0]._employeeID
+        //parse Date
+        let campaignStartDate:Date = campaign[0]._startDate;
+        let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
+        let campaignEndDate:Date = campaign[0]._endDate;
+        let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
+        //parse questions back to input form
+        let questionaireRepository = getRepository(Questionaire);
+        let questionaire = await questionaireRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
+        campaign[0].question = questionaire;
+        let questionsInput = "";
+        for (let i in campaign[0].question) {
+            questionsInput += campaign[0].question[i].question + "\n";
+        }
+        //parse talking points back to input form
+        let talkPointRepository = getRepository(TalkPoint);
+        let talkPoint = await talkPointRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
+        campaign[0].talkingPoint = talkPoint;
+        let talkPointInput = "";
+        for (let i in campaign[0].talkingPoint) {
+            talkPointInput += campaign[0].talkingPoint[i].talk + "\n";
+        }
+        res.status(200).render('edit-campaign', {
+            campaignName : campaign[0].name,
+            
+            //campaignManagers : campaign[0]._CampaignManager,
+            campaignLocations : campaign[0]._locations,
+            campaignStartDate : campaignStartDateString,
+            campaignEndDate : campaignEndDateString,
+            campaignAvgDuration : campaign[0]._avgDuration,
+            campaignQuestions : questionsInput,
+            campaignTalkPoints : talkPointInput
+            
         });
+        
     }
+});
+router.post('/:id', async (req: Request, res: Response) => {
+
+
+
+
+
+
+
 });
 
 /**

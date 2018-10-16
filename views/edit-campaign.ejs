@@ -3,31 +3,31 @@
 	<div class="container">
 
         <h1>Edit Campaign</h1>
-        
+
 		<form action="/campaign" method="POST">
 	  		<div class="form-group">
 			    <label>Campaign Name</label>
-			    <input type="text" name="campaign[campaignName]" class="form-control" placeholder="Campaign Name">
+			    <input type="text" name="campaign[campaignName]" class="form-control" placeholder="Campaign Name" value="<%= campaignName %>">
               </div>
             <div class="form-group">
                 <label>Start Date</label>
-                <input type="text" name="campaign[startDate]" class="form-control" placeholder="YYYY-MM-DD">
+                <input type="text" name="campaign[startDate]" class="form-control" placeholder="YYYY-MM-DD" value="<%= campaignStartDate %>">
             </div>
             <div class="form-group">
                 <label>End Date</label>
-                <input type="text" name="campaign[endDate]" class="form-control" placeholder="YYYY-MM-DD">
+                <input type="text" name="campaign[endDate]" class="form-control" placeholder="YYYY-MM-DD" value="<%= campaignEndDate %>">
             </div>           
             <div class="form-group">
                 <label for="talkingPoints">Talking Points</label>
-                <textarea class="form-control" id="talkingPoints" name="campaign[talkingPoints]" rows="3"></textarea>
+                <textarea class="form-control" id="talkingPoints" name="campaign[talkingPoints]" rows="3" ><%= campaignTalkPoints %></textarea>
             </div>
             <div class="form-group">
                 <label for="questionaire">Questionaire</label>
-                <textarea class="form-control" placeholder="One question per line." id="questionaire" name="campaign[questionaire]" rows="3"></textarea>
+                <textarea class="form-control" placeholder="One question per line." id="questionaire" name="campaign[questionaire]" rows="3"> <%= campaignQuestions %></textarea>
             </div>		
             <div class="form-group">
                 <label>Expected Visit Duration</label>
-                <input type="text" name="campaign[averageExpectedDuration]" class="form-control" placeholder="Number of Minutes">
+                <input type="text" name="campaign[averageExpectedDuration]" class="form-control" placeholder="Number of Minutes" value="<%= campaignAvgDuration %>">
             </div>      		 
             <div class="form-group">
                 <label for="locations">Locations</label>
