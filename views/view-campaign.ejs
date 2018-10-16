@@ -13,6 +13,13 @@
         crossorigin="anonymous"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
     <style>
+        .content {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 10px;
+        }
+
         table,
         th,
         td {
@@ -22,125 +29,142 @@
 </head>
 
 <body>
-    <% if (id === ""){ %>
-    <h2>Campaign was not found.</h2>
-    <% } %>
-    <h1>View a Campaign</h1>
-
-    <h3>Campaign ID</h3>
-    <p>
-        <%= id %>
-    </p>
-
-    <h3>Campaign Name</h3>
-    <p>
-        <%= name %>
-    </p>
-
-    <h3>Start Date</h3>
-    <p>
-        <%= sDate %>
-    </p>
-
-    <h3>End Date</h3>
-    <p>
-        <%= eDate %>
-    </p>
-
-    <h3>Estimated Visit Duration</h3>
-    <p>
-        <%= duration %>
-    </p>
-
-    <h3>Assignment</h3>
-    <p>
-        <%= assignment %>
-    </p>
-    <br></br>
-
-    <h3>Campaign Managers</h3>
-    <table align="left">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-        </tr>
-    </table>
-    <br></br>
-
-    <h3>Canvassers</h3>
-    <table align="left">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-        </tr>
-    </table>
-    <br></br>
-
-    <h3>Questionaire</h3>
-    <table align="left">
-        <% for(var i=0; i < question.length; i++){ %>
-        <tr>
-            <td>
-                <%= question[i].question %>
-            </td>
-        </tr>
+    <div class="content">
+        <% if (id === ""){ %>
+        <h2>Campaign was not found.</h2>
         <% } %>
-    </table>
-    <br></br>
 
-    <h3>Talking Points</h3>
-    <table align="left">
+        <h1>View a Campaign</h1>
 
-    </table>
-    <br></br>
+        <h3>Campaign ID</h3>
+        <p>
+            <%= id %>
+        </p>
 
-    <h3>Locations</h3>
-    <table align="left">
-        <tr>
-            <th>Street Number</th>
-            <th>Street</th>
-            <th>Unit</th>
-            <th>City</th>
-            <th>State</th>
-            <th>Zip Code</th>
-        </tr>
-        <% for(var i=0; i < location.length; i++){ %>
-        <tr>
-            <!-- <td><%= location[i]._id %></td> -->
-            <td>
-                <%= location[i]._streetNumber %>
-            </td>
-            <td>
-                <%= location[i]._street %>
-            </td>
-            <td>
-                <%= location[i]._unit %>
-            </td>
-            <td>
-                <%= location[i]._city %>
-            </td>
-            <td>
-                <%= location[i]._state %>
-            </td>
-            <td>
-                <%= location[i]._zipcode %>
-            </td>
-        </tr>
-        <% } %>
-    </table>
+        <h3>Campaign Name</h3>
+        <p>
+            <%= name %>
+        </p>
+
+        <h3>Start Date</h3>
+        <p>
+            <%= sDate %>
+        </p>
+
+        <h3>End Date</h3>
+        <p>
+            <%= endDate %>
+        </p>
+
+        <h3>Estimated Visit Duration</h3>
+        <p>
+            <%= duration %>
+        </p>
+
+        <h3>Assignment</h3>
+        <p>
+            <%= assignment %>
+        </p>
+
+        <h3>Campaign Managers</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+
+        </table>
+        <br>
+
+        <h3>Canvassers</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+            <% for (var i = 0; i < canv.length; i++){ %>
+            <tr>
+                <td>
+                    <%= canv[i].ID.employeeID %>
+                </td>
+                <td>
+                    <%= canv[i].ID.name %>
+                </td>
+            </tr>
+            <% } %>
+        </table>
+        <br>
+
+        <h3>Questionaire</h3>
+        <table>
+            <% for(var i=0; i < question.length; i++){ %>
+            <tr>
+                <td>
+                    <%= question[i].question %>
+                </td>
+            </tr>
+            <% } %>
+        </table>
+        <br>
+
+        <h3>Talking Points</h3>
+        <table>
+            <% for(var i=0; i < points.length; i++){ %>
+            <tr>
+                <td>
+                    <%= points[i].talk %>
+                </td>
+            </tr>
+            <% } %>
+        </table>
+        <br>
+
+        <h3>Locations</h3>
+        <table>
+            <tr>
+                <th>Street Number</th>
+                <th>Street</th>
+                <th>Unit</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+            </tr>
+            <% for(var i=0; i < location.length; i++){ %>
+            <tr>
+                <td>
+                    <%= location[i]._streetNumber %>
+                </td>
+                <td>
+                    <%= location[i]._street %>
+                </td>
+                <td>
+                    <%= location[i]._unit %>
+                </td>
+                <td>
+                    <%= location[i]._city %>
+                </td>
+                <td>
+                    <%= location[i]._state %>
+                </td>
+                <td>
+                    <%= location[i]._zipcode %>
+                </td>
+            </tr>
+            <% } %>
+        </table>
 
 
-    <div id="map">
+        <div id="map">
+        </div>
+        <script>
+            function mapper() {
+                var uluru = { lat: -25.344, lng: 131.036 };
+                var map = new google.maps.Map(
+                    { height: "400px", width: "100%", zoom: 4, center: uluru });
+                var marker = new google.maps.Marker({ position: uluru, map: map });
+            };
+        </script>
     </div>
-    <script>
-        function mapper() {
-            var uluru = { lat: -25.344, lng: 131.036 };
-            var map = new google.maps.Map(
-                { height: "400px", width: "100%", zoom: 4, center: uluru });
-            var marker = new google.maps.Marker({ position: uluru, map: map });
-        };
-    </script>
-
 </body>
 
 </html>

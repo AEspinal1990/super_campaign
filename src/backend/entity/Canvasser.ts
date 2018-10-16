@@ -8,10 +8,10 @@ import { Campaign } from "./Campaign";
 
 @Entity()
 export class Canvasser{
-    @OneToOne(type => User, {primary: true})
+    @OneToOne(type => User, {primary: true, eager:true})
     @JoinColumn()
     private _ID!: User;
-    @ManyToMany(type => Campaign, {nullable: true, cascade: true})
+    @ManyToMany(type => Campaign, {cascade: true, eager: true})
     @JoinTable({name: "campaign_canvasser_mapping"})
     private _campaignID!: Campaign[];
     @OneToMany(type => Task, task => task.canvasserID, {cascade: true})
@@ -25,7 +25,7 @@ export class Canvasser{
     @ManyToMany(type => Results)
     @JoinTable({name: "canvasser_results_mapping"})
     private _results!: Results[];
-
+ 
     // constructor (ID:User, campaignID:Campaign, tasksRemaining:number[], tasksCompleted:number[], 
     //     datesAvailable:Date[], datesAssigned:Date[]){
     //         this._ID = ID;

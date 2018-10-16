@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable, JoinColumn, OneToOne} from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable, JoinColumn, OneToOne, ManyToOne} from "typeorm";
 import { Assignment } from "./Assignment";
 import { CampaignManager } from "./CampaignManager";
 import { Canvasser } from "./Canvasser";
@@ -15,8 +15,8 @@ export class Campaign {
     @ManyToMany(type => CampaignManager, {cascade: true, eager: true})
     @JoinTable({name: "campaign_manager_mapping"})
     private _manager:CampaignManager[];
-    @ManyToMany(type => Canvasser, {cascade: true})
-    private _canvasser!: Canvasser[];
+    // @ManyToMany(type => Canvasser, can => can.campaignID, {cascade: true})
+    // private _canvasser!: Canvasser[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
@@ -62,9 +62,9 @@ export class Campaign {
     public get manager():CampaignManager[] {
         return this._manager;
     }
-    public get canvasser():Canvasser[] {
-        return this._canvasser;
-    }
+    // public get canvasser():Canvasser[] {
+    //     return this._canvasser;
+    // }
     public get assignment():Assignment {
         return this._assignment;
     }
@@ -95,9 +95,9 @@ export class Campaign {
     public set manager(value:CampaignManager[]){
         this._manager = value;
     }
-    public set canvasser(value:Canvasser[]){
-        this._canvasser = value;
-    }
+    // public set canvasser(value:Canvasser[]){
+    //     this._canvasser = value;
+    // }
     public set assignment(assignemnt:Assignment){
         this._assignment = assignemnt;
     }
