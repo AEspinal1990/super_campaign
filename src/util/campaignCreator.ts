@@ -4,6 +4,7 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { TalkPoint } from '../backend/entity/TalkPoint';
+import { User } from '../backend/entity/User';
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
@@ -90,12 +91,21 @@ export const createCampaign = async campaignData => {
     //For Canvasser Objects 
         //access Canvasser database
     let canvasserRepository = Manager.getRepository(Canvasser);
-    newCampaign.canvasser = [];
         //Parse Locations for All Locations of Campaign Table
     canvassers = canvassers.split(" ");
     console.log(canvassers);
-    console.log(await canvasserRepository.findOne(3));
+    var count = 1;
     for (let i in canvassers) {
+        // const uRepo = getRepository(User);
+        // var use = uRepo.find({where: {"_employeeID": canvassers[count].ID}});
+        // console.log(use);
+        const canRepo = getRepository(Canvasser);
+        var canv = await canRepo.find();
+        console.log(canv[0].ID);
+        canv[0].campaignID.push(newCampaign);
+        console.log("after campaign push");
+        await Manager.save(canv[0]);
+        count++;
         
         //newCampaign.canvasser.push(parseInt(canvassers[i]);
     }
