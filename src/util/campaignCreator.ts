@@ -3,6 +3,7 @@ import { createConnection, getManager, getRepository } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
 import { Canvasser } from '../backend/entity/Canvasser';
+import { TalkPoint } from '../backend/entity/TalkPoint';
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
@@ -37,6 +38,14 @@ export const createCampaign = async campaignData => {
         //Save Campaign Object to database
     await Manager.save(newCampaign).catch(e => console.log(e));
 
+    //For Talking Points
+    talkingPoints = talkingPoints.split("\n");
+    for(let i in talkingPoints) {
+        let newTalkingPoint:TalkPoint = new TalkPoint();
+        newTalkingPoint.campaignID = newCampaign;
+        newTalkingPoint.talk = talkingPoints[i];
+        await Manager.save(newTalkingPoint).catch(e => console.log(e));
+    }
     //For Questionaire Objects
         //Parse Questionaire for Questionaire table
     questionaire = questionaire.split("\n");
@@ -44,7 +53,6 @@ export const createCampaign = async campaignData => {
         let newQuestionaire:Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
-        console.log(questionaire[i]);
         await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
 
@@ -81,12 +89,19 @@ export const createCampaign = async campaignData => {
 
     //For Canvasser Objects 
         //access Canvasser database
-        let canvasserRepository = getRepository(Canvasser);
+    let canvasserRepository = Manager.getRepository(Canvasser);
+    newCampaign.canvasser = [];
         //Parse Locations for All Locations of Campaign Table
-    canvassers = parseInt(canvassers.split(" "));
-    canvassers = canvasserRepository.findByIds(canvassers).catch(e => console.log(e));
+    canvassers = canvassers.split(" ");
     console.log(canvassers);
+    console.log(await canvasserRepository.findOne(3));
+    for (let i in canvassers) {
+        
+        //newCampaign.canvasser.push(parseInt(canvassers[i]);
+    }
 
+    //newCampaign.canvasser = canvassers;
+    //await Manager.save(newCampaign).catch(e => console.log(e));    
 
 };
 
