@@ -5,7 +5,7 @@ import { Assignment } from "./Assignment";
 
 @Entity({name: "Manager"})
 export class CampaignManager {
-    @OneToOne(type => User, {primary: true, cascade: true, eager: true})
+    @OneToOne(type => User, {primary: true, cascade: true, eager: true, onDelete: "CASCADE"})
     @JoinColumn()
     private _ID!: User;
     private _currentCampaigns!: number[];

@@ -38,6 +38,7 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
 
+<<<<<<< HEAD
     const campaign = await campaignRepository.find({where: {"_ID": campaignID}}).catch(e => console.log(e));
     if(campaign === undefined) {
         console.log('not found')
@@ -85,6 +86,9 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         });
         
     }
+=======
+    const campaign = await campaignRepository.findOne(campaignID).catch(e => console.log(e));
+>>>>>>> 9630c94d87ef9eca5166666e466faaba9900d446
 });
 router.post('/:id', async (req: Request, res: Response) => {
 
