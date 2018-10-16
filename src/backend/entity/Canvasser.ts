@@ -8,7 +8,7 @@ import { Campaign } from "./Campaign";
 
 @Entity()
 export class Canvasser{
-    @OneToOne(type => User, {primary: true, eager:true})
+    @OneToOne(type => User, {primary: true, eager: true, cascade: true, onDelete: "CASCADE"})
     @JoinColumn()
     private _ID!: User;
     @ManyToMany(type => Campaign, {cascade: true, eager: true})

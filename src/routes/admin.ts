@@ -159,25 +159,29 @@ router.delete('/:username', async(req: Request, res: Response) => {
     const userRepository = getRepository(User);    
     const user = await userRepository.find({where: {"_username": req.params.username}})
         .catch(e => console.log(e));
-    console.log('Deleting:',user);
-
     /**
      * Delete User from Specific Role Table
      * This record must be deleted first due
      * to foreign key constraing. THEN
      * Delete User from User table
      */
-    await userRepository.query(
-        `DELETE FROM supercampaign.system_admin             
-        WHERE ID_employeeID = '${user[0]._employeeID}';`
-    )
-    .catch(e => console.log(e));
+    // await userRepository.query(
+    //     `DELETE FROM supercampaign.system_admin             
+    //     WHERE ID_employeeID = '${user[0]._employeeID}';`
+    // )
+    // .catch(e => console.log(e));
+
+    await userRepository
+        .createQueryBuilder()
+        .delete()
+        .where("_employeeID = :ID", {ID: user[0].employeeID})
+        .execute();
     
-    await userRepository.query(
-        `DELETE FROM supercampaign.user
-        WHERE employeeID = '${user[0]._employeeID}';`
-    )
-    .catch(e => console.log(e));
+    // await userRepository.query(
+    //     `DELETE FROM supercampaign.user
+    //     WHERE employeeID = '${user[0]._employeeID}';`
+    // )
+    // .catch(e => console.log(e));
     
 
     /**

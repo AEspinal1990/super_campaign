@@ -3,7 +3,7 @@ import { User } from "./User";
 
 @Entity()
 export class SystemAdmin{
-    @OneToOne(type => User, {primary: true, cascade: true})
+    @OneToOne(type => User, {primary: true, cascade: true, onDelete: "CASCADE"})
     @JoinColumn()
     private _ID:User;
 

@@ -42,25 +42,6 @@ router.post('/:id', async (req: Request, res: Response) => {
     const campaignID = parseInt(req.params.id);
 
     const campaign = await campaignRepository.findOne(campaignID).catch(e => console.log(e));
-
-    if(campaign[0] === undefined) {
-        console.log('not found')
-        res.status(404).render('view-user', {
-            missing: campaignID,
-            username: "",
-            name: "",
-            role: "",
-            id: 0
-        });
-    } 
-    else {
-        res.status(200).render('view-user', {
-            username,
-            name: user[0]._name,
-            role: user[0]._permission,
-            id: user[0]._employeeID
-        });
-    }
 });
 
 /**
