@@ -96,25 +96,31 @@ export const createCampaign = async campaignData => {
     campaignManager = campaignManager.split(" ");
     //initialize manager
     newCampaign.manager = [];
-    //console.log(campaignManager);
 
-    let campaignManagers = await campaignManagerRepository.findByIds(campaignManager).catch(e => console.log(e));
-    //console.log(campaignManagers);
-
+    for (var i=0;i<campaignManager.length;i++){
+        const use = await getManager()
+            .findOne(User, {where: {"_employeeID": campaignManager[i]}});
+        console.log(use);
+        const cm = await getManager()
+            .findOne(CampaignManager, {where: {"_ID": use}});
+        console.log("Manager: " + cm);
+        newCampaign.manager.push(cm);
+    }
+    await Manager.save(newCampaign);
 
     //For Canvasser Objects 
     //access Canvasser database
     let canvasserRepository = Manager.getRepository(Canvasser);
     //Parse Locations for All Locations of Campaign Table
     const canvassers: string[] = canvasser.split(" ");
-    var canv = await getRepository(Canvasser).find();
-    for (var i = 0; i < canv.length; i++) {
-        for (var j=0; j< canvassers.length;j++){
-            if (canv[i].ID.employeeID === Number(canvassers[j])){
-                canv[i].campaignID.push(newCampaign);
-                await Manager.save(canv[i]);
-            }
-        }
+
+    for (var i = 0; i < canvassers.length; i++) {
+        const us = await getManager()
+            .findOne(User, {where: {"_employeeID": canvassers[i]}})
+        const ca = await getManager()
+            .findOne(Canvasser, {where: {"_ID": us}});
+        ca.campaignID.push(newCampaign);
+        await Manager.save(ca);
     }
 };
 
