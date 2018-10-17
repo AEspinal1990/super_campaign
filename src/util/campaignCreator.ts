@@ -90,28 +90,24 @@ export const createCampaign = async campaignData => {
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Manager Objects
-        //access Manager database
-    let campaignManagerRepository = Manager.getRepository(CampaignManager);
-        //Parse manager string
-    campaignManager = campaignManager.split(" ");
-        //initialize manager
-    newCampaign.manager = [];
-    //console.log(campaignManager);
-
-    let campaignManagers = await campaignManagerRepository.findByIds(campaignManager).catch(e => console.log(e));
-    //console.log(campaignManagers);
+    const managers:string[] = campaignManager.split(" ");
+    for(let i in managers) {
+        const campaignManagersRepo = getRepository(CampaignManager);
+        //var manager = await campaignManagersRepo.find({where: {"_ID_username": managers[i]}});
+        //console.log(manager);
+        //manager[i].currentCampaigns.push(newCampaign.ID);
+        //await Manager.save(manager[i]);
+    }
 
 
     //For Canvasser Objects 
-        //access Canvasser database
-    let canvasserRepository = Manager.getRepository(Canvasser);
         //Parse Locations for All Locations of Campaign Table
     const canvassers:string[] = canvasser.split(" ");
-    console.log(canvassers.length);
     for (var i=0;i<canvassers.length;i++) {
         const canRepo = getRepository(Canvasser);
         // keeps returning a list of all the canvassers from the username list in one call
         var canv = await canRepo.find({where: {"_ID_username": canvassers[i]}});
+        console.log(canv[i].ID);
         canv[i].campaignID.push(newCampaign);
         await Manager.save(canv[i]);
     }
