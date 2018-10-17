@@ -10,6 +10,7 @@ import { TalkPoint } from '../backend/entity/TalkPoint';
 import { getRepo } from '../util/userManagementSystem';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
+import { Locations } from '../backend/entity/Locations';
 
 const router: Router = Router();
 /**
@@ -38,7 +39,6 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
 
-<<<<<<< HEAD
     const campaign = await campaignRepository.find({where: {"_ID": campaignID}}).catch(e => console.log(e));
     if(campaign === undefined) {
         console.log('not found')
@@ -72,11 +72,25 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         for (let i in campaign[0].talkingPoint) {
             talkPointInput += campaign[0].talkingPoint[i].talk + "\n";
         }
+
+        //parse locations back to input form
+        let locationsRepository = getRepository(Locations);
+        //let locations = await locationsRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
+        //campaign[0].locations = locations;
+        let locationsInput = "";
+        for(let i in campaign[0].locations) {
+            locationsInput += campaign[0].locations[i]._streetNumber + ", " +
+                                campaign[0].locations[i]._street + ", " +
+                                campaign[0].locations[i]._unit + ", " +
+                                campaign[0].locations[i]._city + ", " +
+                                campaign[0].locations[i]._state + ", " +
+                                campaign[0].locations[i]._zipcode + "\n";
+        }
         res.status(200).render('edit-campaign', {
             campaignName : campaign[0].name,
             
             //campaignManagers : campaign[0]._CampaignManager,
-            campaignLocations : campaign[0]._locations,
+            campaignLocations : locationsInput,
             campaignStartDate : campaignStartDateString,
             campaignEndDate : campaignEndDateString,
             campaignAvgDuration : campaign[0]._avgDuration,
@@ -86,9 +100,6 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         });
         
     }
-=======
-    const campaign = await campaignRepository.findOne(campaignID).catch(e => console.log(e));
->>>>>>> 9630c94d87ef9eca5166666e466faaba9900d446
 });
 router.post('/:id', async (req: Request, res: Response) => {
 
