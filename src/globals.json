@@ -1,4 +1,4 @@
 {
-  "taskTimeLimit": "360",
-  "averageSpeed": "55"
+  "taskTimeLimit": "10",
+  "averageSpeed": "200"
 }

@@ -4,3 +4,4 @@
 - Edit global parameters (saved in json?)
 - The results object dont know which question each answer refers to
 - check for location duplicate
+- make view globals

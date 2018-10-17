@@ -116,7 +116,7 @@ router.post('/:username', async(req: Request, res: Response) => {
     let name = user.name;
     let username = user.username;
     let role = user.role;
-    
+    console.log('The role from the front end is: ', role);
     /**
      * Update the user on the database
      */
@@ -135,17 +135,19 @@ router.post('/:username', async(req: Request, res: Response) => {
     let originalRole = unchangedUser[0]._permission;
     if(role !== originalRole) {         
         // Delete this user from old role table 
-        userManager.deleteUserFromRole(unchangedUser[0]._permission,id);
+        console.log('THe role number is: ', unchangedUser[0]._permission);
+        userManager.deleteUserFromRole(unchangedUser[0]._permission, id);
 
         // Add this user to their new role table
         let updatedUser = userManager.createBaseUser(user);
         updatedUser.employeeID = id;
+        console.log('ROle before creation', role)
         let updatedRoledUser = userManager.createRoledUser(role, updatedUser);
-        console.log(updatedRoledUser)
+        console.log('The updated user before saving: ',updatedRoledUser);
         const entityManager = getManager();
         await entityManager
             .save(updatedRoledUser)
-            .then(user2 => console.log('Saved:',user2))
+            .then(user2 =>{} )
             .catch(e => console.log(e));
     }
 
