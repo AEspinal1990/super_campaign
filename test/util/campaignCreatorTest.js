@@ -61,17 +61,13 @@ describe('CreateCampaignInfo Test', function(){
 });
 
 //precondition: createCampignInfo is right
-describe('Create Talking Points Test', function(){
+describe('Create TalkingPoints Test', function(){
     let campaignData = {
         campaignName: 'Campaign Name',
         startDate: '1990-02-26',
         endDate: '2018-10-16',
         talkingPoints: 'MY talking points are here \n eishuifhd',
-        questionaire: 'I \r\nhAS\r\nQuestions\r\n!',
-        averageExpectedDuration: '60',
-        locations:
-                '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
-     canvassers: '1 2 3 1 31 31'
+        averageExpectedDuration: '60'
      };
     let talkingPointsArr = createTalkingPointsFunct(campaignData);
     let expectedArr = campaignData['talkingPoints'].split("\n");
@@ -92,7 +88,17 @@ describe('Create Talking Points Test', function(){
 
 });
 describe('Create Locations Test', function(){
-    
+    let campaignData = {
+        campaignName: 'Campaign Name',
+        startDate: '1990-02-26',
+        endDate: '2018-10-16',
+        talkingPoints: 'MY talking points are here \n eishuifhd',
+        questionaire: 'I \r\nhAS\r\nQuestions\r\n!',
+        averageExpectedDuration: '60',
+        locations:
+                '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
+     canvassers: '1 2 3 1 31 31'
+     };
 });
 // describe('CreateCampaign Test', function(){     
 //     campaignDataExample = { campaignName: 'SomeCampaign', startDate: '2012-03-31',
