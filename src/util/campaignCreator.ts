@@ -7,6 +7,60 @@ import { TalkPoint } from '../backend/entity/TalkPoint';
 import { User } from '../backend/entity/User';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 
+// function to build campaign data
+export const createCampaignInfo = campaignData => {
+    let campaignName = campaignData.campaignName;
+    let campaignManager = campaignData.managers;
+    let startDate = campaignData.startDate;
+    let endDate = campaignData.endDate;
+    let averageExpectedDuration = campaignData.averageExpectedDuration;
+    //let talkingPoints = campaignData.talkingPoints;
+    //let questionaire = campaignData.questionaire;
+    //let locations = campaignData.locations;
+    //let canvassers = campaignData.canvassers;
+    startDate = startDate.split("-");
+    startDate = new Date(startDate[0], startDate[1], startDate[2]);
+    endDate =  endDate.split("-");
+    endDate = new Date(endDate[0], endDate[1], endDate[2]);
+    const newCampaign:Campaign = new Campaign();
+    newCampaign.name = campaignName;
+    newCampaign.startDate = startDate;
+    newCampaign.endDate = endDate;
+    newCampaign.avgDuration = averageExpectedDuration;
+    return newCampaign;
+};
+
+//function to build talking points
+export const createTalkingPoints = campaignData =>{
+    let newCampaign = createCampaignInfo(campaignData);
+    let talkingPoints = campaignData.talkingPoints;
+    talkingPoints = talkingPoints.split("\n");
+    let allTalkingPoints = []
+    for (let i in talkingPoints) {
+        let newTalkingPoint: TalkPoint = new TalkPoint();
+        newTalkingPoint.campaignID = newCampaign;
+        newTalkingPoint.talk = talkingPoints[i];
+        allTalkingPoints[i] = newTalkingPoint;
+    }
+    return allTalkingPoints;
+};
+
+//function to build questionnaires
+export const createQuestionnaires = campaignData =>{
+    let newCampaign = createCampaignInfo(campaignData);
+    let questionaire = campaignData.questionaire;
+    questionaire = questionaire.split("\n");
+    let allquestionnaires = [];
+    for (let i in questionaire) {
+        let newQuestionaire: Questionaire = new Questionaire();
+        newQuestionaire.campaignID = newCampaign;
+        newQuestionaire.question = questionaire[i];
+        allquestionnaires[i] = newQuestionaire;
+    }
+    return allquestionnaires;
+
+};
+
 export const createCampaign = async campaignData => {
     const Manager = getManager();
 
