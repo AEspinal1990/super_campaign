@@ -33,7 +33,7 @@ app.use(morgan('combined', {stream:accessLogStream}))
 /**
  * Configurations
  */
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
