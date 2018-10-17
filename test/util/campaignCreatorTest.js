@@ -4,29 +4,16 @@
 const assert = require('chai').assert;
 
 const createCampaignFunct = require('../../dist/util/createCampaign.js').createCampaign;
-const createQuestionnairesFunct = require('../../dist/util/createCampaign.js').createQuestionaires;
-const createLocationsFunct = require('../../dist/util/createCampaign.js').createLocations;
 const createCampaignInfoFunct = require('../../dist/util/campaignCreator.js').createCampaignInfo;
-
-
-// function to help test Date comparison without using Time
-Date.prototype.isSameDay = function(d) {
-    return this.getFullYear() === d.getFullYear()
-      && this.getDate() === d.getDate()
-      && this.getMonth() === d.getMonth();
-  }
+const createTalkingPointsFunct = require('../../dist/util/campaignCreator.js').createTalkingPoints;
+const createQuestionnairesFunct = require('../../dist/util/campaignCreator.js').createQuestionnaires;
 
 describe('CreateCampaignInfo Test', function(){
     campaignData = {
         campaignName: 'Campaign Name',
         startDate: '1990-02-26',
         endDate: '2018-10-16',
-        talkingPoints: 'MY talking points are here',
-        questionaire: 'I \r\nhAS\r\nQuestions\r\n!',
-        averageExpectedDuration: '60',
-        locations:
-                '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
-     canvassers: '1 2 3 1 31 31'
+        averageExpectedDuration: '60'
      };
      let campaign = createCampaignInfoFunct(campaignData);
 
@@ -60,7 +47,7 @@ describe('CreateCampaignInfo Test', function(){
         endDateString = campaignData['endDate'].split("-");
         endDate = new Date(endDateString[0], endDateString[1], endDateString[2]);
         //console.log(endDate, campaign.endDate);
-        console.log("end date", endDate, "campaign ", campaign.endDate);
+        //console.log("end date", endDate, "campaign ", campaign.endDate);
         assert.equal(endDate.getFullYear(), campaign.endDate.getFullYear());
         assert.equal(endDate.getDate(), campaign.endDate.getDate());
         assert.equal(endDate.getMonth(),campaign.endDate.getMonth());
@@ -71,6 +58,41 @@ describe('CreateCampaignInfo Test', function(){
         assert.isNotNull(campaign.endDate);
         assert.equal(campaign.avgDuration, campaignData['averageExpectedDuration']);
      });
+});
+
+//precondition: createCampignInfo is right
+describe('Create Talking Points Test', function(){
+    let campaignData = {
+        campaignName: 'Campaign Name',
+        startDate: '1990-02-26',
+        endDate: '2018-10-16',
+        talkingPoints: 'MY talking points are here \n eishuifhd',
+        questionaire: 'I \r\nhAS\r\nQuestions\r\n!',
+        averageExpectedDuration: '60',
+        locations:
+                '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
+     canvassers: '1 2 3 1 31 31'
+     };
+    let talkingPointsArr = createTalkingPointsFunct(campaignData);
+    let expectedArr = campaignData['talkingPoints'].split("\n");
+    let idx = 0;
+    talkingPointsArr.forEach(function(test){
+        //console.log( test);
+        it('Talking point is a proper talkingPoints object', function(){
+            assert.typeOf(test,'object');
+            assert.property(test,'talk');
+            assert.property(test,'campaignID');
+        });
+        it('Talking point has correct talk field', function(){
+            assert.equal(test.talk, expectedArr[idx]);
+            idx++;
+        });
+    });
+
+
+});
+describe('Create Locations Test', function(){
+    
 });
 // describe('CreateCampaign Test', function(){     
 //     campaignDataExample = { campaignName: 'SomeCampaign', startDate: '2012-03-31',
