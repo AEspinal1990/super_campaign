@@ -26,43 +26,43 @@ export const createCampaign = async campaignData => {
     ///////////////////////////////////
 
     //For Camapaign Object
-        //Parse date from format YYYY-MM-DD
+    //Parse date from format YYYY-MM-DD
     startDate = startDate.split("-");
     startDate = new Date(startDate[0], startDate[1], startDate[2]);
-    endDate =  endDate.split("-");
+    endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
-        //Assign parsed data to new campaign object
-    const newCampaign:Campaign = new Campaign();
+    //Assign parsed data to new campaign object
+    const newCampaign: Campaign = new Campaign();
     newCampaign.name = campaignName;
     newCampaign.startDate = startDate;
     newCampaign.endDate = endDate;
     newCampaign.avgDuration = averageExpectedDuration;
-        //Save Campaign Object to database
+    //Save Campaign Object to database
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Talking Points
     talkingPoints = talkingPoints.split("\n");
-    for(let i in talkingPoints) {
-        let newTalkingPoint:TalkPoint = new TalkPoint();
+    for (let i in talkingPoints) {
+        let newTalkingPoint: TalkPoint = new TalkPoint();
         newTalkingPoint.campaignID = newCampaign;
         newTalkingPoint.talk = talkingPoints[i];
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
     //For Questionaire Objects
-        //Parse Questionaire for Questionaire table
+    //Parse Questionaire for Questionaire table
     questionaire = questionaire.split("\n");
     for (let i in questionaire) {
-        let newQuestionaire:Questionaire = new Questionaire();
+        let newQuestionaire: Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
         await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
 
     //For Location Objects
-        //Parse Locations for All Locations of Campaign Table
+    //Parse Locations for All Locations of Campaign Table
     locations = locations.split("\n");
 
-        //Initialize array of campaign locations
+    //Initialize array of campaign locations
     newCampaign.locations = [];
 
     for (let i in locations) {
@@ -70,7 +70,7 @@ export const createCampaign = async campaignData => {
             //create location object
             let locationParse = locations[i];
             locationParse = locationParse.split(", ");
-            let newLocation:Locations = new Locations();
+            let newLocation: Locations = new Locations();
             newLocation.streetNumber = parseInt(locationParse[0]);
             newLocation.street = locationParse[1];
             newLocation.unit = locationParse[2];
@@ -90,24 +90,25 @@ export const createCampaign = async campaignData => {
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Manager Objects
-    const managers:string[] = campaignManager.split(" ");
-    for(let i in managers) {
-        const campaignManagersRepo = getRepository(CampaignManager);
-        //var manager = await campaignManagersRepo.find({where: {"_ID_username": managers[i]}});
-        //console.log(manager);
-        //manager[i].currentCampaigns.push(newCampaign.ID);
-        //await Manager.save(manager[i]);
-    }
+    //access Manager database
+    let campaignManagerRepository = Manager.getRepository(CampaignManager);
+    //Parse manager string
+    campaignManager = campaignManager.split(" ");
+    //initialize manager
+    newCampaign.manager = [];
+    //console.log(campaignManager);
+
+    let campaignManagers = await campaignManagerRepository.findByIds(campaignManager).catch(e => console.log(e));
+    //console.log(campaignManagers);
 
 
     //For Canvasser Objects 
-        //Parse Locations for All Locations of Campaign Table
-    const canvassers:string[] = canvasser.split(" ");
-    for (var i=0;i<canvassers.length;i++) {
-        const canRepo = getRepository(Canvasser);
-        // keeps returning a list of all the canvassers from the username list in one call
-        var canv = await canRepo.find({where: {"_ID_username": canvassers[i]}});
-        console.log(canv[i].ID);
+    //access Canvasser database
+    let canvasserRepository = Manager.getRepository(Canvasser);
+    //Parse Locations for All Locations of Campaign Table
+    const canvassers: string[] = canvasser.split(" ");
+    var canv = await getRepository(Canvasser).find({ where: { "_ID_employeeID": canvassers[i] } });
+    for (var i = 0; i < canvassers.length; i++) {
         canv[i].campaignID.push(newCampaign);
         await Manager.save(canv[i]);
     }

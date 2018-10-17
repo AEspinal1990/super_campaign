@@ -11,7 +11,7 @@ export class Canvasser{
     @OneToOne(type => User, {primary: true, eager: true, cascade: true, onDelete: "CASCADE"})
     @JoinColumn()
     private _ID!: User;
-    @ManyToMany(type => Campaign, {cascade: true, eager: true})
+    @ManyToMany(type => Campaign, {cascade: true, eager: true, nullable: true})
     @JoinTable({name: "campaign_canvasser_mapping"})
     private _campaignID!: Campaign[];
     @OneToMany(type => Task, task => task.canvasserID, {cascade: true})
