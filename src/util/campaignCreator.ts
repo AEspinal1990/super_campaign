@@ -20,7 +20,7 @@ export const createCampaignInfo = campaignData => {
     //let canvassers = campaignData.canvassers;
     startDate = startDate.split("-");
     startDate = new Date(startDate[0], startDate[1], startDate[2]);
-    endDate =  endDate.split("-");
+    endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
     const newCampaign:Campaign = new Campaign();
     newCampaign.name = campaignName;
