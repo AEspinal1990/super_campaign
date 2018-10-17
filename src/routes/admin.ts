@@ -1,11 +1,13 @@
 import { Request, Response, Router }    from 'express';
-import { getManager, getRepository }     from "typeorm";
-import * as fs from 'fs';
+import { getManager, getRepository }    from "typeorm";
+import * as expressValidator            from 'express-validator';
+import { check, validationResult }      from 'express-validator/check';
+import * as fs                          from 'fs';
 
-import { CampaignManager }      from '../backend/entity/CampaignManager';
-import { Canvasser }      from '../backend/entity/Canvasser'; 
+import { CampaignManager }  from '../backend/entity/CampaignManager';
+import { Canvasser }        from '../backend/entity/Canvasser'; 
 import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
-import { User } from '../backend/entity/User';
+import { User }             from '../backend/entity/User';
 
 import * as userManager from '../util/userManagementSystem';
 
@@ -49,7 +51,22 @@ router.get('/new', async(req: Request, res: Response) => {
     res.status(200).render('create-user');
 });    
 
-router.post('/', async(req: Request, res: Response) => {
+router.post('/',[
+    // Validation
+    check('username').isLength({min : 5, max: 20}),
+    check('password').isLength({min : 5, max: 20}),
+    check('role').isIn(['1','2','3'])
+]
+, async(req: Request, res: Response) => {
+
+    /**
+     * Ensure data from user is valid.
+     */
+    const validationErrors = validationResult(req);
+    if(!validationErrors.isEmpty()) {
+        return res.status(422).send('Username or Password is of an invalid length. Needs to be between 5-20 characters');
+    }
+
     let newUser: User;
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
 
@@ -78,6 +95,8 @@ router.post('/', async(req: Request, res: Response) => {
     res.status(200).redirect('/user/new'); 
 });
 
+// For security purposes we can limit the length of username to maybe 5-9? characters.
+// The front end could do one check and then here we also check if its a valid user name
 router.get('/:username',  async(req: Request, res: Response) => {
     const userRepository = getRepository(User);
     const username = req.params.username;
@@ -193,10 +212,5 @@ router.delete('/:username', async(req: Request, res: Response) => {
      */
     res.status(200).redirect('/user/' + req.params.username);
 });
-
-
-
-
-
 
 export {router as adminRouter}
