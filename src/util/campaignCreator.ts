@@ -147,18 +147,20 @@ export const createCampaign = async campaignData => {
     //access Manager database
     let campaignManagerRepository = Manager.getRepository(CampaignManager);
     //Parse manager string
-    campaignManager = campaignManager.split(" ");
+    campaignManager = campaignManager.split("\n");
     //initialize manager
     newCampaign.manager = [];
 
     for (var i=0;i<campaignManager.length;i++){
-        const use = await getManager()
-            .findOne(User, {where: {"_employeeID": campaignManager[i]}});
-        console.log(use);
-        const cm = await getManager()
-            .findOne(CampaignManager, {where: {"_ID": use}});
-        console.log("Manager: " + cm);
+        if (campaignManager[i] != "") {
+            const use = await getManager()
+                .findOne(User, {where: {"_employeeID": campaignManager[i]}});
+            console.log(use);
+            const cm = await getManager()
+                .findOne(CampaignManager, {where: {"_ID": use}});
+            console.log("Manager: " + cm);
         newCampaign.manager.push(cm);
+        }
     }
     await Manager.save(newCampaign);
 
@@ -166,15 +168,17 @@ export const createCampaign = async campaignData => {
     //access Canvasser database
     let canvasserRepository = Manager.getRepository(Canvasser);
     //Parse Locations for All Locations of Campaign Table
-    const canvassers: string[] = canvasser.split(" ");
+    const canvassers: string[] = canvasser.split("\n");
 
     for (var i = 0; i < canvassers.length; i++) {
-        const us = await getManager()
-            .findOne(User, {where: {"_employeeID": canvassers[i]}})
-        const ca = await getManager()
-            .findOne(Canvasser, {where: {"_ID": us}});
-        ca.campaignID.push(newCampaign);
-        await Manager.save(ca);
+        if (canvassers[i] != "") {
+            const us = await getManager()
+                .findOne(User, {where: {"_employeeID": canvassers[i]}})
+            const ca = await getManager()
+                .findOne(Canvasser, {where: {"_ID": us}});
+            ca.campaignID.push(newCampaign);
+            await Manager.save(ca);
+        }
     }
 };
 

@@ -57,6 +57,7 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
         let campaignEndDate:Date = campaign[0]._endDate;
         let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
+
         //parse questions back to input form
         let questionaireRepository = getRepository(Questionaire);
         let questionaire = await questionaireRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
@@ -87,10 +88,20 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
                                 campaign[0].locations[i]._state + ", " +
                                 campaign[0].locations[i]._zipcode + "\n";
         }
+
+        //parse managers back to input form
+        let campaignManagers = campaign[0]._manager;
+        let campaignManagersString = "";
+        for (let i in campaignManagers) {
+            campaignManagersString += campaignManagers[i]._ID._employeeID + "\n";
+        }
+        console.log(campaignManagersString);
+
+
         res.status(200).render('edit-campaign', {
             campaignName : campaign[0].name,
             
-            //campaignManagers : campaign[0]._CampaignManager,
+            campaignManagers : campaignManagersString,
             campaignLocations : locationsInput,
             campaignStartDate : campaignStartDateString,
             campaignEndDate : campaignEndDateString,
