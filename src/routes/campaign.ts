@@ -25,7 +25,7 @@ router.post('/', async (req: Request, res: Response) => {
     createCampaign.createQuestionaires(req.body.campaign, newCampaignObject);
     createCampaign.createLocations(req.body.campaign, newCampaignObject);
     */
-    console.log(req.body.campaign);
+    //console.log(req.body.campaign);
     campaignCreator.createCampaign(req.body.campaign);
     if (res.status(200))
         res.send("Campaign Created!");
@@ -156,9 +156,9 @@ router.get('/:id/view', async (req: Request, res: Response) => {
         const tRepo = getRepository(TalkPoint);
         const tpoints = await tRepo.find({where: {"_campaignID": req.params.id}});
         campaign[0].talkingPoint = tpoints;
-        const mRepo = getRepository(CampaignManager);
-        const cm = await mRepo.find();
-        campaign[0].manager = cm;
+        // const mRepo = getRepository(CampaignManager);
+        // const cm = await mRepo.find({where: {"_"}});
+        // campaign[0].manager = cm;
 
         // LOAD CANVASSERS FROM DB
         const canva = await getManager()

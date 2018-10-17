@@ -19,7 +19,7 @@ export const createCampaign = async campaignData => {
     let questionaire = campaignData.questionaire;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
     let locations = campaignData.locations;
-    let canvassers = campaignData.canvassers;
+    let canvasser = campaignData.canvassers;
 
     ///////////////////////////////////
     //PARSE THE DATA
@@ -96,37 +96,25 @@ export const createCampaign = async campaignData => {
     campaignManager = campaignManager.split(" ");
         //initialize manager
     newCampaign.manager = [];
-    console.log(campaignManager);
+    //console.log(campaignManager);
 
     let campaignManagers = await campaignManagerRepository.findByIds(campaignManager).catch(e => console.log(e));
-    console.log(campaignManagers);
+    //console.log(campaignManagers);
 
 
     //For Canvasser Objects 
         //access Canvasser database
     let canvasserRepository = Manager.getRepository(Canvasser);
         //Parse Locations for All Locations of Campaign Table
-    canvassers = canvassers.split(" ");
-    //console.log(canvassers);
-    var count = 1;
-    for (let i in canvassers) {
-        // const uRepo = getRepository(User);
-        // var use = uRepo.find({where: {"_employeeID": canvassers[count].ID}});
-        // console.log(use);
+    const canvassers:string[] = canvasser.split(" ");
+    console.log(canvassers.length);
+    for (var i=0;i<canvassers.length;i++) {
         const canRepo = getRepository(Canvasser);
-        var canv = await canRepo.find();
-        //console.log(canv[0].ID);
-        canv[0].campaignID.push(newCampaign);
-        //console.log("after campaign push");
-        await Manager.save(canv[0]);
-        count++;
-        
-        //newCampaign.canvasser.push(parseInt(canvassers[i]);
+        // keeps returning a list of all the canvassers from the username list in one call
+        var canv = await canRepo.find({where: {"_ID_username": canvassers[i]}});
+        canv[i].campaignID.push(newCampaign);
+        await Manager.save(canv[i]);
     }
-
-    //newCampaign.canvasser = canvassers;
-    //await Manager.save(newCampaign).catch(e => console.log(e));    
-
 };
 
 /** 
