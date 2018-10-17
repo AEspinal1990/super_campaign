@@ -9,6 +9,17 @@ const createLocationsFunct = require('../../dist/util/createCampaign.js').create
 
 
 describe('CreateCampaign Test', function(){
+    campaignData = {
+        campaignName: 'Campaign Name',
+        startDate: '1990-02-26',
+        endDate: '2018-10-16',
+        talkingPoints: 'MY talking points are here',
+        questionaire: 'I \r\nhAS\r\nQuestions\r\n!',
+        averageExpectedDuration: '60',
+        locations:
+                '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
+     canvassers: '1 2 3 1 31 31'
+     };
     campaignDataExample = { campaignName: 'SomeCampaign', startDate: '2012-03-31',
     endDate: '2012-03-32', talkingPoints: 'Talking POINT 1\r\nTALKING POINT 2',
     questionaire: 'Q1\r\nQ2\r\nQ3 Q3PART 2', averageExpectedDuration: '55',
