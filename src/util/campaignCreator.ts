@@ -107,10 +107,14 @@ export const createCampaign = async campaignData => {
     let canvasserRepository = Manager.getRepository(Canvasser);
     //Parse Locations for All Locations of Campaign Table
     const canvassers: string[] = canvasser.split(" ");
-    var canv = await getRepository(Canvasser).find({ where: { "_ID_employeeID": canvassers[i] } });
-    for (var i = 0; i < canvassers.length; i++) {
-        canv[i].campaignID.push(newCampaign);
-        await Manager.save(canv[i]);
+    var canv = await getRepository(Canvasser).find();
+    for (var i = 0; i < canv.length; i++) {
+        for (var j=0; j< canvassers.length;j++){
+            if (canv[i].ID.employeeID === Number(canvassers[j])){
+                canv[i].campaignID.push(newCampaign);
+                await Manager.save(canv[i]);
+            }
+        }
     }
 };
 
