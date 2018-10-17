@@ -25,7 +25,7 @@ router.post('/', async (req: Request, res: Response) => {
     createCampaign.createQuestionaires(req.body.campaign, newCampaignObject);
     createCampaign.createLocations(req.body.campaign, newCampaignObject);
     */
-    console.log(req.body.campaign);
+    //console.log(req.body.campaign);
     campaignCreator.createCampaign(req.body.campaign);
     if (res.status(200))
         res.send("Campaign Created!");

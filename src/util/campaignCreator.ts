@@ -96,17 +96,18 @@ export const createCampaign = async campaignData => {
     campaignManager = campaignManager.split(" ");
         //initialize manager
     newCampaign.manager = [];
-    console.log(campaignManager);
+    //console.log(campaignManager);
 
     let campaignManagers = await campaignManagerRepository.findByIds(campaignManager).catch(e => console.log(e));
-    console.log(campaignManagers);
+    //console.log(campaignManagers);
 
 
     //For Canvasser Objects 
         //access Canvasser database
     let canvasserRepository = Manager.getRepository(Canvasser);
         //Parse Locations for All Locations of Campaign Table
-    const canvassers:string[] = canvasser.split("\r");
+    const canvassers:string[] = canvasser.split(" ");
+    console.log(canvassers.length);
     for (var i=0;i<canvassers.length;i++) {
         const canRepo = getRepository(Canvasser);
         // keeps returning a list of all the canvassers from the username list in one call
