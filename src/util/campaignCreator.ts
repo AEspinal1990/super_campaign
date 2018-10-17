@@ -5,13 +5,14 @@ import { Locations } from '../backend/entity/Locations';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { TalkPoint } from '../backend/entity/TalkPoint';
 import { User } from '../backend/entity/User';
+import { CampaignManager } from '../backend/entity/CampaignManager';
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
 
     //ASSIGN campaignData to variables
     let campaignName = campaignData.campaignName;
-    let campaignManager;
+    let campaignManager = campaignData.managers;
     let startDate = campaignData.startDate;
     let endDate = campaignData.endDate;
     let talkingPoints = campaignData.talkingPoints;
@@ -88,12 +89,25 @@ export const createCampaign = async campaignData => {
     //MAYBE MUST SAVE NEW CAMPAIGN OBJECT AGAIN AFTER SAVING THE OBJECTS SO THAT THE CAMPAIGN-LOCATION TABLE RELATION UPDATES
     await Manager.save(newCampaign).catch(e => console.log(e));
 
+    //For Manager Objects
+        //access Manager database
+    let campaignManagerRepository = Manager.getRepository(CampaignManager);
+        //Parse manager string
+    campaignManager = campaignManager.split(" ");
+        //initialize manager
+    newCampaign.manager = [];
+    console.log(campaignManager);
+
+    let campaignManagers = await campaignManagerRepository.findByIds(campaignManager).catch(e => console.log(e));
+    console.log(campaignManagers);
+
+
     //For Canvasser Objects 
         //access Canvasser database
     let canvasserRepository = Manager.getRepository(Canvasser);
         //Parse Locations for All Locations of Campaign Table
     canvassers = canvassers.split(" ");
-    console.log(canvassers);
+    //console.log(canvassers);
     var count = 1;
     for (let i in canvassers) {
         // const uRepo = getRepository(User);
@@ -101,9 +115,9 @@ export const createCampaign = async campaignData => {
         // console.log(use);
         const canRepo = getRepository(Canvasser);
         var canv = await canRepo.find();
-        console.log(canv[0].ID);
+        //console.log(canv[0].ID);
         canv[0].campaignID.push(newCampaign);
-        console.log("after campaign push");
+        //console.log("after campaign push");
         await Manager.save(canv[0]);
         count++;
         
