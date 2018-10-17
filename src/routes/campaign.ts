@@ -156,9 +156,9 @@ router.get('/:id/view', async (req: Request, res: Response) => {
         const tRepo = getRepository(TalkPoint);
         const tpoints = await tRepo.find({where: {"_campaignID": req.params.id}});
         campaign[0].talkingPoint = tpoints;
-        const mRepo = getRepository(CampaignManager);
-        const cm = await mRepo.find();
-        campaign[0].manager = cm;
+        // const mRepo = getRepository(CampaignManager);
+        // const cm = await mRepo.find({where: {"_"}});
+        // campaign[0].manager = cm;
 
         // LOAD CANVASSERS FROM DB
         const canva = await getManager()
