@@ -47,7 +47,7 @@ describe('CreateCampaignInfo Test', function(){
         assert.isNotNull(campaign.startDate);
         startDateString = campaignData['startDate'].split("-");
         startDate = new Date(startDateString[0], startDateString[1], startDateString[2]);
-        //console.log(startDate.isSameDay(campaign.startDate));
+        //console.log("start date", startDate, "campaign ", campaign.startDate);
         assert.equal(startDate.getFullYear(),campaign.startDate.getFullYear());
         assert.equal(startDate.getDate(), campaign.startDate.getDate());
         assert.equal(startDate.getMonth(),campaign.startDate.getMonth());
@@ -56,13 +56,20 @@ describe('CreateCampaignInfo Test', function(){
      it('campaign has correct end date', function(){ 
         assert.property(campaign,'endDate');
         assert.isNotNull(campaign.endDate);
-        console.log(campaign.endDate);
+        //assert.exists(campaign.endDate);
         endDateString = campaignData['endDate'].split("-");
         endDate = new Date(endDateString[0], endDateString[1], endDateString[2]);
-        assert.equal(endDate.getFullYear(),campaign.endDate.getFullYear());
+        //console.log(endDate, campaign.endDate);
+        console.log("end date", endDate, "campaign ", campaign.endDate);
+        assert.equal(endDate.getFullYear(), campaign.endDate.getFullYear());
         assert.equal(endDate.getDate(), campaign.endDate.getDate());
         assert.equal(endDate.getMonth(),campaign.endDate.getMonth());
         
+     });
+     it('campaign has correct average duration', function(){
+        assert.property(campaign,'avgDuration');
+        assert.isNotNull(campaign.endDate);
+        assert.equal(campaign.avgDuration, campaignData['averageExpectedDuration']);
      });
 });
 // describe('CreateCampaign Test', function(){     
