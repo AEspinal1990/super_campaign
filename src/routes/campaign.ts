@@ -10,6 +10,7 @@ import { TalkPoint } from '../backend/entity/TalkPoint';
 import { getRepo } from '../util/userManagementSystem';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
+import { Locations } from '../backend/entity/Locations';
 
 const router: Router = Router();
 /**
@@ -39,7 +40,67 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
 
-    const campaign = await campaignRepository.findOne(campaignID).catch(e => console.log(e));
+    const campaign = await campaignRepository.find({where: {"_ID": campaignID}}).catch(e => console.log(e));
+    if(campaign === undefined) {
+        console.log('not found')
+        res.status(404).render('edit-campaign', {
+            missing: campaignID,
+            username: "",
+            name: "",
+            role: "",
+            id: 0
+        });
+    } 
+    else {
+        //parse Date
+        let campaignStartDate:Date = campaign[0]._startDate;
+        let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
+        let campaignEndDate:Date = campaign[0]._endDate;
+        let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
+        //parse questions back to input form
+        let questionaireRepository = getRepository(Questionaire);
+        let questionaire = await questionaireRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
+        campaign[0].question = questionaire;
+        let questionsInput = "";
+        for (let i in campaign[0].question) {
+            questionsInput += campaign[0].question[i].question + "\n";
+        }
+        //parse talking points back to input form
+        let talkPointRepository = getRepository(TalkPoint);
+        let talkPoint = await talkPointRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
+        campaign[0].talkingPoint = talkPoint;
+        let talkPointInput = "";
+        for (let i in campaign[0].talkingPoint) {
+            talkPointInput += campaign[0].talkingPoint[i].talk + "\n";
+        }
+
+        //parse locations back to input form
+        let locationsRepository = getRepository(Locations);
+        //let locations = await locationsRepository.find({where: {"_campaignID": campaignID}}).catch(e => console.log(e));
+        //campaign[0].locations = locations;
+        let locationsInput = "";
+        for(let i in campaign[0].locations) {
+            locationsInput += campaign[0].locations[i]._streetNumber + ", " +
+                                campaign[0].locations[i]._street + ", " +
+                                campaign[0].locations[i]._unit + ", " +
+                                campaign[0].locations[i]._city + ", " +
+                                campaign[0].locations[i]._state + ", " +
+                                campaign[0].locations[i]._zipcode + "\n";
+        }
+        res.status(200).render('edit-campaign', {
+            campaignName : campaign[0].name,
+            
+            //campaignManagers : campaign[0]._CampaignManager,
+            campaignLocations : locationsInput,
+            campaignStartDate : campaignStartDateString,
+            campaignEndDate : campaignEndDateString,
+            campaignAvgDuration : campaign[0]._avgDuration,
+            campaignQuestions : questionsInput,
+            campaignTalkPoints : talkPointInput
+            
+        });
+        
+    }
 });
 router.post('/:id', async (req: Request, res: Response) => {
 
