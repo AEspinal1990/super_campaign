@@ -14,6 +14,8 @@
     <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script> -->
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk">
 
+
+
     </script>
     <script>
         function initialize() {
@@ -86,7 +88,16 @@
                 <th>ID</th>
                 <th>Name</th>
             </tr>
-
+            <% for (var i = 0; i < manager.length; i++){ %>
+            <tr>
+                <td>
+                    <%= manager[i].ID.employeeID %>
+                </td>
+                <td>
+                    <%= manager[i].ID.name %>
+                </td>
+            </tr>
+            <% } %>
         </table>
         <br>
 
