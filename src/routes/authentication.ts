@@ -12,10 +12,7 @@ router.get('/', (req: Request, res: Response) => {
     res.render('login');
 });
 
-router.get('/temp',(req: Request, res: Response) => {
-    console.log('Here');
-    res.send('Logged In Successfully!');
-});
+
 
 router.post('/', passport.authenticate(
     'local', {
@@ -23,5 +20,17 @@ router.post('/', passport.authenticate(
         failureRedirect: '/'
     }
 ));
+
+router.get('/logout', (req: Request, res: Response) => {
+    req.logout();
+    // @ts-ignore
+    req!.session!.destroy();
+    res.redirect('/');
+});
+
+router.get('/temp',(req: Request, res: Response) => {
+    console.log('Here');
+    res.send('Logged In Successfully!');
+});
  
 export {router as authRouter}

@@ -33,7 +33,7 @@ const isAuthenticated = (req, res, next) => {
         // res.redirect('/login');
         res.redirect('/');
     }
-    }
+}
 /**
  * View and Edit Global Parameters
  */
@@ -47,7 +47,7 @@ router.get('/globals', isAuthenticated, async(req: Request, res: Response) => {
     res.render('edit-globals',{avgSpeed, taskLimit})
 });
 
-router.post('/globals', async(req: Request, res: Response) => {
+router.post('/globals', isAuthenticated, async(req: Request, res: Response) => {
     let taskLimit = req.body.global.taskLimit;
     let avgSpeed = req.body.global.avgSpeed;
 
@@ -72,7 +72,7 @@ router.get('/new', async(req: Request, res: Response) => {
     res.status(200).render('create-user');
 });    
 
-router.post('/',[
+router.post('/', isAuthenticated,[
     // Validation
     check('username').isLength({min : 5, max: 20}),
     check('password').isLength({min : 5, max: 50})
@@ -122,7 +122,7 @@ router.post('/',[
 
 // For security purposes we can limit the length of username to maybe 5-9? characters.
 // The front end could do one check and then here we also check if its a valid user name
-router.get('/:username',  async(req: Request, res: Response) => {
+router.get('/:username', isAuthenticated, async(req: Request, res: Response) => {
     const userRepository = getRepository(User);
     const username = req.params.username;
     
@@ -149,7 +149,7 @@ router.get('/:username',  async(req: Request, res: Response) => {
 
 });
 
-router.post('/:username', async(req: Request, res: Response) => {
+router.post('/:username', isAuthenticated, async(req: Request, res: Response) => {
     let originalUsername = req.params.username;
 
     console.log('The originalname is: ',originalUsername)
@@ -200,7 +200,7 @@ router.post('/:username', async(req: Request, res: Response) => {
     res.send('hello');
 });
 
-router.delete('/:username', async(req: Request, res: Response) => {
+router.delete('/:username', isAuthenticated, async(req: Request, res: Response) => {
     
     
     // EmployeeID is required to remove user from roled table

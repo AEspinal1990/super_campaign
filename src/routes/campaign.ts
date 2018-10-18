@@ -3,7 +3,7 @@ import { createConnection, getConnection, getManager, getRepository, getTreeRepo
 import { Campaign } from '../backend/entity/Campaign';
 
 import * as campaignCreator from '../util/campaignCreator';
-import * as campaignEditor from '../util/campaignEditor';
+// import * as campaignEditor from '../util/campaignEditor';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 import { User } from '../backend/entity/User';
 import { Questionaire } from '../backend/entity/Questionaire';
@@ -14,14 +14,23 @@ import { Assignment } from '../backend/entity/Assignment';
 import { Locations } from '../backend/entity/Locations';
 
 const router: Router = Router();
+const isAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next()
+    } else {
+        // res.redirect('/login');
+        res.redirect('/');
+    }
+}
+
 /**
  * GET and POST for create Campaign
  */
-router.get('/new', async (req: Request, res: Response) => {
+router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
     res.render('create-campaign');
 });
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', isAuthenticated, async (req: Request, res: Response) => {
     /** let newCampaignObject = createCampaign.createCampaign(req.body.campaign);
     createCampaign.createQuestionaires(req.body.campaign, newCampaignObject);
     createCampaign.createLocations(req.body.campaign, newCampaignObject);
@@ -37,7 +46,7 @@ router.post('/', async (req: Request, res: Response) => {
 /**
  * GET and POST for edit Campaign
  */
-router.get('/:id/edit', async (req: Request, res: Response) => {
+router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
 
@@ -129,18 +138,18 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         
     }
 });
-router.post('/:id', async (req: Request, res: Response) => {
-    campaignEditor.editCampaign(req.body.campaign, req.params.id);
-    if (res.status(200))
-        res.send("Campaign Edited!");
-    else
-        res.send("Error!");
-});
+// router.post('/:id', async (req: Request, res: Response) => {
+//     campaignEditor.editCampaign(req.body.campaign, req.params.id);
+//     if (res.status(200))
+//         res.send("Campaign Edited!");
+//     else
+//         res.send("Error!");
+// });
 
 /**
  * GET for view campaign
  */
-router.get('/:id/view', async (req: Request, res: Response) => {
+router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo
         .find({where: {"_ID": req.params.id}})
