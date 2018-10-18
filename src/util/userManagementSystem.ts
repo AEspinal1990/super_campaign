@@ -18,7 +18,7 @@ export const createBaseUser = userData => {
 
 export const createRoledUser = (roleNumber,user): CampaignManager | Canvasser | SystemAdmin => {
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
-    console.log('RoledNUmber from creator is: ', roleNumber);
+    
     if(roleNumber == 1){
         roledUser = new CampaignManager();
     } 
@@ -31,7 +31,7 @@ export const createRoledUser = (roleNumber,user): CampaignManager | Canvasser | 
 
     roledUser.ID = user;
 
-    console.log('We created a: ', roledUser);
+    
 
     return roledUser
 };

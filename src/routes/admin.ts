@@ -1,6 +1,5 @@
 import { Request, Response, Router }    from 'express';
 import { getManager, getRepository }    from "typeorm";
-import * as expressValidator            from 'express-validator';
 import { check, validationResult }      from 'express-validator/check';
 import * as fs                          from 'fs';
 
@@ -10,13 +9,26 @@ import { SystemAdmin }      from '../backend/entity/SystemAdmin';
 import { User }             from '../backend/entity/User';
 
 import * as userManager from '../util/userManagementSystem';
+import * as authSystem  from '../config/auth';
 
+var passwordValidator = require('password-validator');
 const router: Router = Router();
+
+const passwordSchema:any = new passwordValidator();
+passwordSchema
+    .is().min(8)                                    // Minimum length 8
+    .is().max(100)                                  // Maximum length 100
+    .has().uppercase()                              // Must have uppercase letters
+    .has().lowercase()                              // Must have lowercase letters
+    .has().digits()                                 // Must have digits
+    .has().not().spaces()                           // Should not have spaces
+    .is().not().oneOf(['Passw0rd', 'Password123',   // Blacklist these values
+    'Password','password','Qwert1!']);     
 
 /**
  * View and Edit Global Parameters
  */
-router.get('/globals', async(req: Request, res: Response) => {
+router.get('/globals', authSystem.authenticationMiddleware ,async(req: Request, res: Response) => {
     let raw_gp = fs.readFileSync('src/globals.json');
     // @ts-ignore
     let global_params = JSON.parse(raw_gp);
@@ -54,25 +66,29 @@ router.get('/new', async(req: Request, res: Response) => {
 router.post('/',[
     // Validation
     check('username').isLength({min : 5, max: 20}),
-    check('password').isLength({min : 5, max: 20}),
-    check('role').isIn(['1','2','3'])
+    check('password').isLength({min : 5, max: 50})
 ]
 , async(req: Request, res: Response) => {
 
     /**
      * Ensure data from user is valid.
      */
-    const validationErrors = validationResult(req);
-    if(!validationErrors.isEmpty()) {
+    // const validPassword = !passwordSchema.validate(req.body.password);
+    const validationErrors = await validationResult(req);
+    if(validationErrors.isEmpty()) {
+        console.log(validationErrors)
         return res.status(422).send('Username or Password is of an invalid length. Needs to be between 5-20 characters');
     }
 
     let newUser: User;
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
+    
 
     /**
      * Create User from data in request from client.
      */
+    req.body.user.password = await authSystem.hashPassword(req.body.user.password);
+    console.log('The hash is:',req.body.user.password);
     newUser = userManager.createBaseUser(req.body.user);
     
     /**
@@ -126,6 +142,8 @@ router.get('/:username',  async(req: Request, res: Response) => {
 
 router.post('/:username', async(req: Request, res: Response) => {
     let originalUsername = req.params.username;
+
+    console.log('The originalname is: ',originalUsername)
     const userRepository = getRepository(User);
     const unchangedUser = await userRepository.find({where: {"_username": req.params.username}})
         .catch(e => console.log(e));
@@ -135,7 +153,7 @@ router.post('/:username', async(req: Request, res: Response) => {
     let name = user.name;
     let username = user.username;
     let role = user.role;
-    console.log('The role from the front end is: ', role);
+    
     /**
      * Update the user on the database
      */
@@ -154,15 +172,15 @@ router.post('/:username', async(req: Request, res: Response) => {
     let originalRole = unchangedUser[0]._permission;
     if(role !== originalRole) {         
         // Delete this user from old role table 
-        console.log('THe role number is: ', unchangedUser[0]._permission);
+        
         userManager.deleteUserFromRole(unchangedUser[0]._permission, id);
 
         // Add this user to their new role table
         let updatedUser = userManager.createBaseUser(user);
         updatedUser.employeeID = id;
-        console.log('ROle before creation', role)
+        
         let updatedRoledUser = userManager.createRoledUser(role, updatedUser);
-        console.log('The updated user before saving: ',updatedRoledUser);
+        
         const entityManager = getManager();
         await entityManager
             .save(updatedRoledUser)

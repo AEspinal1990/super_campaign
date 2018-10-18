@@ -9,6 +9,9 @@ import * as bodyParser          from 'body-parser';
 import * as methodOverride      from 'method-override'
 import * as expressValidator    from 'express-validator';
 
+var session     = require('express-session');
+var MySQLStore  = require('express-mysql-session')(session);
+var passport    = require('passport');
 
 /**
  * Import Route Handlers
@@ -41,7 +44,24 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(expressValidator());    // This MUST come after bodyParser.
 app.use(methodOverride('_method'));
-
+app.set('trust proxy', 1) // trust first proxy
+const options = {
+    host: '35.231.100.7',
+    port: 3306,
+    user: 'root',
+    password: 'rng308',
+    database: 'supercampaign'
+}; 
+const sessionStore = new MySQLStore(options);
+app.use(session({
+  secret: 'my super secret, secret, is a secret?',
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  //cookie: { secure: true } // Set to True when using https
+}))
+app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * Use route handlers
