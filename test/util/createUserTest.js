@@ -62,4 +62,8 @@ const createRoledUserFunct = require('../../dist/util/createUser.js').createRole
         assert.equal(SystemAdminRole, tempUser.permission);
     });
 });
- 
+
+// Tests CreateBaseUser Function
+// describe('Integrated User Test',function(){
+
+// });

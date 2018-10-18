@@ -74,7 +74,7 @@ export class Campaign {
     public get startDate():Date {
         return this._startDate;
     }
-    public get EndDate():Date {
+    public get endDate():Date {
         return this._endDate;
     }
     public get avgDuration():number {

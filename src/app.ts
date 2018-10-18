@@ -3,10 +3,11 @@ import "reflect-metadata";
 /**
  * Import Libraries
  */
-import * as express         from 'express';
-import * as bodyParser      from 'body-parser';
-// import * as morgan          from 'morgan';
-import * as methodOverride  from 'method-override'
+import * as express             from 'express';
+import * as bodyParser          from 'body-parser';
+// import * as morgan           from 'morgan';
+import * as methodOverride      from 'method-override'
+import * as expressValidator    from 'express-validator';
 
 
 /**
@@ -38,6 +39,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(expressValidator());    // This MUST come after bodyParser.
 app.use(methodOverride('_method'));
 
 
@@ -49,6 +51,6 @@ app.use('/admin', adminRouter);
 app.use('/global', adminRouter);
 app.use('/campaign', campaignRouter);
 //app.use(morgan('/campaign' stream:__dirname + '/../log/morgan.log'), campaignRouter);
-app.use('/login', authRouter);
+app.use('/', authRouter);
 
 export default app;
