@@ -1,14 +1,10 @@
 import { Request, Response, Router } from 'express';
-import { createConnection, getConnection, getManager, getRepository, getTreeRepository, Connection, MongoEntityManager } from 'typeorm';
+import { getManager, getRepository } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 
 import * as campaignCreator from '../util/campaignCreator';
-// import * as campaignEditor from '../util/campaignEditor';
-import { CampaignManager } from '../backend/entity/CampaignManager';
-import { User } from '../backend/entity/User';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
-import { getRepo } from '../util/userManagementSystem';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
 import { Locations } from '../backend/entity/Locations';
@@ -75,7 +71,7 @@ router.post('/', isAuthenticated, async (req: Request, res: Response) => {
     */
     //console.log(req.body.campaign);
     campaignCreator.createCampaign(req.body.campaign);
-    logger.info(`Created a campaign`);
+    logger.info(`CREATE CAMPAIGN - Created a campaign`);
     if (res.status(200))
         res.send("Campaign Created!");
     else
@@ -174,7 +170,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
             campaignCanvassers : campaignCanvassersString,
             campaignID : req.params.id
         });
-        logger.info(`Editted a campaign`);
+        logger.info(`EDIT CAMPAIGN - Editted a campaign`);
     }
 });
 // router.post('/:id', async (req: Request, res: Response) => {

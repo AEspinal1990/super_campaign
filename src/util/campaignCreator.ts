@@ -1,5 +1,5 @@
 import { Campaign } from '../backend/entity/Campaign';
-import { createConnection, getManager, getRepository } from 'typeorm';
+import { getManager } from 'typeorm';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { Locations } from '../backend/entity/Locations';
 import { Canvasser } from '../backend/entity/Canvasser';

@@ -8,15 +8,17 @@ import { createConnection, Connection, getConnection, getRepository } from "type
  * HTTPS server requires accepting a exception on the certification 
  * but I think the professor said thats ok.
  */
+// const connection2 = createConnection().then(async (connection) => {
+//     console.log(`Connection to ${connection.options.database} established`);
+//     server = https.createServer({
+//         key: fs.readFileSync('server.key'),
+//         cert: fs.readFileSync('server.cert')
+//     }, app).listen(app.get('port'), () => {
+//         console.log('App is running on port', app.get('port'), app.get('env'))
+//     });
+// }).catch(e => console.log(e));
 
 
-// const server2 = https.createServer({
-//     key: fs.readFileSync('server.key'),
-//     cert: fs.readFileSync('server.cert')
-// }, app)
-// .listen(app.get('port'), () => {
-//     console.log('App is running on port', app.get('port'), app.get('env'))
-// });
 
 
 /**
@@ -29,11 +31,6 @@ const connection = createConnection().then(async (connection) => {
          console.log('App is running on port', app.get('port'), app.get('env'))
      });
  }).catch(e => console.log(e));
-
-//let server3 = app.listen(app.get('port'), () => {
-//    console.log('App is running on port', app.get('port'), app.get('env'))
-//});
-
 
 export default server;
 

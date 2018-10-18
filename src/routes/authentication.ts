@@ -56,7 +56,7 @@ router.post('/', passport.authenticate(
 ));
 
 router.get('/logout', (req: Request, res: Response) => {
-    logger.info('Logged out User');
+    logger.info('LOGOUT: Logged out User');
     req.logout();
     // @ts-ignore
     req!.session!.destroy();
@@ -64,6 +64,8 @@ router.get('/logout', (req: Request, res: Response) => {
 });
 
 router.get('/temp',(req: Request, res: Response) => {
+    console.log(req.body)
+    logger.info(`LOGIN: Logged in user`);
     console.log('Here');
     res.send('Logged In Successfully!');
 });

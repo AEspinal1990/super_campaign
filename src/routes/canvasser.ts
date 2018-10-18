@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { getManager, getRepository }     from "typeorm";
+import { getManager }     from "typeorm";
 
 import { Canvasser }      from '../backend/entity/Canvasser'; 
 
@@ -62,7 +62,7 @@ router.get('/:id/availability', isAuthenticated, async(req: Request, res: Respon
     .getMany();
 
 
-    logger.info(`Canvasser changed his availablility`);
+    logger.info(`Edit Availability - Canvasser changed his availablility`);
 });
 
 export {router as canvasserRouter}

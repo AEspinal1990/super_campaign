@@ -1,4 +1,4 @@
-import { createConnection, getManager, getRepository, getConnection }     from "typeorm";
+import { getRepository }     from "typeorm";
 
 
 import { CampaignManager }      from '../backend/entity/CampaignManager';

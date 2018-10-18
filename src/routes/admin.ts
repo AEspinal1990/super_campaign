@@ -154,7 +154,7 @@ router.post('/', isAuthenticated,[
     await entityManager.save(roledUser)
         .then(user => console.log('Saved:',user))
         .catch(e => console.log(e));
-    logger.info(`Created ${roledUser}`);
+    logger.info(`/user/new ADD USER - Created ${roledUser}`);
     res.status(200).redirect('/user/new'); 
 });
 
@@ -167,9 +167,10 @@ router.get('/:username', isAuthenticated, async(req: Request, res: Response) => 
     
     const user = await userRepository.find({where: {"_username": username}})
         .catch(e => console.log(e));
-    logger.info(`Accessd ${user}s profile`);
+    
     if(user[0] === undefined) {
         console.log('not found')
+        logger.info(`/user/${username} VIEW AND EDIT - Could not find ${username}s profile`);
         res.status(404).render('view-user', {
             missing: username,
             username: "",
@@ -178,7 +179,9 @@ router.get('/:username', isAuthenticated, async(req: Request, res: Response) => 
             id: 0
         });
     } else {
+        logger.info(`/user/${username} VIEW AND EDIT - Accessd ${username}s profile`);
         res.status(200).render('view-user', {
+            
             username,
             name: user[0]._name,
             role: user[0]._permission,
@@ -235,7 +238,7 @@ router.post('/:username', isAuthenticated, async(req: Request, res: Response) =>
             .then(user2 =>{} )
             .catch(e => console.log(e));
     }
-    logger.info(`Edited ${originalUsername}`);
+    logger.info(`EDIT USER /user/${originalUsername} Edited ${originalUsername}`);
     res.send('hello');
 });
 
@@ -257,13 +260,13 @@ router.delete('/:username', isAuthenticated, async(req: Request, res: Response) 
     //     WHERE ID_employeeID = '${user[0]._employeeID}';`
     // )
     // .catch(e => console.log(e));
-    logger.info(`Deleted ${user[0]._name}`);
+    
     await userRepository
         .createQueryBuilder()
         .delete()
         .where("_employeeID = :ID", {ID: user[0].employeeID})
         .execute();
-    
+    logger.info(`EDIT USER - Deleted ${user[0]._name}`);
     // await userRepository.query(
     //     `DELETE FROM supercampaign.user
     //     WHERE employeeID = '${user[0]._employeeID}';`
