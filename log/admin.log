@@ -9,3 +9,9 @@
 2018-10-18 14:20:16 info: /user/new ADD USER - Created [object Object]
 2018-10-18 14:20:47 info: /user/abc VIEW AND EDIT - Accessd abcs profile
 2018-10-18 14:20:50 info: /user/abd VIEW AND EDIT - Could not find abds profile
+2018-10-18 14:43:15 info: /user/abc VIEW AND EDIT - Accessd abcs profile
+2018-10-18 14:43:19 info: EDIT USER - Deleted abc
+2018-10-18 14:43:19 info: /user/abc VIEW AND EDIT - Could not find abcs profile
+2018-10-18 14:43:27 info: /user/bob VIEW AND EDIT - Accessd bobs profile
+2018-10-18 14:43:35 info: EDIT USER /user/bob Edited bob
+2018-10-18 14:43:45 info: /user/bobert VIEW AND EDIT - Accessd boberts profile
