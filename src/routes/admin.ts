@@ -53,9 +53,9 @@ router.get('/new', async(req: Request, res: Response) => {
 
 router.post('/',[
     // Validation
-    check('username').isLength({min : 5, max: 20}),
-    check('password').isLength({min : 5, max: 20}),
-    check('role').isIn(['1','2','3'])
+    //check('username').isLength({min : 5, max: 20}),
+    //check('password').isLength({min : 5, max: 20}),
+    //check('role').isIn(['1','2','3'])
 ]
 , async(req: Request, res: Response) => {
 
