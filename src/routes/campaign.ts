@@ -12,8 +12,46 @@ import { getRepo } from '../util/userManagementSystem';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
 import { Locations } from '../backend/entity/Locations';
+import * as fs                          from 'fs';
 
+
+const { createLogger, format, transports } = require('winston');
 const router: Router = Router();
+
+const path = require('path');
+const env = process.env.NODE_ENV || 'development';
+const logDir = 'log';
+
+
+// Create the log directory if it does not exist
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+
+const filename = path.join(logDir, 'campaign.log');
+
+const logger = createLogger({
+  // change level if in dev environment versus production
+  level: env === 'development' ? 'debug' : 'info',
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+  ),
+  transports: [
+    new transports.Console({
+      level: 'info',
+      format: format.combine(
+        format.colorize(),
+        format.printf(
+          info => `${info.timestamp} ${info.level}: ${info.message}`
+        )
+      )
+    }),
+    new transports.File({ filename })
+  ]
+});
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next()
@@ -37,6 +75,7 @@ router.post('/', isAuthenticated, async (req: Request, res: Response) => {
     */
     //console.log(req.body.campaign);
     campaignCreator.createCampaign(req.body.campaign);
+    logger.info(`Created a campaign`);
     if (res.status(200))
         res.send("Campaign Created!");
     else
@@ -135,7 +174,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
             campaignCanvassers : campaignCanvassersString,
             campaignID : req.params.id
         });
-        
+        logger.info(`Editted a campaign`);
     }
 });
 // router.post('/:id', async (req: Request, res: Response) => {

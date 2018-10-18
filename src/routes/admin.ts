@@ -12,7 +12,43 @@ import * as userManager from '../util/userManagementSystem';
 import * as authSystem  from '../config/auth';
 
 var passwordValidator = require('password-validator');
+const { createLogger, format, transports } = require('winston');
 const router: Router = Router();
+
+const path = require('path');
+const env = process.env.NODE_ENV || 'development';
+const logDir = 'log';
+
+
+// Create the log directory if it does not exist
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+
+const filename = path.join(logDir, 'admin.log');
+
+const logger = createLogger({
+  // change level if in dev environment versus production
+  level: env === 'development' ? 'debug' : 'info',
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+  ),
+  transports: [
+    new transports.Console({
+      level: 'info',
+      format: format.combine(
+        format.colorize(),
+        format.printf(
+          info => `${info.timestamp} ${info.level}: ${info.message}`
+        )
+      )
+    }),
+    new transports.File({ filename })
+  ]
+});
 
 const passwordSchema:any = new passwordValidator();
 passwordSchema
@@ -50,6 +86,7 @@ router.get('/globals', isAuthenticated, async(req: Request, res: Response) => {
 router.post('/globals', isAuthenticated, async(req: Request, res: Response) => {
     let taskLimit = req.body.global.taskLimit;
     let avgSpeed = req.body.global.avgSpeed;
+    logger.info(`Changed Globals avgspeed=${avgSpeed} and taskLimit=${taskLimit}`);
 
     let global_params = {
         taskTimeLimit: taskLimit,
@@ -86,6 +123,7 @@ router.post('/', isAuthenticated,[
     const validationErrors = await validationResult(req);
     if(validationErrors.isEmpty()) {
         console.log(validationErrors)
+        logger.info(`ERROR: Invalid Username or Password during registration`);
         return res.status(422).send('Username or Password is of an invalid length. Needs to be between 5-20 characters');
     }
 
@@ -116,19 +154,20 @@ router.post('/', isAuthenticated,[
     await entityManager.save(roledUser)
         .then(user => console.log('Saved:',user))
         .catch(e => console.log(e));
-
+    logger.info(`Created ${roledUser}`);
     res.status(200).redirect('/user/new'); 
 });
 
 // For security purposes we can limit the length of username to maybe 5-9? characters.
 // The front end could do one check and then here we also check if its a valid user name
 router.get('/:username', isAuthenticated, async(req: Request, res: Response) => {
+    
     const userRepository = getRepository(User);
     const username = req.params.username;
     
     const user = await userRepository.find({where: {"_username": username}})
         .catch(e => console.log(e));
-
+    logger.info(`Accessd ${user}s profile`);
     if(user[0] === undefined) {
         console.log('not found')
         res.status(404).render('view-user', {
@@ -196,7 +235,7 @@ router.post('/:username', isAuthenticated, async(req: Request, res: Response) =>
             .then(user2 =>{} )
             .catch(e => console.log(e));
     }
-
+    logger.info(`Edited ${originalUsername}`);
     res.send('hello');
 });
 
@@ -218,7 +257,7 @@ router.delete('/:username', isAuthenticated, async(req: Request, res: Response) 
     //     WHERE ID_employeeID = '${user[0]._employeeID}';`
     // )
     // .catch(e => console.log(e));
-
+    logger.info(`Deleted ${user[0]._name}`);
     await userRepository
         .createQueryBuilder()
         .delete()

@@ -5,18 +5,13 @@ import "reflect-metadata";
  */
 import * as express             from 'express';
 import * as bodyParser          from 'body-parser';
-// import * as morgan           from 'morgan';
 import * as methodOverride      from 'method-override'
 import * as expressValidator    from 'express-validator';
-
-import { User } from "./backend/entity/User";
-import { getManager, getRepository }    from "typeorm";
 
 var session     = require('express-session');
 var MySQLStore  = require('express-mysql-session')(session);
 var passport    = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-import * as authSystem  from './config/auth';
+const { createLogger, format, transports } = require('winston');
 
 /**
  * Import Route Handlers
@@ -26,18 +21,42 @@ import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 
 const app = express();
+const fs = require('fs');
+const path = require('path');
+const env = process.env.NODE_ENV || 'development';
+const logDir = 'log';
 
-/////EXPERIMENT WITH MORGAN
-/*
-var fs = require('fs');
-var morgan = require('morgan');
-var path = require('path');
 
-//Creating stream
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags:'a'});
-//setup the logger
-app.use(morgan('combined', {stream:accessLogStream}))
-*/
+// Create the log directory if it does not exist
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+
+const filename = path.join(logDir, 'results.log');
+
+const logger = createLogger({
+  // change level if in dev environment versus production
+  level: env === 'development' ? 'debug' : 'info',
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+  ),
+  transports: [
+    new transports.Console({
+      level: 'info',
+      format: format.combine(
+        format.colorize(),
+        format.printf(
+          info => `${info.timestamp} ${info.level}: ${info.message}`
+        )
+      )
+    }),
+    new transports.File({ filename })
+  ]
+});
+logger.info('Starting Application');
 
 /**
  * Configurations
@@ -78,7 +97,6 @@ app.use('/user', adminRouter);
 app.use('/admin', adminRouter);
 app.use('/global', adminRouter);
 app.use('/campaign', campaignRouter);
-//app.use(morgan('/campaign' stream:__dirname + '/../log/morgan.log'), campaignRouter);
 app.use('/', authRouter);
 
 
