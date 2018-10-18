@@ -6,3 +6,6 @@
 2018-10-18 01:10:37 info: Deleted [object Object]
 2018-10-18 01:10:38 info: Accessd s profile
 2018-10-18 01:21:45 info: Created [object Object]
+2018-10-18 14:20:16 info: /user/new ADD USER - Created [object Object]
+2018-10-18 14:20:47 info: /user/abc VIEW AND EDIT - Accessd abcs profile
+2018-10-18 14:20:50 info: /user/abd VIEW AND EDIT - Could not find abds profile

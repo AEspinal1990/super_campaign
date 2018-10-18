@@ -46,11 +46,13 @@ export function authenticationMiddleware() {
 
 passport.use('local', new LocalStrategy(async (username, password, done) => {
     try {
+        console.log(username);
         const userRepository = getRepository(User);    
         const user = await userRepository.find({
           where: {"_username": username}
         }).catch(e => console.log(e));
   
+        console.log(user);
       // Check if password is correct for this account
       const isValid = await comparePasswords(password, user[0]._password)
       console.log('THe user',user);

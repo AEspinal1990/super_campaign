@@ -109,7 +109,7 @@ router.get('/new', async(req: Request, res: Response) => {
     res.status(200).render('create-user');
 });    
 
-router.post('/', isAuthenticated,[
+router.post('/', [
     // Validation
     check('username').isLength({min : 5, max: 20}),
     check('password').isLength({min : 5, max: 50})
