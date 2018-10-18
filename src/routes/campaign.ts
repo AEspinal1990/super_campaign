@@ -3,6 +3,7 @@ import { createConnection, getConnection, getManager, getRepository, getTreeRepo
 import { Campaign } from '../backend/entity/Campaign';
 
 import * as campaignCreator from '../util/campaignCreator';
+import * as campaignEditor from '../util/campaignEditor';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 import { User } from '../backend/entity/User';
 import { Questionaire } from '../backend/entity/Questionaire';
@@ -95,32 +96,45 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         for (let i in campaignManagers) {
             campaignManagersString += campaignManagers[i]._ID._employeeID + "\n";
         }
-        console.log(campaignManagersString);
+        //console.log(campaignManagersString);
 
+        
+        //parse canvassers back to input form
+        let campaignCanvasser = await getManager()
+            .createQueryBuilder(Canvasser, "canvasser")
+            .leftJoinAndSelect("canvasser._campaignID", "campaign")
+            .leftJoinAndSelect("canvasser._ID", "user")
+            .where("campaign._ID = :ID", { ID: req.params.id})
+            .getMany();       
+
+        let campaignCanvassersString = "";
+        for(let i in campaignCanvasser) {
+            //campaignCanvasserString += i.ID + "\n";
+            campaignCanvassersString += campaignCanvasser[i].ID.employeeID + "\n";
+        }
+        //console.log(campaignCanvasserString);
 
         res.status(200).render('edit-campaign', {
             campaignName : campaign[0].name,
-            
             campaignManagers : campaignManagersString,
             campaignLocations : locationsInput,
             campaignStartDate : campaignStartDateString,
             campaignEndDate : campaignEndDateString,
             campaignAvgDuration : campaign[0]._avgDuration,
             campaignQuestions : questionsInput,
-            campaignTalkPoints : talkPointInput
-            
+            campaignTalkPoints : talkPointInput,
+            campaignCanvassers : campaignCanvassersString,
+            campaignID : req.params.id
         });
         
     }
 });
 router.post('/:id', async (req: Request, res: Response) => {
-
-
-
-
-
-
-
+    campaignEditor.editCampaign(req.body.campaign, req.params.id);
+    if (res.status(200))
+        res.send("Campaign Edited!");
+    else
+        res.send("Error!");
 });
 
 /**
@@ -179,8 +193,8 @@ router.get('/:id/view', async (req: Request, res: Response) => {
             .where("campaign._ID = :ID", { ID: req.params.id})
             .getMany();
 
-            console.log(campaign[0]);
-            console.log(canva);
+            //console.log(campaign[0]);
+            //console.log(canva);
         res.render('view-campaign', {
             id: campaign[0].ID,
             name: campaign[0].name,

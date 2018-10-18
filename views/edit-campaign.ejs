@@ -4,7 +4,7 @@
 
         <h1>Edit Campaign</h1>
 
-		<form action="/campaign" method="POST">
+		<form action="/campaign/<%= campaignID %>" method="POST">
 	  		<div class="form-group">
 			    <label>Campaign Name</label>
 			    <input type="text" name="campaign[campaignName]" class="form-control" placeholder="Campaign Name" value="<%= campaignName %>">
@@ -34,8 +34,12 @@
                 <textarea class="form-control" id="locations" name="campaign[locations]" rows="3"><%= campaignLocations %></textarea>
             </div>
             <div class="form-group">
+                <label for="locations">Managers</label>
+                <textarea class="form-control" placeholder="ID of each canvasser seperated by space" id="canvassers" name="campaign[managers]" rows="3"><%= campaignManagers %></textarea>
+            </div>    
+            <div class="form-group">
                 <label for="locations">Canvassers</label>
-                <textarea class="form-control" placeholder="ID of each canvasser seperated by space" id="canvassers" name="campaign[canvassers]" rows="3"></textarea>
+                <textarea class="form-control" placeholder="ID of each canvasser seperated by space" id="canvassers" name="campaign[canvassers]" rows="3"><%= campaignCanvassers %></textarea>
             </div>      
   	
 		  <button type="submit" class="btn btn-default">Submit</button>
