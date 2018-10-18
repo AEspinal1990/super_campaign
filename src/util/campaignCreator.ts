@@ -49,7 +49,7 @@ export const createTalkingPoints = campaignData =>{
 export const createQuestionnaires = campaignData =>{
     let newCampaign = createCampaignInfo(campaignData);
     let questionaire = campaignData.questionaire;
-    questionaire = questionaire.split("\n");
+    questionaire = questionaire.trim().split("\n");
     let allquestionnaires = [];
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
@@ -104,7 +104,7 @@ export const createCampaign = async campaignData => {
     }
     //For Questionaire Objects
     //Parse Questionaire for Questionaire table
-    questionaire = questionaire.split("\n");
+    questionaire = questionaire.trim().split("\n");
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;

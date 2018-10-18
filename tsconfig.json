@@ -66,6 +66,6 @@
     "experimentalDecorators": true,
   },
   "include": [
-    "src/**/*"
+    "src/**/*", "test/util/campaignCreatorTest.js"
   ]
 }
