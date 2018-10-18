@@ -1,13 +1,16 @@
 const bcrypt    = require('bcrypt');
 const passport  = require('passport');
+const LocalStrategy = require('passport-local').Strategy
+import { User } from "../backend/entity/User";
+import { getRepository }    from "typeorm";
 
-passport.serializeUser(function(user_id, permission, done) {
-    done(null, user_id, permission);
-  });
-  
-  passport.deserializeUser(function(user_id, done) {
+passport.serializeUser(function(user_id, done) {
     done(null, user_id);
-  });
+});
+  
+passport.deserializeUser(function(user_id, done) {
+    done(null, user_id);
+});
 
 export const hashPassword = async password => {
     try{
@@ -16,7 +19,7 @@ export const hashPassword = async password => {
 
     } catch(error) {
         throw new Error('Hashing failed: ' + error);
-}
+    }   
 }
 
 export const comparePasswords = async (inputPassword, hashedPassword) => {
@@ -27,7 +30,8 @@ export const comparePasswords = async (inputPassword, hashedPassword) => {
     }
 };
 
-export const authenticationMiddleware = () => {
+export function authenticationMiddleware() {
+    console.log('Before auth')
     return (req, res, next) => {
         console.log('Starting auth check');
         console.log(`req.session.user: 
@@ -36,6 +40,29 @@ export const authenticationMiddleware = () => {
         if(req.isAuthenticated()) 
             return next();
         console.log('Finshing auth check')
-        res.redirect('/auth/', {errorMessage: 'You need to log in first.'});
+        res.send('BAd')//('/auth/', {errorMessage: 'You need to log in first.'});
     }
 }
+
+passport.use('local', new LocalStrategy(async (username, password, done) => {
+    try {
+        const userRepository = getRepository(User);    
+        const user = await userRepository.find({
+          where: {"_username": username}
+        }).catch(e => console.log(e));
+  
+      // Check if password is correct for this account
+      const isValid = await comparePasswords(password, user[0]._password)
+      console.log('THe user',user);
+      if (isValid) {
+        return done(null, user)
+      } else {
+        console.log('Invalid pass')
+        return done(null, false, {message: 'Incorrect Password'})
+      }
+    } catch (error) {
+      console.log('Error in strategy')
+      return done(error, false)
+    }
+  } // End async
+  ))

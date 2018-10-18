@@ -9,9 +9,14 @@ import * as bodyParser          from 'body-parser';
 import * as methodOverride      from 'method-override'
 import * as expressValidator    from 'express-validator';
 
+import { User } from "./backend/entity/User";
+import { getManager, getRepository }    from "typeorm";
+
 var session     = require('express-session');
 var MySQLStore  = require('express-mysql-session')(session);
 var passport    = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+import * as authSystem  from './config/auth';
 
 /**
  * Import Route Handlers
@@ -44,7 +49,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(expressValidator());    // This MUST come after bodyParser.
 app.use(methodOverride('_method'));
-app.set('trust proxy', 1) // trust first proxy
 const options = {
     host: '35.231.100.7',
     port: 3306,
@@ -72,5 +76,6 @@ app.use('/global', adminRouter);
 app.use('/campaign', campaignRouter);
 //app.use(morgan('/campaign' stream:__dirname + '/../log/morgan.log'), campaignRouter);
 app.use('/', authRouter);
+
 
 export default app;

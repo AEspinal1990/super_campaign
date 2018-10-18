@@ -25,10 +25,19 @@ passwordSchema
     .is().not().oneOf(['Passw0rd', 'Password123',   // Blacklist these values
     'Password','password','Qwert1!']);     
 
+
+const isAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next()
+    } else {
+        // res.redirect('/login');
+        res.redirect('/');
+    }
+    }
 /**
  * View and Edit Global Parameters
  */
-router.get('/globals', authSystem.authenticationMiddleware ,async(req: Request, res: Response) => {
+router.get('/globals', isAuthenticated, async(req: Request, res: Response) => {
     let raw_gp = fs.readFileSync('src/globals.json');
     // @ts-ignore
     let global_params = JSON.parse(raw_gp);
