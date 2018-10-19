@@ -185,7 +185,7 @@ router.get('/:username', isAuthenticated, async(req: Request, res: Response) => 
             username,
             name: user[0]._name,
             role: user[0]._permission,
-            id: user[0]._employeeID
+            id: user[0]._employeeID,
         });
     }
 
@@ -204,16 +204,19 @@ router.post('/:username', isAuthenticated, async(req: Request, res: Response) =>
     let name = user.name;
     let username = user.username;
     let role = user.role;
-    
+    console.log('The unchanged user', unchangedUser);
     /**
      * Update the user on the database
      */
     await userRepository.query(
         `Update supercampaign.user 
-        SET username = '${username}', fullname = '${name}', permission = '${role}'
+        SET username = '${username}', fullname = '${name}', permission = '${role}', passwd = '${unchangedUser[0]._password}' 
         WHERE username = '${originalUsername}';`
     ).catch(e => console.log(e));
+    // await userRepository.update({'username': username },{
+    //     'password': unchangedUser[0]._password,
 
+    // } ).catch(e => console.log(e));
    
     /**
      * If role has changed, erase from orignal 

@@ -9,3 +9,27 @@
 2018-10-18 14:20:16 info: /user/new ADD USER - Created [object Object]
 2018-10-18 14:20:47 info: /user/abc VIEW AND EDIT - Accessd abcs profile
 2018-10-18 14:20:50 info: /user/abd VIEW AND EDIT - Could not find abds profile
+2018-10-18 16:25:24 info: /user/new ADD USER - Created [object Object]
+2018-10-18 16:26:31 info: Changed Globals avgspeed=25 and taskLimit=55
+2018-10-18 17:23:32 info: /user/new ADD USER - Created [object Object]
+2018-10-18 17:24:21 info: /user/roletest VIEW AND EDIT - Accessd roletests profile
+2018-10-18 17:24:27 info: EDIT USER /user/roletest Edited roletest
+2018-10-18 18:46:04 info: /user/new ADD USER - Created [object Object]
+2018-10-18 18:46:39 info: /user/testing VIEW AND EDIT - Accessd testings profile
+2018-10-18 18:46:52 info: EDIT USER /user/testing Edited testing
+2018-10-18 18:48:35 info: /user/testing VIEW AND EDIT - Accessd testings profile
+2018-10-18 18:52:13 info: /user/new ADD USER - Created [object Object]
+2018-10-18 18:52:27 info: /user/red VIEW AND EDIT - Accessd reds profile
+2018-10-18 18:52:31 info: EDIT USER /user/red Edited red
+2018-10-18 18:52:37 info: /user/red VIEW AND EDIT - Accessd reds profile
+2018-10-18 19:30:48 info: /user/new ADD USER - Created [object Object]
+2018-10-18 19:31:08 info: /user/teal VIEW AND EDIT - Accessd teals profile
+2018-10-18 19:31:54 info: EDIT USER /user/teal Edited teal
+2018-10-18 19:39:02 info: EDIT USER /user/teal Edited teal
+2018-10-18 19:41:24 info: /user/new ADD USER - Created [object Object]
+2018-10-18 19:41:42 info: /user/big VIEW AND EDIT - Accessd bigs profile
+2018-10-18 19:41:47 info: EDIT USER /user/big Edited big
+2018-10-18 19:41:50 info: /user/big VIEW AND EDIT - Accessd bigs profile
+2018-10-18 19:43:41 info: EDIT USER /user/big Edited big
+2018-10-18 19:44:53 info: EDIT USER /user/big Edited big
+2018-10-18 19:46:05 info: EDIT USER /user/big Edited big
