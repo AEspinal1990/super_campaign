@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { getManager, getRepository } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
-
+import * as campaignEditor from '../util/campaignEditor';
 import * as campaignCreator from '../util/campaignCreator';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
@@ -173,13 +173,14 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         logger.info(`EDIT CAMPAIGN - Editted a campaign`);
     }
 });
-// router.post('/:id', async (req: Request, res: Response) => {
-//     campaignEditor.editCampaign(req.body.campaign, req.params.id);
-//     if (res.status(200))
-//         res.send("Campaign Edited!");
-//     else
-//         res.send("Error!");
-// });
+
+router.post('/:id', async (req: Request, res: Response) => {
+    campaignEditor.editCampaign(req.body.campaign, req.params.id);
+    if (res.status(200))
+        res.send("Campaign Edited!");
+    else
+        res.send("Error!");
+});
 
 /**
  * GET for view campaign

@@ -56,6 +56,7 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
       // Check if password is correct for this account
       const isValid = await comparePasswords(password, user[0]._password)
       console.log('THe user',user);
+      
       if (isValid) {
         return done(null, user)
       } else {
