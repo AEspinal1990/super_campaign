@@ -40,26 +40,20 @@ export const editCampaign = async (campaignData, campaignID) => {
     endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
     //Update date to Campaign object
-
     thisCampaign[0].name = campaignName;
     thisCampaign[0].startDate = startDate;
     thisCampaign[0].endDate = endDate;
     thisCampaign[0].avgDuration = averageExpectedDuration;
 
     await Manager.save(thisCampaign).catch(e => console.log(e));
-
-
     //Update Talking Points
-
     const talkPointRepo = getRepository(TalkPoint);
-
     //delete talking Points
     await talkPointRepo
         .createQueryBuilder()
         .delete()
         .where("_campaignID = :ID", { ID: campaignID })
         .execute();
-
     //Create
     talkingPoints = talkingPoints.split("\n");
     for (let i in talkingPoints) {
@@ -68,7 +62,6 @@ export const editCampaign = async (campaignData, campaignID) => {
         newTalkingPoint.talk = talkingPoints[i];
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
-
     //Update Questionaire 
     const questionaireRepo = getRepository(Questionaire);
     //delete campaign questionaires
@@ -77,7 +70,6 @@ export const editCampaign = async (campaignData, campaignID) => {
         .delete()
         .where("_campaignID = :ID", { ID: campaignID })
         .execute();
-
     //For Questionaire Objects
     //Parse Questionaire for Questionaire table
     questionaire = questionaire.split("\n");
@@ -97,10 +89,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     if (canvasser[canvasser.length-1] == ""){
         canvasser.pop();
     }
-    console.log(canvasser);
-
     const foundCanvassers = [];
-
     const usr = await getManager()
         .createQueryBuilder(Canvasser, "canv")
         .leftJoinAndSelect("canv._campaignID", "campaign")
@@ -115,7 +104,6 @@ export const editCampaign = async (campaignData, campaignID) => {
             .leftJoinAndSelect("canv._ID", "user")
             .where("user.employeeID = :ID", { ID: usr[i].ID.employeeID })
             .getOne();
-
         foundCanvassers.push(cvr);
     };
 
@@ -129,7 +117,6 @@ export const editCampaign = async (campaignData, campaignID) => {
                     await getManager().save(foundCanvassers[i]);
                 } else {
                     for (var k = 0; k < canvasser.length; k++) {
-
                         if (foundCanvassers[i].ID.employeeID == canvasser[k]) {
                             // found canvasser, move on
                             canvasser.splice(k, 1);
@@ -207,7 +194,6 @@ export const editCampaign = async (campaignData, campaignID) => {
 
     //Update Managers
     thisCampaign[0].managers = [];
-
     //Parse manager string
     campaignManager = campaignManager.split("\n");
     //initialize manager
@@ -223,8 +209,4 @@ export const editCampaign = async (campaignData, campaignID) => {
         }
     }
     await Manager.save(thisCampaign[0]);
-
-
-
-
 }

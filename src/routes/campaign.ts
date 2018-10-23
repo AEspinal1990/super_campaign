@@ -209,7 +209,7 @@ router.get('/:id/view', async (req: Request, res: Response) => {
     var campaign = await campaignRepo
         .find({where: {"_ID":  req.params.id}})
         .catch(e => console.log(e));
-    console.log(campaign[0]);
+    // console.log(campaign[0]);
     const qRepo = getRepository(Questionaire);
     const questionaire = await qRepo.find({ where: { "_campaignID": campaign[0].ID } });
     campaign[0].question = questionaire;
@@ -250,18 +250,8 @@ router.get('/:id/view', async (req: Request, res: Response) => {
             .getMany();
 
         // CREATE JSON FILE FOR LOCATIONS FOR MAP VIEW
-        var locations = [];
-        for (var i=0; i<campaign[0].locations.length;i++){
-            locations.push({
-                streetNumber: campaign[0].locations[i].number,
-                street: campaign[0].locations[i].street,
-                unit: campaign[0].locations[i].unit,
-                city: campaign[0].locations[i].city,
-                state: campaign[0].locations[i].state,
-                zipcode: campaign[0].locations[i].zipcode
-            });
-        }
-        // fs.writeFile("./views/view-campaign-locations.json", JSON.stringify(locations, null, 4), (e) => {
+        // fs.writeFile("./view-campaign-locations.json", 
+        //     JSON.stringify(campaign[0].locations, null, 4), (e) => {
         //     if (e){
         //         console.error(e);
         //         return;

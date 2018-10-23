@@ -1,7 +1,9 @@
 import app from './app';
 import * as fs from 'fs';
 import * as https from 'https';
-import { createConnection, Connection, getConnection, getRepository } from "typeorm";
+import { createConnection } from "typeorm";
+
+var socket = require('socket.io');
 
 /**
  * Only one of these servers can be uncommented at a time.
@@ -20,17 +22,22 @@ import { createConnection, Connection, getConnection, getRepository } from "type
 // }).catch(e => console.log(e));
 
 
-
-
 /**
  * Create Connection to the Database
  */
 let server;
 const connection = createConnection().then(async (connection) => {
      console.log(`Connection to ${connection.options.database} established`);
-     server = app.listen(app.get('port'), () => {
-         console.log('App is running on port', app.get('port'), app.get('env'))
-     });
+    //  server = app.listen(app.get('port'), () => {
+        //  console.log('App is running on port', app.get('port'), app.get('env'))
+    //  });
+    const serv = app.listen(app.get('port'), function(){
+        console.log('App is running on port', app.get('port'), app.get('env'));
+      });
+    var io = socket(serv);
+    io.on('connection', function(socket){
+        console.log("Made socket connect!");
+    })
  }).catch(e => console.log(e));
 
 export default server;

@@ -1,5 +1,7 @@
 import "reflect-metadata";
 
+
+
 /**
  * Import Libraries
  */
@@ -27,13 +29,22 @@ const path = require('path');
 const env = process.env.NODE_ENV || 'development';
 const logDir = 'log';
 
+// var socket = require('socket.io');
+// const serv = app.listen(app.get('port'), function(){
+//   console.log('App is running on port', app.get('port'), app.get('env'));
+// });
+app.use('/static', express.static('node_modules'));
+// var io = socket(server);
+// io.on('connection', function(){
+//   console.log("socket connected");
+// });
+
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
 const filename = path.join(logDir, 'results.log');
-
 const logger = createLogger({
   // change level if in dev environment versus production
   level: env === 'development' ? 'debug' : 'info',
