@@ -1,6 +1,4 @@
 import { getRepository }     from "typeorm";
-
-
 import { CampaignManager }      from '../backend/entity/CampaignManager';
 import { Canvasser }      from '../backend/entity/Canvasser'; 
 import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 

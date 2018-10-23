@@ -25,24 +25,8 @@ export class Task{
     private _scheduledOn!:Date;
     @Column({name: "taskStatus"})
     private _status!:boolean;
-    @ManyToOne(type => Assignment, as => as.task)
+    @ManyToOne(type => Assignment, as => as.tasks)
     private _assignment!:Assignment;
-
-    // constructor(ID:number, canvasserID:Canvasser, campaignID:number, rL:RemainingLocation,
-    //      remainingLocations:number[], cL:CompletedLocation, completedLocations:number[],
-    //     currentLocation:Locations, recommendedRoute:number[], scheduledOn:Date, status:boolean){
-    //         this._ID = ID;
-    //         this._canvaserID = canvasserID;
-    //         this._campaignID = campaignID;
-    //         this._remainingLocation = rL;
-    //         this._remainingLocations = remainingLocations;
-    //         this._completedLocation = cL;
-    //         this._completedLocations = completedLocations;
-    //         this._currentLocation = currentLocation;
-    //         this._recommendedRoute = recommendedRoute;
-    //         this._scheduledOn = scheduledOn;
-    //         this._status = status;
-    // }
 
     public get ID():number{
         return this._ID;

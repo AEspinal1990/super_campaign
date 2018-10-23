@@ -19,8 +19,8 @@ export class Questionaire{
     public get question(){
         return this._question;
     }
-    public set campaignID(campaignID:Campaign){
-        this._campaignID = campaignID;
+    public set campaignID(campaign:Campaign){
+        this._campaignID = campaign;
     }
     public set question(question:string){
         this._question = question;

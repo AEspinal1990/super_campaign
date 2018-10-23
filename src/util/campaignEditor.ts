@@ -8,7 +8,6 @@ import { User } from "../backend/entity/User";
 import { getRepo } from "./userManagementSystem";
 import { Canvasser } from "../backend/entity/Canvasser";
 
-
 //This part is for the posting the form for editing campaign with the new camaignData
 export const editCampaign = async (campaignData, campaignID) => {
     const Manager = getManager();
@@ -95,6 +94,9 @@ export const editCampaign = async (campaignData, campaignID) => {
     for (var i = 0; i < canvasser.length; i++) {
         canvasser[i] = canvasser[i].replace(/\r/, "");
     }
+    if (canvasser[canvasser.length-1] == ""){
+        canvasser.pop();
+    }
     console.log(canvasser);
 
     const foundCanvassers = [];
@@ -154,12 +156,15 @@ export const editCampaign = async (campaignData, campaignID) => {
             }
         }
     }
-
+    //deep copy
+    var locationCopy = [];
+    for (let i in thisCampaign[0].locations ){
+        locationCopy.push(thisCampaign[0].locations.splice(0,1)[0]);
+    }
     //Update Locations
     thisCampaign[0].locations = [];
     //Parse Locations for All Locations of Campaign Table
     locations = locations.split("\n");
-
     //Initialize array of campaign locations
     for (let i in locations) {
         if (locations[i] != "") {
@@ -173,13 +178,29 @@ export const editCampaign = async (campaignData, campaignID) => {
             newLocation.city = locationParse[3];
             newLocation.state = locationParse[4];
             newLocation.zipcode = parseInt(locationParse[5]);
-
             //associate this new location to array
             thisCampaign[0].locations.push(newLocation);
-            //save location to location table
-            await Manager.save(newLocation).catch(e => console.log(e));
-
-            //check if location[i] is already in database
+        }
+    }
+    for (let i in locationCopy) {
+        // YOU HAVE TO CHECK FOR DIFFERENCES IN LOCATIONS...
+        for (let j in thisCampaign[0].locations){
+            if (locationCopy[i].streetNumber == thisCampaign[0].locations[j].streetNumber &&
+                locationCopy[i].street == thisCampaign[0].locations[j].street &&
+                locationCopy[i].unit == thisCampaign[0].locations[j].unit &&
+                locationCopy[i].city == thisCampaign[0].locations[j].city &&
+                locationCopy[i].state == thisCampaign[0].locations[j].state &&
+                locationCopy[i].zipcode == thisCampaign[0].locations[j].zipcode){
+                    thisCampaign[0].locations[j].ID = locationCopy[i].ID;
+                    break;
+            }
+            if (Number(j) === thisCampaign[0].locations.length-1){
+                await getRepository(Locations)
+                    .createQueryBuilder()
+                    .delete()
+                    .where("_ID = :ID", {ID: locationCopy[i].ID})
+                    .execute();
+            }
         }
     }
     await Manager.save(thisCampaign[0]).catch(e => console.log(e));
@@ -187,8 +208,6 @@ export const editCampaign = async (campaignData, campaignID) => {
     //Update Managers
     thisCampaign[0].managers = [];
 
-    //access Manager database
-    let campaignManagerRepository = Manager.getRepository(CampaignManager);
     //Parse manager string
     campaignManager = campaignManager.split("\n");
     //initialize manager

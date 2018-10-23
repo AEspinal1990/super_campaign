@@ -7,11 +7,6 @@ export class TalkPoint{
     private _campaignID!:Campaign;
     @PrimaryColumn({name: "talk"})
     private _talk!:string;
-    
-    // constructor (campaignID:Campaign, talk:string){
-    //     this._campaignID = campaignID;
-    //     this._talk = talk;
-    // }
 
     public get campaignID(){
         return this._campaignID;
@@ -19,8 +14,8 @@ export class TalkPoint{
     public get talk(){
         return this._talk;
     }
-    public set campaignID(campaignID:Campaign){
-        this._campaignID = campaignID;
+    public set campaignID(campaign:Campaign){
+        this._campaignID = campaign;
     }
     public set talk(talk:string){
         this._talk = talk;

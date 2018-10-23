@@ -11,11 +11,6 @@ export class AssignedDate{
     @Column({name: "assignedDate"})
     private _assignedDate!:Date;
 
-    // constructor (canvasserID:Canvasser, assignedDate:Date){
-    //     this._canvasserID = canvasserID;
-    //     this._assignedDate = assignedDate;
-    // }
-
     public get canvasserID(): Canvasser{
         return this._canvasserID;
     }

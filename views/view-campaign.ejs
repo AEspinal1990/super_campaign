@@ -4,7 +4,6 @@
     <title>Super Campaign</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
-    </link>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -12,11 +11,11 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script> -->
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk">
-
-
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
+    <script type="text/javascript" src="./view-campaign-location.json"></script>
 
     </script>
+    <script type="text/javascript" src="map-view.js"></script>
     <script>
         function initialize() {
             var mapProp = {
@@ -25,6 +24,29 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map"), mapProp);
+            var geocode = new google.maps.Geocoder();
+            // var add = "100 Nicolls Road, Stony Brook, NY 11794";
+            // geocode.geocode({'address': add}, function (res, stat) {
+            //     if (stat == google.maps.GeocoderStatus.OK){
+            //         var marker = new google.maps.Marker({
+            //             map: map,
+            //             position: res[0].geometry.location
+            //         });
+            //     } else {
+            //         alert("Geocode not found");
+            //     }
+            // });
+
+            // var rawFile = new XMLHttpRequests();
+            // rawFile.overrideMimeType("'application/jsion");
+            // rawFile.open("GET", "./view-campaign-location.json", true);
+            // rawFile.onReadystatechange = function () {
+            // if (rawFile.readyState === 4 && rawFile.status == "200") {
+            // var locations = JSON.parse(rawFile.resposeText);
+
+
+            // }
+            // }
         }
         google.maps.event.addDomListener(window, 'load', initialize);
     </script>
@@ -179,6 +201,31 @@
         </table>
 
         <div id="map" style="width:500px;height:380px;">
+        </div>
+        <div id="marks">
+            <script>
+                var geocoder = new google.maps.Geocoder();
+                for (var i = 0; i < locations.length; i++) {
+                    var address =
+                        locations[i]._streetNumber + ", " +
+                        locations[i]._street + ", " +
+                        locations[i]._unit + ", " +
+                        locaitons[i]._city + ", " +
+                        locations[i]._state + ", " +
+                        locations[i]._zipcode;
+
+                    geocoder.geocode({ 'address': address }, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            marker = new google.maps.Marker({
+                                map: document.getElementById("map"),
+                                position: results[0].geometry.location
+                            });
+                        } else {
+                            alert("Geocode not found");
+                        }
+                    })
+                } alert("After loop");
+            </script>
         </div>
     </div>
 </body>

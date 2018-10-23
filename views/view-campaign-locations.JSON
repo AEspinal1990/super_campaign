@@ -1,0 +1,10 @@
+[
+    {
+        "streetNumber": 1,
+        "street": "street",
+        "unit": "unit",
+        "city": "city",
+        "state": "state",
+        "zipcode": 12345
+    }
+]

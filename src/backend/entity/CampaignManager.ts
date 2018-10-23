@@ -10,12 +10,6 @@ export class CampaignManager {
     private _ID!: User;
     private _currentCampaigns!: number[];
 
-    // constructor (ID:User, campaignID:Campaign, currentCampaigns:number[]){
-    //     this._ID = ID;
-    //     this._campaignID = campaignID;
-    //     this._currentCampaigns = currentCampaigns;
-    // }
-
     public get ID(): User {
         return this._ID;
     }
@@ -28,11 +22,7 @@ export class CampaignManager {
     public set currentCampaigns(value: number[]) {
         this._currentCampaigns = value;
     }
-
-    // public createCampaign():Campaign{
-
-    // }
-
+    
     public deleteCampaign(campaignID:number){
         var index = this._currentCampaigns.indexOf(campaignID);
         if (index != -1){

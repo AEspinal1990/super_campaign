@@ -20,7 +20,7 @@ export class Campaign {
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
-    @ManyToMany(type => Locations, {eager: true})
+    @ManyToMany(type => Locations, {eager: true, cascade: true})
     @JoinTable({name: "campaign_locations_mapping"})
     private _locations!:Locations[];
     @Column({name: "startDate"})
