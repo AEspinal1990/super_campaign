@@ -16,10 +16,10 @@ export class Locations{
     private _state!: string;
     @Column({name: "zipcode"})
     private _zipcode!: number;
-    // @Column({ name: "lat"})
-    // private _lat!: number;
-    // @Column({ name: "long" })
-    // private _long!: number;
+    @Column({ name: "lat"})
+    private _lat!: number;
+    @Column({ name: "long" })
+    private _long!: number;
 
     public get ID(): number {
         return this._ID;
@@ -42,18 +42,18 @@ export class Locations{
     public get zipcode(): number {
         return this._zipcode;
     }
-    // public get lat(): number {
-    //     return this._lat;
-    // }
-    // public get long(): number {
-    //     return this._long;
-    // }
-    // public set long(value: number) {
-    //     this._long = value;
-    // }
-    // public set lat(value: number) {
-    //     this._lat = value;
-    // }
+    public get lat(): number {
+        return this._lat;
+    }
+    public get long(): number {
+        return this._long;
+    }
+    public set long(value: number) {
+        this._long = value;
+    }
+    public set lat(value: number) {
+        this._lat = value;
+    }
     public set ID(value: number) {
         this._ID = value;
     }

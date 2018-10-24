@@ -9,6 +9,7 @@ import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
 import { Locations } from '../backend/entity/Locations';
 import * as fs from 'fs';
+import io from '../server';
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
@@ -68,11 +69,6 @@ router.get('/new', async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-    /** let newCampaignObject = createCampaign.createCampaign(req.body.campaign);
-    createCampaign.createQuestionaires(req.body.campaign, newCampaignObject);
-    createCampaign.createLocations(req.body.campaign, newCampaignObject);
-    */
-    //console.log(req.body.campaign);
     campaignCreator.createCampaign(req.body.campaign);
     logger.info(`CREATE CAMPAIGN - Created a campaign`);
     if (res.status(200))
@@ -196,15 +192,6 @@ router.post('/:id', async (req: Request, res: Response) => {
  * GET for view campaign
  */
 router.get('/:id/view', async (req: Request, res: Response) => {
-    // googleMapsClient.geocode({address: '100 Nicolls Road, Stony Brook, NY 11794'}, function(err, response) {
-    //     if (!err){
-    //         console.log("GEOCODE RESULTS:");
-    //         console.log(response.json.results);
-    //     } else{
-    //         console.log("GEOCODE NOT FOUND")
-    //     }
-    // })
- 
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo
         .find({where: {"_ID":  req.params.id}})
@@ -230,12 +217,6 @@ router.get('/:id/view', async (req: Request, res: Response) => {
             canvasser: ""
         });
     } else {
-        /*
-            Creating Talking Points, Assignment entity into DB
-        */
-        // campaign[0].assignment = new Assignment();
-        // await getManager().save(campaign[0]).catch(e => console.log(e));
-
         // MANUAL LOAD FROM DB - CM AND TALKING POINTS
         const tRepo = getRepository(TalkPoint);
         const tpoints = await tRepo.find({ where: { "_campaignID": req.params.id } });
@@ -249,15 +230,7 @@ router.get('/:id/view', async (req: Request, res: Response) => {
             .where("campaign._ID = :ID", { ID: req.params.id })
             .getMany();
 
-        // CREATE JSON FILE FOR LOCATIONS FOR MAP VIEW
-        // fs.writeFile("./view-campaign-locations.json", 
-        //     JSON.stringify(campaign[0].locations, null, 4), (e) => {
-        //     if (e){
-        //         console.error(e);
-        //         return;
-        //     }
-        //     console.log("view-campaign-locations.JSON has been created");
-        // })
+        // send geocodes through socket
 
         res.render('view-campaign', {
             id: campaign[0].ID,

@@ -68,7 +68,7 @@ const logger = createLogger({
   ]
 });
 logger.info('Starting Application');
-
+ 
 /**
  * Configurations
  */

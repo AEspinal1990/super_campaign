@@ -2,6 +2,7 @@ import app from './app';
 import * as fs from 'fs';
 import * as https from 'https';
 import { createConnection } from "typeorm";
+import { isObject } from 'util';
 
 var socket = require('socket.io');
 
@@ -21,7 +22,6 @@ var socket = require('socket.io');
 //     });
 // }).catch(e => console.log(e));
 
-
 /**
  * Create Connection to the Database
  */
@@ -31,14 +31,17 @@ const connection = createConnection().then(async (connection) => {
     //  server = app.listen(app.get('port'), () => {
         //  console.log('App is running on port', app.get('port'), app.get('env'))
     //  });
-    const serv = app.listen(app.get('port'), function(){
+    server = app.listen(app.get('port'), function(){
         console.log('App is running on port', app.get('port'), app.get('env'));
       });
-    var io = socket(serv);
-    io.on('connection', function(socket){
-        console.log("Made socket connect!");
+    var io = socket(server);
+    io.on('connection', function(socket){ 
+        console.log("Made socket connection!");
+        // io.emit('view-campaign-geocodes', {
+        //     lat: 40.9256538,
+        //     long: -73.140943
+        // });
     })
  }).catch(e => console.log(e));
 
 export default server;
-
