@@ -1,24 +1,24 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Locations{
-    @PrimaryGeneratedColumn({name: "ID"})
+export class Locations {
+    @PrimaryGeneratedColumn({ name: "ID" })
     private _ID!: number;
-    @Column({name: "num"})
+    @Column({ name: "num" })
     private _streetNumber!: number;
-    @Column({name: "street"})
+    @Column({ name: "street" })
     private _street!: string;
-    @Column({name: "unit", nullable: true})
+    @Column({ name: "unit", nullable: true })
     private _unit!: string;
-    @Column({name: "city"})
+    @Column({ name: "city" })
     private _city!: string;
-    @Column({name: "state"})
+    @Column({ name: "state" })
     private _state!: string;
-    @Column({name: "zipcode"})
+    @Column({ name: "zipcode" })
     private _zipcode!: number;
-    @Column({ name: "lat"})
+    @Column("decimal", { precision: 10, scale: 6, name: "lat"})
     private _lat!: number;
-    @Column({ name: "long" })
+    @Column("decimal", {precision: 10, scale: 6, name: "long"})
     private _long!: number;
 
     public get ID(): number {

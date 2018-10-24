@@ -26,6 +26,7 @@ var socket = require('socket.io');
  * Create Connection to the Database
  */
 let server;
+export let io;
 const connection = createConnection().then(async (connection) => {
      console.log(`Connection to ${connection.options.database} established`);
     //  server = app.listen(app.get('port'), () => {
@@ -34,13 +35,15 @@ const connection = createConnection().then(async (connection) => {
     server = app.listen(app.get('port'), function(){
         console.log('App is running on port', app.get('port'), app.get('env'));
       });
-    var io = socket(server);
-    io.on('connection', function(socket){ 
+    io = socket(server);
+    io.on('connection', function(sock){ 
         console.log("Made socket connection!");
-        // io.emit('view-campaign-geocodes', {
-        //     lat: 40.9256538,
-        //     long: -73.140943
-        // });
+        sock.on('room', function(room){
+            sock.join(room);
+        });
+        sock.on('disconnect', function(){
+            console.log("Connection disconnected");
+        });
     })
  }).catch(e => console.log(e));
 

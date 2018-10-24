@@ -1,7 +1,5 @@
 import "reflect-metadata";
 
-
-
 /**
  * Import Libraries
  */

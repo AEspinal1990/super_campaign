@@ -15,25 +15,44 @@
     <!-- <script type="text/javascript" src="map-view.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script>
+        // var map;
+        // var marker = [];
+        // setInterval(function () {
+        // }, 10000);
+        // var geocodes;
         function initialize() {
             var mapProp = {
                 center: new google.maps.LatLng(40.7128, -74.0060),
-                zoom: 5,
+                zoom: 7,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map"), mapProp);
+            // google.maps.event.trigger(map, 'resize');
 
+            var room = "view"
             var socket = io.connect('http://localhost:8080');
-            var geocodes;
+            socket.on('connect', function () {
+                socket.emit('room', room);
+            })
             socket.on('view-campaign-geocodes', function (geocode) {
-                for (let i in geocode) {
-                marker = new google.maps.Marker({
-                    map: map,
-                    position: {lat: Number(geocode.lat), lng: Number(geocode.long)}
-                });
-            }
+                loadMarkers(geocode);
+                // geocodes = geocode;
             });
         }
+        
+        function loadMarkers() {
+            for (let i in geocodes) {
+                var coord = new google.maps.LatLng(geocodes[i].lat, geocodes[i].lng);
+                alert(coord);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: coord
+                });
+            }
+            // marker.setMap(map);
+            // location.reload(true);
+        }
+
         google.maps.event.addDomListener(window, 'load', initialize);
     </script>
     <style>
@@ -43,7 +62,6 @@
             background: white;
             padding: 10px;
         }
-
         table,
         th,
         td {
@@ -188,6 +206,7 @@
 
         <div id="map" style="width:500px;height:380px;" onload='markers()'>
         </div>
+        <button id="markers" onclick="loadMarkers()">Map Locations</button>
     </div>
 </body>
 

@@ -9,7 +9,8 @@ import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
 import { Locations } from '../backend/entity/Locations';
 import * as fs from 'fs';
-import io from '../server';
+import { io } from '../server';
+
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
@@ -17,11 +18,9 @@ const googleMapsClient = require('@google/maps').createClient({
 
 const { createLogger, format, transports } = require('winston');
 const router: Router = Router();
-
 const path = require('path');
 const env = process.env.NODE_ENV || 'development';
 const logDir = 'log';
-
 
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
@@ -29,7 +28,6 @@ if (!fs.existsSync(logDir)) {
 }
 
 const filename = path.join(logDir, 'campaign.log');
-
 const logger = createLogger({
     // change level if in dev environment versus production
     level: env === 'development' ? 'debug' : 'info',
@@ -194,7 +192,7 @@ router.post('/:id', async (req: Request, res: Response) => {
 router.get('/:id/view', async (req: Request, res: Response) => {
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo
-        .find({where: {"_ID":  req.params.id}})
+        .find({ where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
     // console.log(campaign[0]);
     const qRepo = getRepository(Questionaire);
@@ -204,7 +202,7 @@ router.get('/:id/view', async (req: Request, res: Response) => {
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");
         res.status(404).render('view-campaign', {
-            id: "", 
+            id: "",
             name: "",
             manager: "",
             assignment: "",
@@ -231,6 +229,16 @@ router.get('/:id/view', async (req: Request, res: Response) => {
             .getMany();
 
         // send geocodes through socket
+        var geocodes = [];
+        for (let i in campaign[0].locations) {
+            geocodes.push({
+                lat: campaign[0].locations[i].lat,
+                lng: campaign[0].locations[i].long
+            });
+        }
+        // lets make a new connection socket for the view url and change the path from client
+        var room = "view";
+        io.sockets.in(room).emit('view-campaign-geocodes', geocodes);
 
         res.render('view-campaign', {
             id: campaign[0].ID,
