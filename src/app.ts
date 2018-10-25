@@ -31,7 +31,7 @@ const logDir = 'log';
 // const serv = app.listen(app.get('port'), function(){
 //   console.log('App is running on port', app.get('port'), app.get('env'));
 // });
-app.use('/static', express.static('node_modules'));
+// app.use('/static', express.static('node_modules'));
 // var io = socket(server);
 // io.on('connection', function(){
 //   console.log("socket connected");

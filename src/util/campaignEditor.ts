@@ -8,6 +8,10 @@ import { User } from "../backend/entity/User";
 import { getRepo } from "./userManagementSystem";
 import { Canvasser } from "../backend/entity/Canvasser";
 
+const googleMapsClient = require('@google/maps').createClient({
+    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
+});
+
 //This part is for the posting the form for editing campaign with the new camaignData
 export const editCampaign = async (campaignData, campaignID) => {
     const Manager = getManager();
@@ -179,6 +183,8 @@ export const editCampaign = async (campaignData, campaignID) => {
                 locationCopy[i].state == thisCampaign[0].locations[j].state &&
                 locationCopy[i].zipcode == thisCampaign[0].locations[j].zipcode){
                     thisCampaign[0].locations[j].ID = locationCopy[i].ID;
+                    thisCampaign[0].locations[j].lat = locationCopy[i].lat;
+                    thisCampaign[0].locations[j].long = locationCopy[i].long;
                     break;
             }
             if (Number(j) === thisCampaign[0].locations.length-1){
@@ -187,8 +193,35 @@ export const editCampaign = async (campaignData, campaignID) => {
                     .delete()
                     .where("_ID = :ID", {ID: locationCopy[i].ID})
                     .execute();
+                locationCopy.splice(Number(i), 1);
             }
         }
+    }
+    // get new coordinates for new locations
+    for (let i in thisCampaign[0].locations){
+        if (thisCampaign[0].locations[i].lat === undefined || thisCampaign[0].locations[i].long === undefined){
+            thisCampaign[0].locations[i].lat = -1;
+            thisCampaign[0].locations[i].long = -1;
+            var address =
+                thisCampaign[0].locations[i].streetNumber + " " +
+                thisCampaign[0].locations[i].street + ", " +
+                thisCampaign[0].locations[i].city + ", " +
+                thisCampaign[0].locations[i].state + " " +
+                thisCampaign[0].locations[i].zipcode;
+            await googleMapsClient.geocode({ address: address }, function (err, response) {
+                if (!err) {
+                    var coord = response.json.results[0].geometry.location;
+                } else {
+                    console.log("Geocode not found");
+                }
+                saveLocations(coord);
+            });
+            function saveLocations(coord) {
+                thisCampaign[0].locations[i].lat = Number(coord.lat);
+                thisCampaign[0].locations[i].long = Number(coord.lng);
+                Manager.save(thisCampaign[0]).catch(e => console.log(e));
+            }
+        } 
     }
     await Manager.save(thisCampaign[0]).catch(e => console.log(e));
 

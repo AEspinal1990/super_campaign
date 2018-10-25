@@ -2,6 +2,19 @@
 
 <head>
     <title>Super Campaign</title>
+    <style>
+        .content {
+                max-width: 500px;
+                margin: auto;
+                background: white;
+                padding: 10px;
+            }
+            table,
+            th,
+            td {
+                border: 1px solid black;
+            }
+        </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -12,62 +25,23 @@
         crossorigin="anonymous"></script>
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
     <script type="application/json" src="locations/view-campaign-location.JSON"></script>
-    <!-- <script type="text/javascript" src="map-view.js"></script> -->
+    <script type="text/javascript" src="/scripts/map-view.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script>
-        // var map;
-        // var marker = [];
-        // setInterval(function () {
-        // }, 10000);
-        // var geocodes;
-        function initialize() {
-            var mapProp = {
-                center: new google.maps.LatLng(40.7128, -74.0060),
-                zoom: 7,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            var map = new google.maps.Map(document.getElementById("map"), mapProp);
-            // google.maps.event.trigger(map, 'resize');
-
-            var room = "view"
-            var socket = io.connect('http://localhost:8080');
-            socket.on('connect', function () {
-                socket.emit('room', room);
-            })
-            socket.on('view-campaign-geocodes', function (geocode) {
-                loadMarkers(geocode);
-                // geocodes = geocode;
-            });
-        }
-        
-        function loadMarkers() {
+        var socket = io();
+        var room = "view";
+        socket.on('connect', function(){
+            socket.emit('room', room);
+        });
+        socket.on('view-campaign-geocodes', function (geocodes) {
+            console.log(data);
             for (let i in geocodes) {
-                var coord = new google.maps.LatLng(geocodes[i].lat, geocodes[i].lng);
-                alert(coord);
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: coord
-                });
+                var geocode = new google.maps.LatLng(data[i].lat, data[i].lng);
+                loadMarkers(geocode);
             }
-            // marker.setMap(map);
-            // location.reload(true);
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize);
+        });
     </script>
-    <style>
-        .content {
-            max-width: 500px;
-            margin: auto;
-            background: white;
-            padding: 10px;
-        }
-        table,
-        th,
-        td {
-            border: 1px solid black;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -206,7 +180,6 @@
 
         <div id="map" style="width:500px;height:380px;" onload='markers()'>
         </div>
-        <button id="markers" onclick="loadMarkers()">Map Locations</button>
     </div>
 </body>
 

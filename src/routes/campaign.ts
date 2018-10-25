@@ -126,8 +126,6 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
 
         //parse locations back to input form
         let locationsRepository = getRepository(Locations);
-        //let locations = await locationsRepository.find({where: {"_campaign": campaignID}}).catch(e => console.log(e));
-        //campaign[0].locations = locations;
         let locationsInput = "";
         for (let i in campaign[0].locations) {
             locationsInput += campaign[0].locations[i]._streetNumber + ", " +
@@ -144,8 +142,6 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
         for (let i in campaignManagers) {
             campaignManagersString += campaignManagers[i]._ID._employeeID + "\n";
         }
-        //console.log(campaignManagersString);
-
 
         //parse canvassers back to input form
         let campaignCanvasser = await getManager()
@@ -157,10 +153,8 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
 
         let campaignCanvassersString = "";
         for (let i in campaignCanvasser) {
-            //campaignCanvasserString += i.ID + "\n";
             campaignCanvassersString += campaignCanvasser[i].ID.employeeID + "\n";
         }
-        //console.log(campaignCanvasserString);
 
         res.status(200).render('edit-campaign', {
             campaignName: campaign[0].name,
