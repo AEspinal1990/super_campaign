@@ -65,6 +65,11 @@ export const createQuestionnaires = campaignData => {
 
 };
 
+const parseDate = date => {
+    let newDate = date.split("-");
+    return new Date(newDate[0], newDate[1], newDate[2]);
+}
+
 export const createCampaign = async campaignData => {
     const Manager = getManager();
 

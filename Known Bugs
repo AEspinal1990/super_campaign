@@ -1,0 +1,8 @@
+1) Updating a user causes password to be lost. Specifically 
+when changing roles.
+
+2)  Attempting to login with a user that does not exist causes
+an error.
+
+3) Issue with displaying campaign dates. How it is stored doesn't 
+represent actual date.

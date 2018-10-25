@@ -58,6 +58,7 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
       console.log('THe user',user);
       
       if (isValid) {
+          
         return done(null, user)
       } else {
         console.log('Invalid pass')
@@ -68,4 +69,4 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
       return done(error, false)
     }
   } // End async
-  ))
+))
