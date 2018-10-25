@@ -73,11 +73,18 @@ router.get('/new_assignment/:id', async (req: Request, res: Response) => {
     var avgTravelTime = 0;
     var assignment = new Assignment();
     assignment.campaign = campaign;
-
+    /*
+        foreach (1:location){
+            avgTravelTime += l.location.distance / avgTravelSpeed
+        }
+        avgTrabelTime /= numLocations;
+        numTask = (avgTravelTime + AVG_VISIT_TIME) / WORKDAY_LIMIT;
+    */
     campaign.locations.forEach(e => {
+        var pointDist = 0;
         campaign.locations.forEach(x => {
             // find avg distance from locations object
-
+            avgTravelTime += manhattanDist(e.lat, e.long, x.lat, x.long);
         });
     });
 
@@ -98,5 +105,15 @@ router.get('/new_assignment/:id', async (req: Request, res: Response) => {
             // await getManager().save(canvasser);
             await getManager().save(assignment);
 });
+
+function manhattanDist(coord1:number, coord2:number, coord3:number, coord4:number):number{
+    var distance = 0;
+    distance = Math.abs(coord1 - coord3);
+    distance += Math.abs(coord2 - coord4);
+    ///////////////////////////////////////////////////////////////////////
+    // difference in coordinates - may have to convert to miles or meters
+    ///////////////////////////////////////////////////////////////////////
+    return distance;
+}
 
 export { router as managerRouter };
