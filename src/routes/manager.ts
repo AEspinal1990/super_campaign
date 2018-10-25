@@ -75,18 +75,28 @@ router.get('/new_assignment/:id', async (req: Request, res: Response) => {
     assignment.campaign = campaign;
     /*
         foreach (1:location){
-            avgTravelTime += l.location.distance / avgTravelSpeed
+            avgTravelTime += l.location.distance / avgTravelSpeed {~===1.4 meters/sec or 3.1 mph}
         }
         avgTrabelTime /= numLocations;
         numTask = (avgTravelTime + AVG_VISIT_TIME) / WORKDAY_LIMIT;
     */
+   // temp global variables ########
+        var AVG_TRAVEL_SPEED = 3;
+        var WORKDAY_LIMIT = 10;
+
+   var avgDistance = 0;
     campaign.locations.forEach(e => {
-        var pointDist = 0;
+        var avgSingleDistance = 0;
+        // find the average distance from all other locations
         campaign.locations.forEach(x => {
             // find avg distance from locations object
-            avgTravelTime += manhattanDist(e.lat, e.long, x.lat, x.long);
+            avgSingleDistance += manhattanDist(e.lat, e.long, x.lat, x.long) / AVG_TRAVEL_SPEED;
         });
+        avgSingleDistance /= campaign.locations.length;
+        avgDistance += avgSingleDistance;
     });
+    avgDistance /= campaign.locations.length;
+    var numTask = (avgDistance + campaign.avgDuration) / WORKDAY_LIMIT;
 
     // relations testing
             
@@ -107,13 +117,19 @@ router.get('/new_assignment/:id', async (req: Request, res: Response) => {
 });
 
 function manhattanDist(coord1:number, coord2:number, coord3:number, coord4:number):number{
-    var distance = 0;
-    distance = Math.abs(coord1 - coord3);
-    distance += Math.abs(coord2 - coord4);
-    ///////////////////////////////////////////////////////////////////////
-    // difference in coordinates - may have to convert to miles or meters
-    ///////////////////////////////////////////////////////////////////////
-    return distance;
+    // or we can just use google map geometry api... 
+    var R = 3958.755866; // miles
+    var t1 = coord1 * Math.PI / 180;
+    var t2 = coord3 * Math.PI / 180;
+    var t3 = (coord3-coord1) * Math.PI / 180;
+    var t4 = (coord4-coord2) * Math.PI / 180;
+    
+    var a = Math.sin(t3/2) * Math.sin(t3/2) +
+            Math.cos(t1) * Math.cos(t2) *
+            Math.sin(t4/2) * Math.sin(t4/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    
+    var d = R * c;
+    return d;
 }
-
 export { router as managerRouter };
