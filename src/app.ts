@@ -27,16 +27,6 @@ const path = require('path');
 const env = process.env.NODE_ENV || 'development';
 const logDir = 'log';
 
-// var socket = require('socket.io');
-// const serv = app.listen(app.get('port'), function(){
-//   console.log('App is running on port', app.get('port'), app.get('env'));
-// });
-// app.use('/static', express.static('node_modules'));
-// var io = socket(server);
-// io.on('connection', function(){
-//   console.log("socket connected");
-// });
-
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
@@ -77,27 +67,27 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(expressValidator());    // This MUST come after bodyParser.
 app.use(methodOverride('_method'));
-// const options = {
-//     host: '35.231.100.7',
-//     port: 3306,
-//     user: 'root',
-//     password: 'rng308',
-//     database: 'supercampaign'
-// }; 
-// const sessionStore = new MySQLStore(options);
-// app.use(session({
-//   secret: 'my super secret, secret, is a secret?',
-//   store: sessionStore,
-//   resave: false,
-//   saveUninitialized: false,
-//   //cookie: { secure: true } // Set to True when using https
-// }))
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use((req, res, next) => {
-//   res.locals.isAuthenticated = req.isAuthenticated();
-//   next();
-// });
+const options = {
+    host: '35.231.100.7',
+    port: 3306,
+    user: 'root',
+    password: 'rng308',
+    database: 'supercampaign'
+}; 
+const sessionStore = new MySQLStore(options);
+app.use(session({
+  secret: 'my super secret, secret, is a secret?',
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  //cookie: { secure: true } // Set to True when using https
+}))
+app.use(passport.initialize());
+app.use(passport.session());
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+});
 
 /**
  * Use route handlers
@@ -107,7 +97,7 @@ app.use('/admin', adminRouter);
 app.use('/global', adminRouter);
 app.use('/campaign', campaignRouter);
 app.use('/manager', managerRouter);
-// app.use('/', authRouter);
+app.use('/', authRouter);
 
 
 export default app;

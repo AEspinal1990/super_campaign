@@ -62,7 +62,7 @@ const isAuthenticated = (req, res, next) => {
 /**
  * GET and POST for create Campaign
  */
-router.get('/new', async (req: Request, res: Response) => {
+router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
     res.render('create-campaign');
 });
 
@@ -78,7 +78,7 @@ router.post('/', async (req: Request, res: Response) => {
 /**
  * GET and POST for edit Campaign
  */
-router.get('/:id/edit', async (req: Request, res: Response) => {
+router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
 
@@ -172,7 +172,7 @@ router.get('/:id/edit', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/:id', async (req: Request, res: Response) => {
+router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
     campaignEditor.editCampaign(req.body.campaign, req.params.id);
     if (res.status(200))
         res.send("Campaign Edited!");
@@ -183,7 +183,7 @@ router.post('/:id', async (req: Request, res: Response) => {
 /**
  * GET for view campaign
  */
-router.get('/:id/view', async (req: Request, res: Response) => {
+router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo
         .find({ where: { "_ID": req.params.id } })
