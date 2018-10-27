@@ -45,19 +45,18 @@ function createTalkingPoints(campaignData, newCampaign) {
     return allTalkingPoints;
 };
 
-//function to build questionnaires
-export const createQuestionnaires = campaignData => {
-    let newCampaign = createCampaignEnt(campaignData);
+//function to create a Questionaire for each question
+function createQuestionnaires (campaignData, newCampaign) {
     let questionaire = campaignData.questionaire;
     questionaire = questionaire.trim().split("\n");
-    let allquestionnaires = [];
+    let allQuestionnaires = [];
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
-        allquestionnaires[i] = newQuestionaire;
+        allQuestionnaires[i] = newQuestionaire;
     }
-    return allquestionnaires;
+    return allQuestionnaires;
 
 };
 
@@ -77,29 +76,21 @@ export const createCampaign = async campaignData => {
     let locations = campaignData.locations;
     let canvasser = campaignData.canvassers;
 
-    //For Camapaign Object
+    //For Camapaign Entity
     let newCampaign = createCampaignEnt(campaignData);
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Talking Points
     let allTalkingPoints = createTalkingPoints(campaignData, newCampaign);
     for (let i in allTalkingPoints) {
-        let newTalkingPoint: TalkPoint = new TalkPoint();
-        newTalkingPoint.campaignID = newCampaign;
-        newTalkingPoint.talk = allTalkingPoints[i];
-        await Manager.save(newTalkingPoint).catch(e => console.log(e));
+        await Manager.save(i).catch(e => console.log(e));
     }
 
-    //For Questionaire Objects
-    //Parse Questionaire for Questionaire table
-    questionaire = questionaire.trim().split("\n");
-    for (let i in questionaire) {
-        let newQuestionaire: Questionaire = new Questionaire();
-        newQuestionaire.campaignID = newCampaign;
-        newQuestionaire.question = questionaire[i];
-        await Manager.save(newQuestionaire).catch(e => console.log(e));
+    //For Questionaires
+    let questionnaires = createQuestionnaires(campaignData, newCampaign);
+    for (let i in questionnaires) {
+        await Manager.save(i).catch(e => console.log(e));
     }
-    await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Location Objects
     //Parse Locations for All Locations of Campaign Table
