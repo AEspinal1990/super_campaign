@@ -12,20 +12,17 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 
 // function to build campaign data
-export const createCampaignInfo = campaignData => {
+export const createCampaignEnt = campaignData => {
     let campaignName = campaignData.campaignName;
-    let campaignManager = campaignData.managers;
     let startDate = campaignData.startDate;
     let endDate = campaignData.endDate;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
-    //let talkingPoints = campaignData.talkingPoints;
-    //let questionaire = campaignData.questionaire;
-    //let locations = campaignData.locations;
-    //let canvassers = campaignData.canvassers;
+
     startDate = startDate.split("-");
-    startDate = new Date(startDate[0], startDate[1], startDate[2]);
+    startDate = new Date(startDate[0], parseInt(startDate[1]) - 1, startDate[2]);
     endDate = endDate.split("-");
-    endDate = new Date(endDate[0], endDate[1], endDate[2]);
+    endDate = new Date(endDate[0], parseInt(endDate[1]) - 1, endDate[2]);
+
     const newCampaign: Campaign = new Campaign();
     newCampaign.name = campaignName;
     newCampaign.startDate = startDate;
@@ -36,7 +33,7 @@ export const createCampaignInfo = campaignData => {
 
 //function to build talking points
 export const createTalkingPoints = campaignData => {
-    let newCampaign = createCampaignInfo(campaignData);
+    let newCampaign = createCampaignEnt(campaignData);
     let talkingPoints = campaignData.talkingPoints;
     talkingPoints = talkingPoints.split("\n");
     let allTalkingPoints = []
@@ -51,7 +48,7 @@ export const createTalkingPoints = campaignData => {
 
 //function to build questionnaires
 export const createQuestionnaires = campaignData => {
-    let newCampaign = createCampaignInfo(campaignData);
+    let newCampaign = createCampaignEnt(campaignData);
     let questionaire = campaignData.questionaire;
     questionaire = questionaire.trim().split("\n");
     let allquestionnaires = [];
@@ -74,10 +71,8 @@ export const createCampaign = async campaignData => {
     const Manager = getManager();
 
     //ASSIGN campaignData to variables
-    let campaignName = campaignData.campaignName;
     let campaignManager = campaignData.managers;
-    let startDate = campaignData.startDate;
-    let endDate = campaignData.endDate;
+
     let talkingPoints = campaignData.talkingPoints;
     let questionaire = campaignData.questionaire;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
@@ -89,19 +84,7 @@ export const createCampaign = async campaignData => {
     ///////////////////////////////////
 
     //For Camapaign Object
-    //Parse date from format YYYY-MM-DD
-    startDate = startDate.split("-");
-    startDate = new Date(startDate[0], parseInt(startDate[1]) - 1, startDate[2]);
-    endDate = endDate.split("-");
-    endDate = new Date(endDate[0], parseInt(endDate[1]) - 1, endDate[2]);
-
-    //Assign parsed data to new campaign object
-    const newCampaign: Campaign = new Campaign();
-    newCampaign.name = campaignName;
-    newCampaign.startDate = startDate;
-    newCampaign.endDate = endDate;
-    newCampaign.avgDuration = averageExpectedDuration;
-    //Save Campaign Object to database
+    let newCampaign = createCampaignEnt(campaignData);
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Talking Points
