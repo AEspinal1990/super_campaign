@@ -32,8 +32,7 @@ export const createCampaignEnt = campaignData => {
 };
 
 //function to build talking points
-export const createTalkingPoints = campaignData => {
-    let newCampaign = createCampaignEnt(campaignData);
+function createTalkingPoints(campaignData, newCampaign) {
     let talkingPoints = campaignData.talkingPoints;
     talkingPoints = talkingPoints.split("\n");
     let allTalkingPoints = []
@@ -73,28 +72,24 @@ export const createCampaign = async campaignData => {
     //ASSIGN campaignData to variables
     let campaignManager = campaignData.managers;
 
-    let talkingPoints = campaignData.talkingPoints;
     let questionaire = campaignData.questionaire;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
     let locations = campaignData.locations;
     let canvasser = campaignData.canvassers;
-
-    ///////////////////////////////////
-    //PARSE THE DATA
-    ///////////////////////////////////
 
     //For Camapaign Object
     let newCampaign = createCampaignEnt(campaignData);
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Talking Points
-    talkingPoints = talkingPoints.split("\n");
-    for (let i in talkingPoints) {
+    let allTalkingPoints = createTalkingPoints(campaignData, newCampaign);
+    for (let i in allTalkingPoints) {
         let newTalkingPoint: TalkPoint = new TalkPoint();
         newTalkingPoint.campaignID = newCampaign;
-        newTalkingPoint.talk = talkingPoints[i];
+        newTalkingPoint.talk = allTalkingPoints[i];
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
+
     //For Questionaire Objects
     //Parse Questionaire for Questionaire table
     questionaire = questionaire.trim().split("\n");
