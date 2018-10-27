@@ -7,8 +7,11 @@
 - make view globals
 
 -test
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+- Add password validation
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Milestone 2 - Need 66 points
 - Create, View, Edit Campaign COMPLETELY - 15 points
     - Need to add map view functionality to view
@@ -21,24 +24,24 @@ Milestone 2 - Need 66 points
       including 2 for packing them at the beginning
     * 1 point for update/discard Assignment
 
-View Canvassing Assignment - 12 Points
+- View Canvassing Assignment - 12 Points
     - 4 pts table
     - 3 pts summary 
     - 5 pts for map view
 
-View Campaign Results - 12 Points
+- View Campaign Results - 12 Points
 
-Edit Availability - 4 Points
+- Edit Availability - 4 Points
 
-View Upcoming Canvassing Assignment - 3 Points
+- View Upcoming Canvassing Assignment - 3 Points
 
-Edit User - 4 Points
+- Edit User - 4 Points
 
-Edit Global Parameters - 3 Points
+- Edit Global Parameters - 3 Points
 
-Authentication and access control - 4 Points
+- Authentication and access control - 4 Points
 
-Network Security and Multi-host operation - 5 points
+- Network Security and Multi-host operation - 5 points
 
 - Complete Documentation
     
