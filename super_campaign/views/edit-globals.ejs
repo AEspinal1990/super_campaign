@@ -1,0 +1,22 @@
+<% include ./partials/header %>
+
+	<div class="container">
+
+        <h1>Edit Globals</h1>
+        
+		<form action="/admin/globals" method="POST">
+	  		<div class="form-group">
+			    <label>Max Duration of Daily Task</label>
+			    <input type="text" name="global[taskLimit]" class="form-control" value="<%= taskLimit %>">
+              </div>
+		    <div class="form-group">
+			    <label>Average Canvasser Travel Speed</label>
+			    <input type="text" name="global[avgSpeed]" class="form-control" value="<%= avgSpeed %>" >
+              </div>
+		  	
+		  <button type="submit" class="btn btn-default">Update</button>
+		</form>
+
+	</div><!-- Close container -->
+
+<% include ./partials/footer %>
