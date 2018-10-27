@@ -6,6 +6,7 @@
 - check for location duplicate
 - make view globals
 
+-test
 
 
 Milestone 2 - Need 66 points
