@@ -44,6 +44,8 @@ export function authenticationMiddleware() {
     }
 }
 
+
+// TODO: Remove unnecessary logs
 passport.use('local', new LocalStrategy(async (username, password, done) => {
     try {
         console.log(username);

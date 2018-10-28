@@ -55,6 +55,7 @@ router.post('/', passport.authenticate(
     }
 ));
 
+// TODO: leave a better message on log
 router.get('/logout', (req: Request, res: Response) => {
     logger.info('LOGOUT: Logged out User');
     req.logout();
