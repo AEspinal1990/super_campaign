@@ -11,7 +11,9 @@ import * as expressValidator    from 'express-validator';
 var session     = require('express-session');
 var MySQLStore  = require('express-mysql-session')(session);
 var passport    = require('passport');
-const { createLogger, format, transports } = require('winston');
+const winston   = require('winston');
+const logger    = require('./util/logger');
+const appLogger = winston.loggers.get('appLogger');
 
 /**
  * Import Route Handlers
@@ -21,42 +23,7 @@ import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 import { managerRouter }    from './routes/manager';
 
-
 const app = express();
-const fs = require('fs');
-const path = require('path');
-const env = process.env.NODE_ENV || 'development';
-const logDir = 'log';
-
-// Create the log directory if it does not exist
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
-
-const filename = path.join(logDir, 'results.log');
-const logger = createLogger({
-  // change level if in dev environment versus production
-  level: env === 'development' ? 'debug' : 'info',
-  format: format.combine(
-    format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }),
-    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-  ),
-  transports: [
-    new transports.Console({
-      level: 'info',
-      format: format.combine(
-        format.colorize(),
-        format.printf(
-          info => `${info.timestamp} ${info.level}: ${info.message}`
-        )
-      )
-    }),
-    new transports.File({ filename })
-  ]
-});
-logger.info('Starting Application');
  
 /**
  * Configurations
@@ -100,5 +67,5 @@ app.use('/campaign', campaignRouter);
 app.use('/manager', managerRouter);
 app.use('/', authRouter);
 
-
+appLogger.info('Starting Application');
 export default app;

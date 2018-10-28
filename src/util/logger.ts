@@ -11,7 +11,6 @@ if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
 }
 
-
 winston.loggers.add('adminLogger', {
     // change level if in dev environment versus production
     level: env === 'development' ? 'debug' : 'info',
@@ -51,7 +50,7 @@ winston.loggers.add('authLogger', {
                 )
             )
         }),
-        new winston.transports.File({ filename: 'admin.log' })
+        new winston.transports.File({ filename: 'auth.log' })
     ]
 });
 
@@ -73,7 +72,7 @@ winston.loggers.add('campaignLogger', {
                 )
             )
         }),
-        new winston.transports.File({ filename: 'admin.log' })
+        new winston.transports.File({ filename: 'campaign.log' })
     ]
 });
 
@@ -95,7 +94,7 @@ winston.loggers.add('canvasserLogger', {
                 )
             )
         }),
-        new winston.transports.File({ filename: 'admin.log' })
+        new winston.transports.File({ filename: 'canvasser.log' })
     ]
 });
 
@@ -117,7 +116,7 @@ winston.loggers.add('managerLogger', {
                 )
             )
         }),
-        new winston.transports.File({ filename: 'admin.log' })
+        new winston.transports.File({ filename: 'manager.log' })
     ]
 });
 
@@ -139,6 +138,6 @@ winston.loggers.add('appLogger', {
                 )
             )
         }),
-        new winston.transports.File({ filename: 'admin.log' })
+        new winston.transports.File({ filename: 'application.log' })
     ]
 });
