@@ -1,8 +1,9 @@
-const bcrypt    = require('bcryptjs');
-const passport  = require('passport');
-const LocalStrategy = require('passport-local').Strategy
-import { User } from "../backend/entity/User";
+const bcrypt            = require('bcryptjs');
+const passport          = require('passport');
+const LocalStrategy     = require('passport-local').Strategy
+import { User }             from "../backend/entity/User";
 import { getRepository }    from "typeorm";
+//import {authLogger}         from '../util/logger';
 
 passport.serializeUser(function(user_id, done) {
     done(null, user_id);
@@ -44,31 +45,27 @@ export function authenticationMiddleware() {
     }
 }
 
-
 // TODO: Remove unnecessary logs
 passport.use('local', new LocalStrategy(async (username, password, done) => {
     try {
-        console.log(username);
         const userRepository = getRepository(User);    
         const user = await userRepository.find({
           where: {"_username": username}
-        }).catch(e => console.log(e));
-  
-        console.log(user);
+        })
+        .catch(e => {});
+        // .catch(e => authLogger.error(`Login error occured ${username} not found, ${e}`));
+        
       // Check if password is correct for this account
-      const isValid = await comparePasswords(password, user[0]._password)
-      console.log('THe user',user);
+      const isValid = await comparePasswords(password, user[0]._password);
       
-      if (isValid) {
-          
+      if (isValid) {          
         return done(null, user)
       } else {
-        console.log('Invalid pass')
+        //authLogger.error(`Login error incorrect password for ${username}.`)
         return done(null, false, {message: 'Incorrect Password'})
       }
     } catch (error) {
-      console.log('Error in strategy')
       return done(error, false)
     }
-  } // End async
-))
+  } 
+));

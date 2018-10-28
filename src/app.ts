@@ -21,6 +21,7 @@ import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 import { managerRouter }    from './routes/manager';
 
+
 const app = express();
 const fs = require('fs');
 const path = require('path');

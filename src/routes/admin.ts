@@ -8,10 +8,12 @@ import { Canvasser }        from '../backend/entity/Canvasser';
 import { SystemAdmin }      from '../backend/entity/SystemAdmin'; 
 import { User }             from '../backend/entity/User';
 
+const winston = require('winston');
+const logger = require('../util/logger');
+const adminLogger = winston.loggers.get('adminLogger');
+
 import * as userManager from '../util/userManagementSystem';
 import * as authSystem  from '../config/auth';
-import {adminLogger}    from '../util/logger';
-
 
 var passwordValidator = require('password-validator');
 const router: Router = Router();
@@ -50,6 +52,8 @@ router.get('/globals', isAuthenticated, async(req: Request, res: Response) => {
     res.render('edit-globals',{avgSpeed, taskLimit})
 });
 
+// Can't be run when checking for changes in files. Will cause app to crash
+// Needs to be run with 'npm start'
 router.post('/globals', isAuthenticated, async(req: Request, res: Response) => {
     let taskLimit = req.body.global.taskLimit;
     let avgSpeed = req.body.global.avgSpeed;
@@ -61,10 +65,6 @@ router.post('/globals', isAuthenticated, async(req: Request, res: Response) => {
     };
 
     let data = JSON.stringify(global_params,null,2);
-    // Reason redirect does not work is that right after the file
-    // is saved the server goes down and restarts. While it's
-    // down a request is made to /globals which cannot be answered
-    // which causes refresh to fail.
     await fs.writeFileSync('src/globals.json', data);
 
     res.status(200).redirect(req.get('referer'))
@@ -90,7 +90,6 @@ router.post('/', [
     // const validPassword = !passwordSchema.validate(req.body.password);
     const validationErrors = await validationResult(req);
     if(validationErrors.isEmpty()) {
-        console.log(validationErrors)
         adminLogger.error(`Invalid Username or Password during registration`);
         return res.status(422).send('Username or Password is of an invalid length. Needs to be between 5-20 characters');
     }
