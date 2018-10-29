@@ -34,7 +34,7 @@ winston.loggers.add('adminLogger', {
 });
 
 
-winston.loggers.add('authLogger', {
+winston.loggers.add('appLogger', {
     // change level if in dev environment versus production
     level: env === 'development' ? 'debug' : 'info',
     format: format.combine(
@@ -51,7 +51,7 @@ winston.loggers.add('authLogger', {
                 )
             )
         }),
-        new winston.transports.File({ filename: 'auth.log' })
+        new winston.transports.File({ filename: appLogFilename })
     ]
 });
 
