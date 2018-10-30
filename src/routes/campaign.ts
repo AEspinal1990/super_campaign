@@ -9,7 +9,7 @@ import { Canvasser } from '../backend/entity/Canvasser';
 import { Assignment } from '../backend/entity/Assignment';
 import { Locations } from '../backend/entity/Locations';
 import * as fs from 'fs';
-import { io } from '../server';
+import server, { io } from '../server';
 
 
 const googleMapsClient = require('@google/maps').createClient({
@@ -231,8 +231,11 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
             });
         }
         // lets make a new connection socket for the view url and change the path from client
-        var room = "view";
-        io.sockets.in(room).emit('view-campaign-geocodes', geocodes);
+        io.on('connection', function(socket) {
+            socket.emit('geocodes', geocodes);
+            console.log('someone CONNECTED:');
+            console.log(geocodes);            
+        });
 
         res.render('view-campaign', {
             id: campaign[0].ID,
@@ -245,9 +248,10 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
             location: campaign[0].locations,
             question: campaign[0].question,
             points: campaign[0].talkingPoint,
-            canv: canva
+            canv: canva,
         });
     }
 });
+
 
 export { router as campaignRouter }

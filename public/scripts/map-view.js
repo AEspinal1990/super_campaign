@@ -1,4 +1,4 @@
-
+/*
 var map;
 var socket;
 // setInterval(function () {
@@ -60,3 +60,4 @@ function loadMarkers(geocodes) {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
+*/
