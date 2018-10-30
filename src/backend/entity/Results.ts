@@ -7,6 +7,9 @@ import { CompletedLocation } from "./CompletedLocation";
 export class Results{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
+    // add campaign name parameter
+    @Column({ name: "campaignID" })
+    private _campaignID!: number;
     @ManyToMany(type => Locations)
     @JoinTable({name: "results_locations_mapping"})
     private _locationID!: Locations;
@@ -19,17 +22,6 @@ export class Results{
     private _rating!: number;
     @ManyToOne(type => CompletedLocation, cl => cl.resultID, {nullable: true})
     private _completedLocation!: CompletedLocation;
-
-    // constructor (ID:number, location:Locations, canvasser:Canvasser, answer:boolean, 
-    //     answerNumber:number, answers:boolean[], rating:number){
-    //     this._ID = ID;
-    //     this._locationID = location;
-    //     this._canvasserID = canvasser;
-    //     this._answer = answer;
-    //     this._answerNumber = answerNumber;
-    //     this._answers = answers;
-    //     this._rating = rating;
-    // }
 
     public get ID(): number {
         return this._ID;
@@ -51,6 +43,12 @@ export class Results{
     }
     public get completedLocation(): CompletedLocation {
         return this._completedLocation;
+    }
+    public get campaignID(): number {
+        return this._campaignID;
+    }
+    public set campaignID(value: number) {
+        this._campaignID = value;
     }
     public set ID(value: number) {
         this._ID = value;

@@ -107,8 +107,8 @@ router.get('/new_assignment/:id', async (req: Request, res: Response) => {
             var task = new Task();
             assignment.tasks = [task];
             canvasser.task = [task];
-            task.remainingLocations = new RemainingLocation();
-            task.remainingLocations.locationID = campaign.locations;
+            task.remainingLocations = [new RemainingLocation()];
+            task.remainingLocations[0].locationID = campaign.locations;
             task.scheduledOn = new Date();
 
             // should save task and remainingLocation entities and canvasser

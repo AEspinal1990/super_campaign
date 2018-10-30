@@ -34,8 +34,7 @@ const connection = createConnection().then(async (connection) => {
     //  });
     server = app.listen(app.get('port'), function(){
         console.log('App is running on port', app.get('port'), app.get('env'));
-      });
-    io = socket(server);
+        io = socket(server);
     io.on('connection', function(sock){ 
         console.log("Made socket connection!");
         sock.on('room', function(room){
@@ -45,6 +44,9 @@ const connection = createConnection().then(async (connection) => {
             console.log("Connection disconnected");
         });
     })
+      });
+      
+    
  }).catch(e => console.log(e));
 
 export default server;

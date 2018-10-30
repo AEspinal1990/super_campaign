@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne} from "typeorm"
+import {Column, Entity, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOne, ManyToMany, JoinTable} from "typeorm"
 import { Canvasser } from "./Canvasser";
 import { RemainingLocation } from "./RemainingLocation";
 import { CompletedLocation } from "./CompletedLocation";
@@ -8,16 +8,17 @@ import { Assignment } from "./Assignment";
 export class Task{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
-    @ManyToOne(type => Canvasser, can => can.task)
+    @ManyToMany(type => Canvasser, {cascade: true})
+    // @JoinTable({name: "task_canvasser_mapping"})
     private _canvaserID!:Canvasser;
     @Column({name: "campaignID"})
     private _campaignID!:number;
-    @OneToOne(type => RemainingLocation, {nullable: true, cascade: true})
+    @OneToMany(type => RemainingLocation, rl => rl.task, {nullable: true, cascade: true})
     @JoinColumn()
-    private _remainingLocations!:RemainingLocation;
-    @OneToOne(type => CompletedLocation, {nullable: true, cascade: true})
+    private _remainingLocations!:RemainingLocation[];
+    @OneToMany(type => CompletedLocation, cl => cl.task, {nullable: true, cascade: true})
     @JoinColumn()
-    private _completedLocations!:CompletedLocation;
+    private _completedLocations!:CompletedLocation[];
     @Column({name: "currentLocation", nullable: true})
     private _currentLocation!:number;
     private _recommendedRoute!:number[];
@@ -37,10 +38,10 @@ export class Task{
     public get campaignID():number{
         return this._campaignID;
     }
-    public get remainingLocations(): RemainingLocation{
+    public get remainingLocations(): RemainingLocation[]{
         return this._remainingLocations;
     }
-    public get completedLocations():CompletedLocation{
+    public get completedLocations():CompletedLocation[]{
         return this._completedLocations;
     }
     public get currentLocation():number{
@@ -67,10 +68,10 @@ export class Task{
     public set campaignID(campaignId:number){
         this._campaignID = campaignId;
     }
-    public set remainingLocations(value:RemainingLocation){
+    public set remainingLocations(value:RemainingLocation[]){
         this._remainingLocations = value;
     }
-    public set completedLocations(value:CompletedLocation){
+    public set completedLocations(value:CompletedLocation[]){
         this._completedLocations = value;
     }
     public set currentLocation(location:number){
