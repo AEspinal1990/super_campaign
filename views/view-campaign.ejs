@@ -31,6 +31,7 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+<<<<<<< HEAD
     
 
     <!--
@@ -39,7 +40,12 @@
     -->
     <script src="http://localhost:8080/socket.io/socket.io.js"></script>
     <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>-->
+=======
+    <script async defer src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
+    <script type="application/json" src="locations/view-campaign-location.JSON"></script>
+>>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 </head>
 
 <body>
@@ -152,30 +158,34 @@
                 <th>State</th>
                 <th>Zip Code</th>
             </tr>
-            <% for(var i=0; i < location.length; i++){ %>
+            <% for(var i=0; i < locationz.length; i++){ %>
             <tr>
                 <td>
-                    <%= location[i]._streetNumber %>
+                    <%= locationz[i]._streetNumber %>
                 </td>
                 <td>
-                    <%= location[i]._street %>
+                    <%= locationz[i]._street %>
                 </td>
                 <td>
-                    <%= location[i]._unit %>
+                    <%= locationz[i]._unit %>
                 </td>
                 <td>
-                    <%= location[i]._city %>
+                    <%= locationz[i]._city %>
                 </td>
                 <td>
-                    <%= location[i]._state %>
+                    <%= locationz[i]._state %>
                 </td>
                 <td>
-                    <%= location[i]._zipcode %>
+                    <%= locationz[i]._zipcode %>
+                </td>
+                <td classname="geocodes" style="display: none;">
+                    <%= locationz[i]._lat %>
                 </td>
             </tr>
             <% } %>
         </table>
 
+<<<<<<< HEAD
         <div id="map"></div>
 
         <script>
@@ -226,8 +236,15 @@
         </script>    
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
 
+=======
+        <div style="display: none;"></div>
+
+        <div id="map" style="width:500px;height:380px;">
+        </div>
+>>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
     </div>
 
 </body>
+<script type="text/javascript" src="/scripts/map-view.js" async defer></script>
 
 </html>

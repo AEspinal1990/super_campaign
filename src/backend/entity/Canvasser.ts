@@ -14,7 +14,8 @@ export class Canvasser{
     @ManyToMany(type => Campaign, {cascade: true, eager: true, nullable: true})
     @JoinTable({name: "campaign_canvasser_mapping"})
     private _campaignID!: Campaign[];
-    @OneToMany(type => Task, task => task.canvasserID, {cascade: true})
+    @ManyToMany(type => Task,  {cascade: true})
+    @JoinTable({name: "canvasser_task_mapping"})
     private _task!:Task[];
     @ManyToMany(type => Availability, av => av.canvasserID, {cascade: true, nullable: true})
     @JoinTable({name: "canvasser_availability_mapping"})

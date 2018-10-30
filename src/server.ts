@@ -36,6 +36,7 @@ const connection = createConnection().then(async (connection) => {
     
     server = app.listen(app.get('port'), function(){
         console.log('App is running on port', app.get('port'), app.get('env'));
+<<<<<<< HEAD
       });
     
     io = require('socket.io').listen(server);
@@ -48,6 +49,9 @@ const connection = createConnection().then(async (connection) => {
     console.log('listening at 3000');
     --------------------------------------
     io = socket(server);
+=======
+        io = socket(server);
+>>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
     io.on('connection', function(sock){ 
         console.log("Made socket connection!");
         sock.on('room', function(room){
@@ -58,8 +62,14 @@ const connection = createConnection().then(async (connection) => {
             console.log("Connection disconnected");
         });
     })
+<<<<<<< HEAD
     */
 
+=======
+      });
+      
+    
+>>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
  }).catch(e => console.log(e));
 
 export default server;

@@ -231,12 +231,18 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
             });
         }
         // lets make a new connection socket for the view url and change the path from client
+<<<<<<< HEAD
         io.on('connection', function(socket) {
             socket.emit('geocodes', geocodes);
             console.log('someone CONNECTED:');
             console.log(geocodes);            
         });
 
+=======
+        var room = "view";
+        await io.sockets.in(room).emit('view-campaign-geocodes', geocodes);
+        console.log('location',campaign[0].locations)
+>>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
         res.render('view-campaign', {
             id: campaign[0].ID,
             name: campaign[0].name,
@@ -245,7 +251,7 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
             sDate: campaign[0].startDate,
             endDate: campaign[0].endDate,
             duration: campaign[0].avgDuration,
-            location: campaign[0].locations,
+            locationz: campaign[0].locations,
             question: campaign[0].question,
             points: campaign[0].talkingPoint,
             canv: canva,
