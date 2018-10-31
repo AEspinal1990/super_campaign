@@ -9,9 +9,9 @@ export class CompletedLocation {
     private _ID!:number;
     @ManyToMany(type => Locations)
     @JoinTable({name: "completed_locations_mapping"})
-    private _locationID!:Locations[];
+    private _locations!:Locations[];
     @OneToMany(type => Results, res => res.completedLocation)
-    private _resultID!:Results[];
+    private _results!:Results[];
     @OneToOne(type => Task, {cascade: true})
     // @JoinColumn({name: "task"})
     private _task!:Task;
@@ -19,11 +19,11 @@ export class CompletedLocation {
     public get ID(): number{
         return this._ID;
     }
-    public get locationID(): Locations[]{
-        return this._locationID;
+    public get locations(): Locations[]{
+        return this._locations;
     }
-    public get resultID(): Results[]{
-        return this._resultID;
+    public get results(): Results[]{
+        return this._results;
     }
     public get task():Task{
         return this._task;
@@ -31,11 +31,11 @@ export class CompletedLocation {
     public set ID(ID:number){
         this._ID = ID;
     }
-    public set locationID(locationID:Locations[]){
-        this._locationID = locationID;
+    public set locations(locationID:Locations[]){
+        this._locations = locationID;
     }
-    public set resultID(resultID:Results[]){
-        this._resultID = resultID;
+    public set results(resultID:Results[]){
+        this._results = resultID;
     }
     public set task(task:Task){
         this._task = task;

@@ -1,7 +1,6 @@
 import {Column, Entity, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable, JoinColumn, OneToOne, ManyToOne} from "typeorm";
 import { Assignment } from "./Assignment";
 import { CampaignManager } from "./CampaignManager";
-import { Canvasser } from "./Canvasser";
 import { Locations } from "./Locations";
 import { Questionaire } from "./Questionaire";
 import { TalkPoint } from "./TalkPoint";

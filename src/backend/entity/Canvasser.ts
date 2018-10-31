@@ -23,7 +23,7 @@ export class Canvasser{
     @JoinTable({name: "canvasser_availability_mapping"})
     private _availableDates!: Availability[];
 
-    @ManyToMany(type => AssignedDate)
+    @ManyToMany(type => AssignedDate, {cascade: true, nullable: true})
     @JoinTable({name: "canvasser_assignedDate_mapping"})
     private _assignedDates!:AssignedDate[];
     

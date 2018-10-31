@@ -4,6 +4,7 @@ import { User }           from "../backend/entity/User";
 import { Canvasser }      from '../backend/entity/Canvasser'; 
 import { Availability } from '../backend/entity/Availability';
 import { Results } from '..//backend/entity/Results';
+import { CompletedLocation } from '../backend/entity/CompletedLocation';
 
 const router: Router = Router();
 
@@ -27,10 +28,10 @@ const isAuthenticated = (req, res, next) => {
 router.get('/:id/availability', isAuthenticated, async(req: Request, res: Response) => {
     const canvas = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
-    .leftJoinAndSelect("canvasser._campaign", "campaign")
+    .leftJoinAndSelect("canvasser._campaigns", "campaign")
     .leftJoinAndSelect("canvasser._ID", "user")
-    .leftJoinAndSelect("canvasser._availableDate", "avaDate")
-    .leftJoinAndSelect("canvasser._assignedDate", "assDate")
+    .leftJoinAndSelect("canvasser._availableDates", "avaDate")
+    .leftJoinAndSelect("canvasser._assignedDates", "assDate")
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getOne();
     console.log(canvas);
@@ -44,10 +45,10 @@ router.get('/:id/availability', isAuthenticated, async(req: Request, res: Respon
     await getManager().save(canvas);
     const canv = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
-    .leftJoinAndSelect("canvasser._campaign", "campaign")
+    .leftJoinAndSelect("canvasser._campaigns", "campaign")
     .leftJoinAndSelect("canvasser._ID", "user")
-    .leftJoinAndSelect("canvasser._availableDate", "avaDate")
-    .leftJoinAndSelect("canvasser._assignedDate", "assDate")
+    .leftJoinAndSelect("canvasser._availableDates", "avaDate")
+    .leftJoinAndSelect("canvasser._assignedDates", "assDate")
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getOne();
     console.log(canv);
@@ -74,18 +75,16 @@ router.post('/:id/availability', isAuthenticated, async(req: Request, res: Respo
 router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
     const canv = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
-    .leftJoinAndSelect("canvasser._campaign", "campaign")
+    .leftJoinAndSelect("canvasser._campaigns", "campaign")
+    .leftJoinAndSelect("campaign._locations", "campLocations")
     .leftJoinAndSelect("canvasser._ID", "user")
-    .leftJoinAndSelect("canvasser._availableDate", "avaDate")
-    .leftJoinAndSelect("canvasser._assignedDate", "assDate")
+    .leftJoinAndSelect("canvasser._availableDates", "avaDate")
+    .leftJoinAndSelect("canvasser._assignedDates", "assDate")
     .leftJoinAndSelect("canvasser._results", "results")
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getOne();
     console.log(canv);
 
-    var results = new Results();
-    results.campaign = canv.campaigns[0];
-    results.location = canv.campaigns[0].locations[0];
 
     adminLogger.info(`/${req.params.id}/view-assignment - View Tasks`);
     

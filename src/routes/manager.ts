@@ -7,6 +7,7 @@ import { Locations } from '../backend/entity/Locations';
 import * as fs from 'fs';
 import { Task } from '../backend/entity/Task';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
+import { RelationCountAttribute } from 'typeorm/query-builder/relation-count/RelationCountAttribute';
 
 const router: Router = Router();
 const isAuthenticated = (req, res, next) => {
@@ -85,6 +86,33 @@ router.get('/new-assignment/:id', async (req: Request, res: Response) => {
         res.status(200);
     }
 });
+
+router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+    // get campaign id
+
+});
+
+router.get('/:CampaignID/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+    // use campaignID to get assignment
+
+    // use assignment to get tasks
+
+});
+
+router.get('/:id/results', isAuthenticated, async(req: Request, res: Response) => {
+
+    // need to work on results relation
+
+    // var results = new Results();
+    // results.campaign = canv.campaigns[0];
+    // results.answer = true;
+    // results.answerNumber = 1;
+    // results.rating = 5;
+    // results.completedLocation = new CompletedLocation();
+    // results.completedLocation.locations = [canv.campaigns[0].locations[0]];
+
+    // await getManager().save(results);
+})
 
 function manhattanDist(coord1: number, coord2: number, coord3: number, coord4: number): number {
     // or we can just use google map geometry api... 
