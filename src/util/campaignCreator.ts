@@ -65,13 +65,13 @@ export const initCampaign = (name, sDate, eDate, avgDuration) => {
 
 export const saveCampaign = async campaign => {
     const Manager = getManager();
-    // await Manager.save(campaign).catch(e => console.log(e));
+    await Manager.save(campaign).catch(e => console.log(e));
 };
 
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks
-    talkingPoints = talkingPoints.split("\n");
-    
+    talkingPoints = talkingPoints.trim().split("\n");
+
     /**
      * Create talking points and insert into array
      */
@@ -104,13 +104,103 @@ export const getQuestionaire = (campaign, questionaire) => {
     let questions = [];
     for (let i in questionaire) {
         questions.push(new Questionaire());
+        questions[i].campaign = campaign;
+        questions[i].question = questionaire[i];
     }
-    // for (let i in questionaire) {
-    //     let newQuestionaire: Questionaire = new Questionaire();
-    //     newQuestionaire.campaign = newCampaign;
-    //     newQuestionaire.question = questionaire[i];
-    // }
+
+    return questions;
 };
+
+export const saveQuestionaire = questionaire => {
+    const Manager = getManager();
+    /**
+     * Save each indivdual question to the DB.
+     */
+    questionaire.forEach( async question => {
+        await Manager.save(question).catch(e => console.log(e));
+    });
+};
+
+function getStreetNumber(location) {
+    return parseInt(location.split(',')[0]);
+}
+
+function getStreet(location){
+    return (location.split(',')[1]).trim();
+}
+
+function getUnit(location) {
+    let unit = location.split(',')[2];
+    if(unit === undefined){
+        return '';
+    }
+    return unit.trim();
+}
+
+function getCity(location) {
+    return (location.split(',')[3]).trim();
+}
+
+function getState(location) {
+    return (location.split(',')[4]).trim();
+}
+
+function getZip(location) {
+    let zip = (location.split(',')[5]);
+    parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
+    return zip;
+}
+
+function constructAddress(location){
+    var address =
+        location.streetNumber + " " +
+        location.street + ", " +
+        location.city + ", " +
+        location.state + " " +
+        location.zipcode;
+    return address;
+
+}
+
+async function getCoords(address) {
+    let c;
+    await googleMapsClient.geocode({ address: address }, function (err, response) {
+        if (!err) {
+            c = response.json.results[0].geometry.location;
+            console.log('Coordinates', c);
+            return c;
+        } else {
+            console.log("Geocode not found");
+        }
+        // CALLBACK FUNCTION - IN ORDER TO OBTAIN RESULTS, MUST OCCUR IN HERE
+    });
+    return c;
+};
+
+export const getLocations = async locations => {
+    locations = locations.trim().split('\n');
+
+    let places = [];
+    let address;
+    for(let i in locations) {
+        places.push(new Locations());
+        places[i].streetNumber = getStreetNumber(locations[i]);
+        places[i].street = getStreet(locations[i]);
+        places[i].unit = getUnit(locations[i]);
+        places[i].city = getCity(locations[i]);
+        places[i].state = getState(locations[i]);
+        places[i].zip = getZip(locations[i]);
+
+        address = constructAddress(places[i]);
+        let coords = await getCoords(address);
+        
+        console.log(coords);
+        places[i].lat = -1;
+        places[i].long = -1;
+    }
+    return places;    
+};
+
 
 
 
