@@ -39,12 +39,52 @@ router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-    campaignCreator.createCampaign(req.body.campaign);
-    campaignLogger.info(`/campaign - Created a campaign`);
-    if (res.status(200))
-        res.send("Campaign Created!");
-    else
-        res.send("Error!");
+    
+    // campaignCreator.createCampaign(req.body.campaign);
+    // campaignLogger.info(`/campaign - Created a campaign`);
+    // if (res.status(200))
+    //     res.send("Campaign Created!");
+    // else
+    //     res.send("Error!");
+
+    
+   
+    let startDate;
+    let endDate;
+    let avgDuration;
+    let campaign;
+    let talkingPoints;
+    let questionaire;
+
+    /**
+     * Grab dates from input and create Date objects
+     */
+    startDate = campaignCreator.getDate(req.body.campaign.startDate);
+    endDate = campaignCreator.getDate(req.body.campaign.endDate);
+    
+    /**
+     * Grab the expected average duration spent at each location.
+     */
+    avgDuration = Number(req.body.campaign.averageExpectedDuration);
+
+    /**
+     * Create Campaign then save it.
+     */
+    campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
+    //await campaignCreator.saveCampaign(campaign);
+
+    /**
+     * Parse the talking points then save them.
+     */
+    talkingPoints = campaignCreator.getTalkingPoints(campaign, req.body.campaign.talkingPoints);
+    //await campaignCreator.saveTalkingPoints(talkingPoints);
+
+    /**
+     * Parse the questionaire then save it.
+     */
+    questionaire = campaignCreator.getQuestionaire(campaign, req.body.campaign.questionaire);
+
+    res.send('okay');
 });
 
 /**
@@ -153,7 +193,7 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
 
 /**
  * GET for view campaign
- */
+ */ 
 router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo

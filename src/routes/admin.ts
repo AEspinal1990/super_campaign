@@ -169,7 +169,7 @@ router.post('/:username', isAuthenticated, async(req: Request, res: Response) =>
     let name = user.name;
     let username = user.username;
     let role = user.role;
-    console.log('PASS:', password);
+    
     /**
      * Update the user on the database
      */

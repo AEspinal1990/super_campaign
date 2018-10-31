@@ -49,6 +49,71 @@ export const createTalkingPoints = campaignData => {
     return allTalkingPoints;
 };
 
+export const getDate = date => {
+    date = date.split("-");
+    return new Date(date[0], date[1], date[2]);
+};
+
+export const initCampaign = (name, sDate, eDate, avgDuration) => {
+    const newCampaign: Campaign = new Campaign();
+    newCampaign.name = name;
+    newCampaign.startDate = sDate;
+    newCampaign.endDate = eDate;
+    newCampaign.avgDuration = avgDuration;
+    return newCampaign;
+};
+
+export const saveCampaign = async campaign => {
+    const Manager = getManager();
+    // await Manager.save(campaign).catch(e => console.log(e));
+};
+
+export const getTalkingPoints = (campaign, talkingPoints) => {
+    // Split up points by line breaks
+    talkingPoints = talkingPoints.split("\n");
+    
+    /**
+     * Create talking points and insert into array
+     */
+    let points = [];
+    for (let i in talkingPoints) {
+        points.push(new TalkPoint());
+        points[i].campaign = campaign;
+        points[i].talk = talkingPoints[i];       
+    }
+
+    return points;
+};
+
+export const saveTalkingPoints = talkingPoints => {   
+    const Manager = getManager();
+    /**
+     * Save each indivdual talking point to the DB.
+     */
+    talkingPoints.forEach( async point => {
+        await Manager.save(point).catch(e => console.log(e));
+    });
+};
+
+export const getQuestionaire = (campaign, questionaire) => {
+    questionaire = questionaire.trim().split("\n");
+
+    /**
+     * Create questions and insert into array
+     */
+    let questions = [];
+    for (let i in questionaire) {
+        questions.push(new Questionaire());
+    }
+    // for (let i in questionaire) {
+    //     let newQuestionaire: Questionaire = new Questionaire();
+    //     newQuestionaire.campaign = newCampaign;
+    //     newQuestionaire.question = questionaire[i];
+    // }
+};
+
+
+
 //function to build questionnaires
 export const createQuestionnaires = campaignData => {
     let newCampaign = createCampaignInfo(campaignData);
@@ -84,11 +149,13 @@ export const createCampaign = async campaignData => {
     ///////////////////////////////////
 
     //For Camapaign Object
+
     //Parse date from format YYYY-MM-DD
     startDate = startDate.split("-");
     startDate = new Date(startDate[0], startDate[1], startDate[2]);
     endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
+
     //Assign parsed data to new campaign object
     const newCampaign: Campaign = new Campaign();
     newCampaign.name = campaignName;
@@ -104,6 +171,7 @@ export const createCampaign = async campaignData => {
         let newTalkingPoint: TalkPoint = new TalkPoint();
         newTalkingPoint.campaign = newCampaign;
         newTalkingPoint.talk = talkingPoints[i];
+        console.log('Saving the talking point', newTalkingPoint);
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
     //For Questionaire Objects
@@ -164,7 +232,7 @@ export const createCampaign = async campaignData => {
         }
     }
 
-   campaignManager = campaignManager.split("\n");
+    campaignManager = campaignManager.split("\n");
     //initialize manager
     newCampaign.managers = [];
 

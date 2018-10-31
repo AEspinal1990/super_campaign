@@ -10,6 +10,10 @@ import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { RelationCountAttribute } from 'typeorm/query-builder/relation-count/RelationCountAttribute';
 
 const router: Router = Router();
+const winston   = require('winston');
+const logger    = require('../util/logger');
+const managerLogger = winston.loggers.get('managerLogger');
+
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next()
@@ -17,17 +21,18 @@ const isAuthenticated = (req, res, next) => {
         res.redirect('/');
     }
 }
+
 /* FOR OR_TOOLS PYTHON */
 // const {spawn} = require('child_process');
 // const pyORT = spawn('python', ['../util/ortool.py']);
 
-router.get('/new-assignment/:id', async (req: Request, res: Response) => {
+router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     const campaignID = req.params.id;
 
-    var campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
+    let campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
     if (campaign === undefined) {
         console.log('not found');
-        res.status(404).render('create-assignment', {
+        return res.status(404).render('create-assignment', {
             id: "",
             name: "",
             manager: "",
@@ -40,51 +45,68 @@ router.get('/new-assignment/:id', async (req: Request, res: Response) => {
             points: "",
             canvasser: ""
         });
-    } else {
-        // console.log(campaign);
-        var assignment = new Assignment();
-        // assignment.campaign = campaign;
+    } 
+        
+    /**
+     * Create Assignment
+     */
+    let assignment = new Assignment();
 
-        // temp global variables ########
-        var AVG_TRAVEL_SPEED = 3; // in MPH
-        var WORKDAY_LIMIT = 10; // in hours
+    /**
+     * Grab global parameters from globals.json
+     */
+    let AVG_TRAVEL_SPEED = 3; // in MPH
+    let WORKDAY_LIMIT = 10; // in hours
 
-        var avgDistance = 0;
-        campaign.locations.forEach(e => {
-            var avgSingleDistance = 0;
-            // find the average distance from all other locations
-            campaign.locations.forEach(x => {
-                // find avg distance from locations object
-                avgSingleDistance += manhattanDist(e.lat, e.long, x.lat, x.long) / AVG_TRAVEL_SPEED;
-            });
-            avgSingleDistance /= campaign.locations.length;
-            avgDistance += avgSingleDistance;
+    /**
+     * Grab necessary data to create an assignment.
+     */
+
+
+
+    /**
+     * Using the Manhatten Distance formula compute the average
+     * distance between all locations. This will help come up
+     * with a rough estimate on the number of tasks needed to 
+     * canvass all the locations in the current campaign.
+     */
+    let avgDistance = 0;
+    campaign.locations.forEach(e => {
+        let avgSingleDistance = 0;
+        // find the average distance from all other locations
+        campaign.locations.forEach(x => {
+            // find avg distance from locations object
+            avgSingleDistance += manhattanDist(e.lat, e.long, x.lat, x.long) / AVG_TRAVEL_SPEED;
         });
-        avgDistance /= campaign.locations.length;
-        var numTask = (avgDistance + campaign.avgDuration) / WORKDAY_LIMIT;
-        console.log("Create Assignment = number of tasks: ", numTask);
-        /////////////////////////////////////
-        ///////// relations testing /////////
-        /////////////////////////////////////  
-        var canvasser = await getManager().findOne(Canvasser, { where: { "_campaign_ID": campaign.ID } });
-        var task = new Task();
-        canvasser.task = [task];
-        task.remainingLocation = new RemainingLocation();
-        task.remainingLocation.locations = campaign.locations;
-        task.scheduledOn = new Date();
-        task.assignment = assignment;
-        task.campaignID = Number(campaign.ID);
-        task.status = false;
-        assignment.tasks = [task];
-        campaign.assignment = assignment;
-        await getManager().save(assignment);
-        await getManager().save(campaign);
-        await getManager().save(canvasser);
-        var campaig = await getManager().findOne(Campaign,
-            { where: { "_ID": campaign.ID }, relations: ["_assignment"] })
-        console.log(campaig);
-        res.status(200);
-    }
+        avgSingleDistance /= campaign.locations.length;
+        avgDistance += avgSingleDistance;
+    });
+    avgDistance /= campaign.locations.length;
+    let numTask = (avgDistance + campaign.avgDuration) / WORKDAY_LIMIT;
+    console.log("Create Assignment = number of tasks: ", numTask);
+
+    /////////////////////////////////////
+    ///////// relations testing /////////
+    /////////////////////////////////////  
+    let canvasser = await getManager().findOne(Canvasser, { where: { "_campaign_ID": campaign.ID } });
+    let task = new Task();
+    canvasser.task = [task];
+    task.remainingLocation = new RemainingLocation();
+    task.remainingLocation.locations = campaign.locations;
+    task.scheduledOn = new Date();
+    task.assignment = assignment;
+    task.campaignID = Number(campaign.ID);
+    task.status = false;
+    assignment.tasks = [task];
+    campaign.assignment = assignment;
+    await getManager().save(assignment);
+    await getManager().save(campaign);
+    await getManager().save(canvasser);
+    let campaig = await getManager().findOne(Campaign,
+        { where: { "_ID": campaign.ID }, relations: ["_assignment"] })
+    console.log(campaig);
+    res.status(200);
+    
 });
 
 router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
@@ -103,7 +125,7 @@ router.get('/:id/results', isAuthenticated, async(req: Request, res: Response) =
 
     // need to work on results relation
 
-    // var results = new Results();
+    // let results = new Results();
     // results.campaign = canv.campaigns[0];
     // results.answer = true;
     // results.answerNumber = 1;
@@ -116,18 +138,19 @@ router.get('/:id/results', isAuthenticated, async(req: Request, res: Response) =
 
 function manhattanDist(coord1: number, coord2: number, coord3: number, coord4: number): number {
     // or we can just use google map geometry api... 
-    var R = 3958.755866; // miles
-    var t1 = coord1 * Math.PI / 180;
-    var t2 = coord3 * Math.PI / 180;
-    var t3 = (coord3 - coord1) * Math.PI / 180;
-    var t4 = (coord4 - coord2) * Math.PI / 180;
+    let R = 3958.755866; // miles
+    let t1 = coord1 * Math.PI / 180;
+    let t2 = coord3 * Math.PI / 180;
+    let t3 = (coord3 - coord1) * Math.PI / 180;
+    let t4 = (coord4 - coord2) * Math.PI / 180;
 
-    var a = Math.sin(t3 / 2) * Math.sin(t3 / 2) +
+    let a = Math.sin(t3 / 2) * Math.sin(t3 / 2) +
         Math.cos(t1) * Math.cos(t2) *
         Math.sin(t4 / 2) * Math.sin(t4 / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    var d = R * c;
+    let d = R * c;
     return d;
 }
+
 export { router as managerRouter };
