@@ -15,6 +15,7 @@ const winston   = require('winston');
 const logger    = require('./util/logger');
 const appLogger = winston.loggers.get('appLogger');
 
+
 /**
  * Import Route Handlers
  */
@@ -22,6 +23,7 @@ import { adminRouter }      from './routes/admin';
 import { authRouter }       from './routes/authentication';
 import { campaignRouter }   from './routes/campaign';
 import { managerRouter }    from './routes/manager';
+import { canvasserRouter }  from './routes/canvasser';
 
 const app = express();
  
@@ -66,6 +68,7 @@ app.use('/admin', adminRouter);
 app.use('/global', adminRouter);
 app.use('/campaign', campaignRouter);
 app.use('/manager', managerRouter);
+app.use('/canvasser', canvasserRouter)
 app.use('/', authRouter);
 
 appLogger.info('Starting Application');

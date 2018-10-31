@@ -1,27 +1,31 @@
-import {Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable} from "typeorm";
+import {Entity, Column, OneToMany, JoinColumn, ManyToMany, JoinTable, PrimaryGeneratedColumn} from "typeorm";
 import { Canvasser } from "./Canvasser";
 
 @Entity()
 export class Availability{
-    @Column({name: "availableDate", primary: true})
+    @PrimaryGeneratedColumn({ name: "ID" })
+    private _ID!: number;
+    @Column({name: "availableDate"})
     private _availableDate!:Date;
-    @ManyToMany(type => Canvasser, can => can.availableDate, {cascade: true})
-    private _canvasser!:Canvasser[];
+    // @ManyToMany(type => Canvasser, {cascade: true})
+    // @JoinTable({name: "canvasser_availability_mapping"})
+    // private _canvasser!:Canvasser[];
 
-    // constructor (canvasserID:Canvasser, availableDate:Date){
-    //     this._canvasserID = canvasserID;
-    //     this._availableDate = availableDate;
+    // public get canvasserID(): Canvasser[]{
+    //     return this._canvasser;
     // }
-
-    public get canvasserID(): Canvasser[]{
-        return this._canvasser;
-    }
     public get availableDate(){
         return this._availableDate;
     }
-    public set canvasserID(canvasserID:Canvasser[]){
-        this._canvasser = canvasserID;
+    public get ID(): number {
+        return this._ID;
     }
+    public set ID(value: number) {
+        this._ID = value;
+    }
+    // public set canvasserID(canvasserID:Canvasser[]){
+    //     this._canvasser = canvasserID;
+    // }
     public set availableDate(availableDate:Date){
         this._availableDate = availableDate;
     }

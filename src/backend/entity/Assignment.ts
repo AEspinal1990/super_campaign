@@ -1,6 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn, OneToMany, JoinColumn, OneToOne} from "typeorm"
+import {Entity, PrimaryGeneratedColumn, OneToMany} from "typeorm"
 import { Task } from "./Task";
-import { Campaign } from "./Campaign";
 
 @Entity()
 export class Assignment {
@@ -8,8 +7,6 @@ export class Assignment {
     private _ID!: number;
     @OneToMany(type => Task, task => task.assignment, {cascade: true})
     private _tasks!:Task[];
-    // @OneToOne(type => Campaign, {cascade: true})
-    // private _campaign!:Campaign
 
     public get ID(): number {
         return this._ID;
@@ -17,16 +14,10 @@ export class Assignment {
     public get tasks(): Task[] {
         return this._tasks;
     }
-    // public get campaign(): Campaign {
-    //     return this._campaign;
-    // }
     public set ID(value: number) {
         this._ID = value;
     }
     public set tasks(taskID:Task[]){
         this._tasks = taskID;
     }
-    // public set campaign(value: Campaign){
-    //     this._campaign = value;
-    // }
 }
