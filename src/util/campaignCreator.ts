@@ -12,17 +12,20 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 
 // function to build campaign data
-export const createCampaignEnt = campaignData => {
+export const createCampaignInfo = campaignData => {
     let campaignName = campaignData.campaignName;
+    let campaignManager = campaignData.managers;
     let startDate = campaignData.startDate;
     let endDate = campaignData.endDate;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
-
+    //let talkingPoints = campaignData.talkingPoints;
+    //let questionaire = campaignData.questionaire;
+    //let locations = campaignData.locations;
+    //let canvassers = campaignData.canvassers;
     startDate = startDate.split("-");
-    startDate = new Date(startDate[0], parseInt(startDate[1]) - 1, startDate[2]);
+    startDate = new Date(startDate[0], startDate[1], startDate[2]);
     endDate = endDate.split("-");
-    endDate = new Date(endDate[0], parseInt(endDate[1]) - 1, endDate[2]);
-
+    endDate = new Date(endDate[0], endDate[1], endDate[2]);
     const newCampaign: Campaign = new Campaign();
     newCampaign.name = campaignName;
     newCampaign.startDate = startDate;
@@ -32,7 +35,8 @@ export const createCampaignEnt = campaignData => {
 };
 
 //function to build talking points
-function createTalkingPoints(campaignData, newCampaign) {
+export const createTalkingPoints = campaignData => {
+    let newCampaign = createCampaignInfo(campaignData);
     let talkingPoints = campaignData.talkingPoints;
     talkingPoints = talkingPoints.split("\n");
     let allTalkingPoints = []
@@ -45,52 +49,73 @@ function createTalkingPoints(campaignData, newCampaign) {
     return allTalkingPoints;
 };
 
-//function to create a Questionaire for each question
-function createQuestionnaires (campaignData, newCampaign) {
+//function to build questionnaires
+export const createQuestionnaires = campaignData => {
+    let newCampaign = createCampaignInfo(campaignData);
     let questionaire = campaignData.questionaire;
     questionaire = questionaire.trim().split("\n");
-    let allQuestionnaires = [];
+    let allquestionnaires = [];
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
         newQuestionaire.campaignID = newCampaign;
         newQuestionaire.question = questionaire[i];
-        allQuestionnaires[i] = newQuestionaire;
+        allquestionnaires[i] = newQuestionaire;
     }
-    return allQuestionnaires;
+    return allquestionnaires;
 
 };
-
-const parseDate = date => {
-    let newDate = date.split("-");
-    return new Date(newDate[0], newDate[1], newDate[2]);
-}
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
 
     //ASSIGN campaignData to variables
+    let campaignName = campaignData.campaignName;
     let campaignManager = campaignData.managers;
-
+    let startDate = campaignData.startDate;
+    let endDate = campaignData.endDate;
+    let talkingPoints = campaignData.talkingPoints;
     let questionaire = campaignData.questionaire;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
     let locations = campaignData.locations;
     let canvasser = campaignData.canvassers;
 
-    //For Camapaign Entity
-    let newCampaign = createCampaignEnt(campaignData);
+    ///////////////////////////////////
+    //PARSE THE DATA
+    ///////////////////////////////////
+
+    //For Camapaign Object
+    //Parse date from format YYYY-MM-DD
+    startDate = startDate.split("-");
+    startDate = new Date(startDate[0], startDate[1], startDate[2]);
+    endDate = endDate.split("-");
+    endDate = new Date(endDate[0], endDate[1], endDate[2]);
+    //Assign parsed data to new campaign object
+    const newCampaign: Campaign = new Campaign();
+    newCampaign.name = campaignName;
+    newCampaign.startDate = startDate;
+    newCampaign.endDate = endDate;
+    newCampaign.avgDuration = averageExpectedDuration;
+    //Save Campaign Object to database
     await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Talking Points
-    let allTalkingPoints = createTalkingPoints(campaignData, newCampaign);
-    for (let i in allTalkingPoints) {
-        await Manager.save(i).catch(e => console.log(e));
+    talkingPoints = talkingPoints.split("\n");
+    for (let i in talkingPoints) {
+        let newTalkingPoint: TalkPoint = new TalkPoint();
+        newTalkingPoint.campaignID = newCampaign;
+        newTalkingPoint.talk = talkingPoints[i];
+        await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
-
-    //For Questionaires
-    let questionnaires = createQuestionnaires(campaignData, newCampaign);
-    for (let i in questionnaires) {
-        await Manager.save(i).catch(e => console.log(e));
+    //For Questionaire Objects
+    //Parse Questionaire for Questionaire table
+    questionaire = questionaire.trim().split("\n");
+    for (let i in questionaire) {
+        let newQuestionaire: Questionaire = new Questionaire();
+        newQuestionaire.campaignID = newCampaign;
+        newQuestionaire.question = questionaire[i];
+        await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
+    await Manager.save(newCampaign).catch(e => console.log(e));
 
     //For Location Objects
     //Parse Locations for All Locations of Campaign Table
@@ -139,11 +164,7 @@ export const createCampaign = async campaignData => {
         }
     }
 
-    //For Manager Objects
-    //access Manager database
-    let campaignManagerRepository = Manager.getRepository(CampaignManager);
-    //Parse manager string
-    campaignManager = campaignManager.split("\n");
+   campaignManager = campaignManager.split("\n");
     //initialize manager
     newCampaign.manager = [];
 
@@ -158,10 +179,7 @@ export const createCampaign = async campaignData => {
     }
     await Manager.save(newCampaign);
 
-    //For Canvasser Objects 
-    //access Canvasser database
-    let canvasserRepository = Manager.getRepository(Canvasser);
-    //Parse Locations for All Locations of Campaign Table
+   //Parse Locations for All Locations of Campaign Table
     const canvassers: string[] = canvasser.split("\n");
 
     for (var i = 0; i < canvassers.length; i++) {

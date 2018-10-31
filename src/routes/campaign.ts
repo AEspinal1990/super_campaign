@@ -233,7 +233,7 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         // lets make a new connection socket for the view url and change the path from client
         var room = "view";
         await io.sockets.in(room).emit('view-campaign-geocodes', geocodes);
-        console.log('location',campaign[0].locations)
+        // console.log('location',campaign[0].locations)
         res.render('view-campaign', {
             id: campaign[0].ID,
             name: campaign[0].name,
