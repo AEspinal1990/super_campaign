@@ -68,11 +68,9 @@ router.post('/:id/availability', isAuthenticated, async(req: Request, res: Respo
     const mm = "03";
     const dd = "27";
     const date = `${yyyy} - ${mm} - `
-
-
 });
 
-router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/:id/view-tasks', isAuthenticated, async(req: Request, res: Response) => {
     const canv = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
     .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -86,7 +84,7 @@ router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Res
     console.log(canv);
 
 
-    adminLogger.info(`/${req.params.id}/view-assignment - View Tasks`);
+    adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
     
 });
 

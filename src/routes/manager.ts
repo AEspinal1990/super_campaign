@@ -8,6 +8,8 @@ import * as fs from 'fs';
 import { Task } from '../backend/entity/Task';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { RelationCountAttribute } from 'typeorm/query-builder/relation-count/RelationCountAttribute';
+import { Results } from '../backend/entity/Results';
+import { CompletedLocation } from '../backend/entity/CompletedLocation';
 
 const router: Router = Router();
 const isAuthenticated = (req, res, next) => {
@@ -87,31 +89,43 @@ router.get('/new-assignment/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/view-assignments', isAuthenticated, async(req: Request, res: Response) => {
     // get campaign id
 
+
+    // redirect to '/:id/view-assignment/:id'
 });
 
-router.get('/:CampaignID/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/]view-assignments/:id', isAuthenticated, async(req: Request, res: Response) => {
     // use campaignID to get assignment
 
     // use assignment to get tasks
 
+    //send to frontend
 });
 
 router.get('/:id/results', isAuthenticated, async(req: Request, res: Response) => {
-
+    var campaign = await getManager().findOne(Campaign,
+        {where: {"_ID": req.params.id}});
+    console.log(campaign);
     // need to work on results relation
 
-    // var results = new Results();
-    // results.campaign = canv.campaigns[0];
-    // results.answer = true;
-    // results.answerNumber = 1;
-    // results.rating = 5;
-    // results.completedLocation = new CompletedLocation();
-    // results.completedLocation.locations = [canv.campaigns[0].locations[0]];
+    var results = new Results();
+    results.campaign = campaign;
+    results.answer = true;
+    results.answerNumber = 1;
+    results.rating = 5;
+    results.completedLocation = new CompletedLocation();
+    results.completedLocation.locations = [campaign.locations[0]];
+    await getManager().save(results.completedLocation);
+    console.log("After CompletedLocation Save");
+    await getManager().save(results);
 
-    // await getManager().save(results);
+    campaign.results = [results];
+    var result = await getManager().findOne(Results, 
+        {where: {"_campaign": campaign}, 
+            relations: ["_completedLocation"]});
+    console.log(result);
 })
 
 function manhattanDist(coord1: number, coord2: number, coord3: number, coord4: number): number {

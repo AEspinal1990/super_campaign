@@ -31,7 +31,7 @@ export class Campaign {
     private _question!:Questionaire[];
     @OneToMany(type => TalkPoint, tp => tp.campaign)
     private _talkingPoint!:TalkPoint[];
-    @OneToMany(type => Results, res => res.campaign)
+    @OneToMany(type => Results, res => res.campaign, {nullable: true})
     private _results!: Results[];
     public get results(): Results[] {
         return this._results;
