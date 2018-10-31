@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/*
-=======
->>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
 var map;
 var socket;
 // setInterval(function () {
@@ -56,9 +52,5 @@ function loadMarkers(geocodes) {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
-<<<<<<< HEAD
-*/
-=======
 
 // window.onload(initialize());
->>>>>>> 02adf89a39c2e9cec3fd463eee199b3221024edc
