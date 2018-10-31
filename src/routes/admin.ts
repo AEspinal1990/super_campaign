@@ -145,7 +145,8 @@ router.get('/:username', isAuthenticated, async(req: Request, res: Response) => 
             id: 0
         });
     } else {
-        adminLogger.info(`/user/${username} - Accessed ${username}s profile`);
+        console.log(req.user)
+        adminLogger.info(`/user/${username} - ${req.user[0]._username} accessed ${username}s profile`);
         res.status(200).render('view-user', {            
             username,
             name: user[0]._name,
@@ -198,7 +199,7 @@ router.post('/:username', isAuthenticated, async(req: Request, res: Response) =>
         const entityManager = getManager();
         await entityManager
             .save(updatedRoledUser)
-            .then(() => adminLogger.info(`/user/${originalUsername} Edited ${originalUsername}`))
+            .then(() => adminLogger.info(`/user/${originalUsername} - ${req.user[0]._username} edited ${originalUsername}`))
             .catch(e => adminLogger.error(`Error occured while updating role tables of${username} in database, ${e}`));
     }
     
@@ -224,7 +225,7 @@ router.delete('/:username', isAuthenticated, async(req: Request, res: Response) 
         .delete()
         .where("_employeeID = :ID", {ID: user[0].employeeID})
         .execute()
-        .then(() => adminLogger.info(`/${req.params.username} Deleted ${user[0]._name}`));
+        .then(() => adminLogger.info(`/${req.params.username} ${req.user[0]._username} deleted ${user[0]._name}`));
 
 
     // TODO: Find a better palce to route to after a user has been deleted
