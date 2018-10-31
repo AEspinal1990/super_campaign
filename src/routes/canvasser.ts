@@ -79,10 +79,20 @@ router.get('/:id/view-tasks', isAuthenticated, async(req: Request, res: Response
     .leftJoinAndSelect("canvasser._availableDates", "avaDate")
     .leftJoinAndSelect("canvasser._assignedDates", "assDate")
     .leftJoinAndSelect("canvasser._results", "results")
+    .leftJoinAndSelect("canvasser._task", "task")
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getOne();
     console.log(canv);
 
+    if (canv === undefined){
+        res.render("view-tasks" ,{
+            // send undefined
+        });
+    } else {
+        res.render("view-tasks" ,{
+            // send canvasser's tasks
+        });
+    }
 
     adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
     

@@ -136,11 +136,11 @@ router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) 
     console.log(resul);
 
     if (result === undefined) {
-        res.status(404).send({
+        res.status(404).render("view-results", {
             // undefined values
         });
     } else {
-        res.status(200).send({
+        res.status(200).render("view-results", {
             // actual results values
         });
     }
