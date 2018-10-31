@@ -34,7 +34,7 @@ router.get('/logout', (req: Request, res: Response) => {
 });
 
 router.get('/temp',(req: Request, res: Response) => {
-    logger.info(`/login -${req.user}`);
+    authLogger.info(`/login -${req.user}`);
     res.send('Logged In Successfully!');
 });
  
