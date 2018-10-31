@@ -89,14 +89,14 @@ router.get('/new-assignment/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/view-assignments', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {
     // get campaign id
 
 
     // redirect to '/:id/view-assignment/:id'
 });
 
-router.get('/]view-assignments/:id', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/view-assignments/:id', isAuthenticated, async (req: Request, res: Response) => {
     // use campaignID to get assignment
 
     // use assignment to get tasks
@@ -104,28 +104,46 @@ router.get('/]view-assignments/:id', isAuthenticated, async(req: Request, res: R
     //send to frontend
 });
 
-router.get('/:id/results', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
-        {where: {"_ID": req.params.id}});
+        { where: { "_ID": req.params.id } });
     console.log(campaign);
-    // need to work on results relation
-
-    var results = new Results();
-    results.campaign = campaign;
-    results.answer = true;
-    results.answerNumber = 1;
-    results.rating = 5;
-    results.completedLocation = new CompletedLocation();
-    results.completedLocation.locations = [campaign.locations[0]];
-    await getManager().save(results.completedLocation);
-    console.log("After CompletedLocation Save");
+    /*
+        create dummy Results data
+    */
+    var results = [];
+    for (let i in campaign.question) {
+        var result = new Results();
+        result.campaign = campaign;
+        result.answer = true;
+        result.answerNumber = Number(i);
+        result.rating = 5;
+        result.completedLocation = new CompletedLocation();
+        result.completedLocation.locations = [campaign.locations[0]];
+        await getManager().save(result.completedLocation);
+    }
     await getManager().save(results);
+    campaign.results = results;
+    /*
+         End of Dummy Results data
+     */
 
-    campaign.results = [results];
-    var result = await getManager().findOne(Results, 
-        {where: {"_campaign": campaign}, 
-            relations: ["_completedLocation"]});
-    console.log(result);
+    var resul = await getManager().find(Results,
+        {
+            where: { "_campaign": campaign },
+            relations: ["_completedLocation"]
+        });
+    console.log(resul);
+
+    if (result === undefined) {
+        res.status(404).send({
+            // undefined values
+        });
+    } else {
+        res.status(200).send({
+            // actual results values
+        });
+    }
 })
 
 function manhattanDist(coord1: number, coord2: number, coord3: number, coord4: number): number {
