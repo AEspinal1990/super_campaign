@@ -8,11 +8,11 @@ export class Results{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
     // add campaign name parameter
-    @Column({ name: "campaignID" })
-    private _campaignID!: number;
+    @Column({ name: "campaign" })
+    private _campaign!: number;
     @ManyToMany(type => Locations)
     @JoinTable({name: "results_locations_mapping"})
-    private _locationID!: Locations;
+    private _location!: Locations;
     @Column({name: "result"})
     private _answer!:boolean;
     @Column({name: "resultNum"})
@@ -27,7 +27,7 @@ export class Results{
         return this._ID;
     }
     public get location(): Locations {
-        return this._locationID;
+        return this._location;
     }
     public get answer(): boolean {
         return this._answer;
@@ -45,16 +45,16 @@ export class Results{
         return this._completedLocation;
     }
     public get campaignID(): number {
-        return this._campaignID;
+        return this._campaign;
     }
     public set campaignID(value: number) {
-        this._campaignID = value;
+        this._campaign = value;
     }
     public set ID(value: number) {
         this._ID = value;
     }
     public set location(value: Locations) {
-        this._locationID = value;
+        this._location = value;
     }
     public set answer(answer:boolean) {
         this._answer = answer;

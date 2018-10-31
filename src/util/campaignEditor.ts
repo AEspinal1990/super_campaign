@@ -96,7 +96,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     const foundCanvassers = [];
     const usr = await getManager()
         .createQueryBuilder(Canvasser, "canv")
-        .leftJoinAndSelect("canv._campaignID", "campaign")
+        .leftJoinAndSelect("canv._campaign", "campaign")
         .leftJoinAndSelect("canv._ID", "user")
         .where("campaign.ID = :ID", { ID: thisCampaign[0].ID })
         .getMany();
@@ -104,7 +104,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     for (var i = 0; i < usr.length; i++) {
         const cvr = await getManager()
             .createQueryBuilder(Canvasser, "canv")
-            .leftJoinAndSelect("canv._campaignID", "campaign")
+            .leftJoinAndSelect("canv._campaign", "campaign")
             .leftJoinAndSelect("canv._ID", "user")
             .where("user.employeeID = :ID", { ID: usr[i].ID.employeeID })
             .getOne();

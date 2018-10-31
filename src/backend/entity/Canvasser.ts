@@ -14,7 +14,7 @@ export class Canvasser{
 
     @ManyToMany(type => Campaign, {cascade: true, eager: true, nullable: true})
     @JoinTable({name: "campaign_canvasser_mapping"})
-    private _campaignID!: Campaign[];
+    private _campaign!: Campaign[];
 
     @ManyToMany(type => Task,  {cascade: true})
     @JoinTable({name: "canvasser_task_mapping"})
@@ -35,7 +35,7 @@ export class Canvasser{
         return this._ID;
     }
     public get campaignID(): Campaign[] {
-        return this._campaignID;
+        return this._campaign;
     }
     public get task():Task[] {
         return this._task;
@@ -53,7 +53,7 @@ export class Canvasser{
         this._ID = value;
     }
     public set campaignID(value: Campaign[]) {
-        this._campaignID = value;
+        this._campaign = value;
     }
     public set task(value:Task[]){
         this._task = value;

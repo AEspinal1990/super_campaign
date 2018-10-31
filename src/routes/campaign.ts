@@ -118,7 +118,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         //parse canvassers back to input form
         let campaignCanvasser = await getManager()
             .createQueryBuilder(Canvasser, "canvasser")
-            .leftJoinAndSelect("canvasser._campaignID", "campaign")
+            .leftJoinAndSelect("canvasser._campaign", "campaign")
             .leftJoinAndSelect("canvasser._ID", "user")
             .where("campaign._ID = :ID", { ID: req.params.id })
             .getMany();
@@ -189,7 +189,7 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         // LOAD CANVASSERS FROM DB
         const canva = await getManager()
             .createQueryBuilder(Canvasser, "canvasser")
-            .leftJoinAndSelect("canvasser._campaignID", "campaign")
+            .leftJoinAndSelect("canvasser._campaign", "campaign")
             .leftJoinAndSelect("canvasser._ID", "user")
             .where("campaign._ID = :ID", { ID: req.params.id })
             .getMany();
