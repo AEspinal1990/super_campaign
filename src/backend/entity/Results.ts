@@ -2,14 +2,14 @@ import {Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, OneToOne, JoinCol
 import { Locations } from "./Locations";
 import { Canvasser } from "./Canvasser";
 import { CompletedLocation } from "./CompletedLocation";
+import { Campaign } from "./Campaign";
 
 @Entity()
 export class Results{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!: number;
-    // add campaign name parameter
-    @Column({ name: "campaign" })
-    private _campaign!: number;
+    @ManyToOne(type => Campaign, camp => camp.results)
+    private _campaign!: Campaign;
     @ManyToMany(type => Locations)
     @JoinTable({name: "results_locations_mapping"})
     private _location!: Locations;
@@ -44,10 +44,10 @@ export class Results{
     public get completedLocation(): CompletedLocation {
         return this._completedLocation;
     }
-    public get campaignID(): number {
+    public get campaign(): Campaign {
         return this._campaign;
     }
-    public set campaignID(value: number) {
+    public set campaign(value: Campaign) {
         this._campaign = value;
     }
     public set ID(value: number) {

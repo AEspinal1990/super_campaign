@@ -42,7 +42,7 @@ export const createTalkingPoints = campaignData => {
     let allTalkingPoints = []
     for (let i in talkingPoints) {
         let newTalkingPoint: TalkPoint = new TalkPoint();
-        newTalkingPoint.campaignID = newCampaign;
+        newTalkingPoint.campaign = newCampaign;
         newTalkingPoint.talk = talkingPoints[i];
         allTalkingPoints[i] = newTalkingPoint;
     }
@@ -57,7 +57,7 @@ export const createQuestionnaires = campaignData => {
     let allquestionnaires = [];
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
-        newQuestionaire.campaignID = newCampaign;
+        newQuestionaire.campaign = newCampaign;
         newQuestionaire.question = questionaire[i];
         allquestionnaires[i] = newQuestionaire;
     }
@@ -102,7 +102,7 @@ export const createCampaign = async campaignData => {
     talkingPoints = talkingPoints.split("\n");
     for (let i in talkingPoints) {
         let newTalkingPoint: TalkPoint = new TalkPoint();
-        newTalkingPoint.campaignID = newCampaign;
+        newTalkingPoint.campaign = newCampaign;
         newTalkingPoint.talk = talkingPoints[i];
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
@@ -111,7 +111,7 @@ export const createCampaign = async campaignData => {
     questionaire = questionaire.trim().split("\n");
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
-        newQuestionaire.campaignID = newCampaign;
+        newQuestionaire.campaign = newCampaign;
         newQuestionaire.question = questionaire[i];
         await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
@@ -166,7 +166,7 @@ export const createCampaign = async campaignData => {
 
    campaignManager = campaignManager.split("\n");
     //initialize manager
-    newCampaign.manager = [];
+    newCampaign.managers = [];
 
     for (var i = 0; i < campaignManager.length; i++) {
         if (campaignManager[i] != "") {
@@ -174,7 +174,7 @@ export const createCampaign = async campaignData => {
                 .findOne(User, { where: { "_employeeID": campaignManager[i] } });
             const cm = await getManager()
                 .findOne(CampaignManager, { where: { "_ID": use } });;
-            newCampaign.manager.push(cm);
+            newCampaign.managers.push(cm);
         }
     }
     await Manager.save(newCampaign);
@@ -188,7 +188,7 @@ export const createCampaign = async campaignData => {
                 .findOne(User, { where: { "_employeeID": canvassers[i] } })
             const ca = await getManager()
                 .findOne(Canvasser, { where: { "_ID": us } });
-            ca.campaignID.push(newCampaign);
+            ca.campaigns.push(newCampaign);
             await Manager.save(ca);
         }
     }

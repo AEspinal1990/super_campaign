@@ -38,7 +38,7 @@ router.get('/:id/availability', isAuthenticated, async(req: Request, res: Respon
     // relations testing //
     var avail = new Availability();
     avail.availableDate = new Date();
-    canvas.availableDate = [avail];
+    canvas.availableDates = [avail];
     await getManager().save(avail);
     console.log("After availability save");
     await getManager().save(canvas);
@@ -84,8 +84,8 @@ router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Res
     console.log(canv);
 
     var results = new Results();
-    results.campaignID = canv.campaignID[0].ID;
-    results.location = 
+    results.campaign = canv.campaigns[0];
+    results.location = canv.campaigns[0].locations[0];
 
     adminLogger.info(`/${req.params.id}/view-assignment - View Tasks`);
     

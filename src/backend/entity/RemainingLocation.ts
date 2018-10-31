@@ -8,7 +8,7 @@ export class RemainingLocation{
     private _ID!:number;
     @ManyToMany(type => Locations, {eager: true, cascade: true})
     @JoinTable({name: "remaining_locations_mapping"})
-    private _locationID!:Locations[];
+    private _locations!:Locations[];
     @OneToOne(type => Task)
     // @JoinColumn({name: "task"})
     private _task!: Task;
@@ -16,8 +16,8 @@ export class RemainingLocation{
     public get ID(){
         return this._ID;
     }
-    public get locationID(){
-        return this._locationID;
+    public get locations(){
+        return this._locations;
     }
     public get task(){
         return this._task;
@@ -25,8 +25,8 @@ export class RemainingLocation{
     public set ID(ID:number){
         this._ID = ID;
     }
-    public set locationID(locationID:Locations[]){
-        this._locationID = locationID;
+    public set locations(locationID:Locations[]){
+        this._locations = locationID;
     }
     public set task(task:Task){
         this._task = task;

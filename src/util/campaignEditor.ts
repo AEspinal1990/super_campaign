@@ -56,13 +56,13 @@ export const editCampaign = async (campaignData, campaignID) => {
     await talkPointRepo
         .createQueryBuilder()
         .delete()
-        .where("_campaignID = :ID", { ID: campaignID })
+        .where("_campaign = :ID", { ID: campaignID })
         .execute();
     //Create
     talkingPoints = talkingPoints.split("\n");
     for (let i in talkingPoints) {
         let newTalkingPoint: TalkPoint = new TalkPoint();
-        newTalkingPoint.campaignID = thisCampaign[0];
+        newTalkingPoint.campaign = thisCampaign[0];
         newTalkingPoint.talk = talkingPoints[i];
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
@@ -72,14 +72,14 @@ export const editCampaign = async (campaignData, campaignID) => {
     await questionaireRepo
         .createQueryBuilder()
         .delete()
-        .where("_campaignID = :ID", { ID: campaignID })
+        .where("_campaign = :ID", { ID: campaignID })
         .execute();
     //For Questionaire Objects
     //Parse Questionaire for Questionaire table
     questionaire = questionaire.split("\n");
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
-        newQuestionaire.campaignID = thisCampaign[0];
+        newQuestionaire.campaign = thisCampaign[0];
         newQuestionaire.question = questionaire[i];
         await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
@@ -96,7 +96,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     const foundCanvassers = [];
     const usr = await getManager()
         .createQueryBuilder(Canvasser, "canv")
-        .leftJoinAndSelect("canv._campaign", "campaign")
+        .leftJoinAndSelect("canv._campaigns", "campaign")
         .leftJoinAndSelect("canv._ID", "user")
         .where("campaign.ID = :ID", { ID: thisCampaign[0].ID })
         .getMany();
@@ -104,7 +104,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     for (var i = 0; i < usr.length; i++) {
         const cvr = await getManager()
             .createQueryBuilder(Canvasser, "canv")
-            .leftJoinAndSelect("canv._campaign", "campaign")
+            .leftJoinAndSelect("canv._campaigns", "campaign")
             .leftJoinAndSelect("canv._ID", "user")
             .where("user.employeeID = :ID", { ID: usr[i].ID.employeeID })
             .getOne();
@@ -113,11 +113,11 @@ export const editCampaign = async (campaignData, campaignID) => {
 
     var flag = 0;
     for (var i = 0; i < foundCanvassers.length; i++) {
-        for (var j = 0; j < foundCanvassers[i].campaignID.length; j++) {
-            if (foundCanvassers[i].campaignID[j].ID == thisCampaign[0].ID) {
+        for (var j = 0; j < foundCanvassers[i].campaigns.length; j++) {
+            if (foundCanvassers[i].campaigns[j].ID == thisCampaign[0].ID) {
                 // check if the foundCanvasser ID is in canvasser
                 if (flag == 1) {
-                    foundCanvassers[i].campaignID.splice(j, 1);
+                    foundCanvassers[i].campaigns.splice(j, 1);
                     await getManager().save(foundCanvassers[i]);
                 } else {
                     for (var k = 0; k < canvasser.length; k++) {
@@ -130,7 +130,7 @@ export const editCampaign = async (campaignData, campaignID) => {
                             break;
                         } else if (k == canvasser.length - 1) {
                             // canvasser was deleted from campaign
-                            foundCanvassers[i].campaignID.splice(j, 1);
+                            foundCanvassers[i].campaigns.splice(j, 1);
                             await getManager().save(foundCanvassers[i]);
                         }
                     }
@@ -142,7 +142,7 @@ export const editCampaign = async (campaignData, campaignID) => {
             for (var g = 0; g < canvasser.length; g++) {
                 const user = await getManager().findOne(User, { where: { "_employeeID": canvasser[g] } });
                 const newcanv = await getManager().findOne(Canvasser, { where: { "_ID": user } });
-                newcanv.campaignID.push(thisCampaign[0].ID);
+                newcanv.campaigns.push(thisCampaign[0].ID);
                 await getManager().save(newcanv);
             }
         }
@@ -230,7 +230,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     //Parse manager string
     campaignManager = campaignManager.split("\n");
     //initialize manager
-    thisCampaign[0].manager = [];
+    thisCampaign[0].managers = [];
 
     for (var i = 0; i < campaignManager.length; i++) {
         if (campaignManager[i] != "") {
@@ -238,7 +238,7 @@ export const editCampaign = async (campaignData, campaignID) => {
                 .findOne(User, { where: { "_employeeID": campaignManager[i] } });
             const cm = await getManager()
                 .findOne(CampaignManager, { where: { "_ID": use } });
-            thisCampaign[0].manager.push(cm);
+            thisCampaign[0].managers.push(cm);
         }
     }
     await Manager.save(thisCampaign[0]);

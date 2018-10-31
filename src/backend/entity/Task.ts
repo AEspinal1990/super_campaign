@@ -11,10 +11,10 @@ export class Task{
     private _campaignID!:number;
     @OneToOne(type => RemainingLocation, {nullable: true, cascade: true})
     @JoinColumn({name: "remainingLocation"})
-    private _remainingLocations!:RemainingLocation;
+    private _remainingLocation!:RemainingLocation;
     @OneToOne(type => CompletedLocation, {nullable: true, cascade: true})
     @JoinColumn({name: "completedLocation"})
-    private _completedLocations!:CompletedLocation;
+    private _completedLocation!:CompletedLocation;
     @Column({name: "currentLocation", nullable: true})
     private _currentLocation!:number;
     private _recommendedRoute!:number[];
@@ -31,11 +31,11 @@ export class Task{
     public get campaignID():number{
         return this._campaignID;
     }
-    public get remainingLocations(): RemainingLocation{
-        return this._remainingLocations;
+    public get remainingLocation(): RemainingLocation{
+        return this._remainingLocation;
     }
-    public get completedLocations():CompletedLocation{
-        return this._completedLocations;
+    public get completedLocation():CompletedLocation{
+        return this._completedLocation;
     }
     public get currentLocation():number{
         return this._currentLocation;
@@ -58,11 +58,11 @@ export class Task{
     public set campaignID(campaignId:number){
         this._campaignID = campaignId;
     }
-    public set remainingLocations(value:RemainingLocation){
-        this._remainingLocations = value;
+    public set remainingLocation(value:RemainingLocation){
+        this._remainingLocation = value;
     }
-    public set completedLocations(value:CompletedLocation){
-        this._completedLocations = value;
+    public set completedLocation(value:CompletedLocation){
+        this._completedLocation = value;
     }
     public set currentLocation(location:number){
         this._currentLocation = location;

@@ -81,7 +81,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
 
         //parse questions back to input form
         let questionaireRepository = getRepository(Questionaire);
-        let questionaire = await questionaireRepository.find({ where: { "_campaignID": campaignID } }).catch(e => console.log(e));
+        let questionaire = await questionaireRepository.find({ where: { "_campaign._ID": campaignID } }).catch(e => console.log(e));
         campaign[0].question = questionaire;
         let questionsInput = "";
         for (let i in campaign[0].question) {
@@ -89,7 +89,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         }
         //parse talking points back to input form
         let talkPointRepository = getRepository(TalkPoint);
-        let talkPoint = await talkPointRepository.find({ where: { "_campaignID": campaignID } }).catch(e => console.log(e));
+        let talkPoint = await talkPointRepository.find({ where: { "_campaign._ID": campaignID } }).catch(e => console.log(e));
         campaign[0].talkingPoint = talkPoint;
         let talkPointInput = "";
         for (let i in campaign[0].talkingPoint) {
@@ -97,28 +97,27 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         }
 
         //parse locations back to input form
-        let locationsRepository = getRepository(Locations);
         let locationsInput = "";
         for (let i in campaign[0].locations) {
-            locationsInput += campaign[0].locations[i]._streetNumber + ", " +
-                campaign[0].locations[i]._street + ", " +
-                campaign[0].locations[i]._unit + ", " +
-                campaign[0].locations[i]._city + ", " +
-                campaign[0].locations[i]._state + ", " +
-                campaign[0].locations[i]._zipcode + "\n";
+            locationsInput += campaign[0].locations[i].streetNumber + ", " +
+                campaign[0].locations[i].street + ", " +
+                campaign[0].locations[i].unit + ", " +
+                campaign[0].locations[i].city + ", " +
+                campaign[0].locations[i].state + ", " +
+                campaign[0].locations[i].zipcode + "\n";
         }
 
         //parse managers back to input form
-        let campaignManagers = campaign[0]._manager;
+        let campaignManagers = campaign[0].managers;
         let campaignManagersString = "";
         for (let i in campaignManagers) {
-            campaignManagersString += campaignManagers[i]._ID._employeeID + "\n";
+            campaignManagersString += campaignManagers[i].ID.employeeID + "\n";
         }
 
         //parse canvassers back to input form
         let campaignCanvasser = await getManager()
             .createQueryBuilder(Canvasser, "canvasser")
-            .leftJoinAndSelect("canvasser._campaign", "campaign")
+            .leftJoinAndSelect("canvasser._campaigns", "campaign")
             .leftJoinAndSelect("canvasser._ID", "user")
             .where("campaign._ID = :ID", { ID: req.params.id })
             .getMany();
@@ -161,9 +160,6 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         .find({ where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
     // console.log(campaign[0]);
-    const qRepo = getRepository(Questionaire);
-    const questionaire = await qRepo.find({ where: { "_campaignID": campaign[0].ID } });
-    campaign[0].question = questionaire;
 
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");
@@ -182,14 +178,17 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         });
     } else {
         // MANUAL LOAD FROM DB - CM AND TALKING POINTS
+        const qRepo = getRepository(Questionaire);
+        const questionaire = await qRepo.find({ where: { "_campaign": campaign[0].ID } });
+        campaign[0].question = questionaire;
         const tRepo = getRepository(TalkPoint);
-        const tpoints = await tRepo.find({ where: { "_campaignID": req.params.id } });
+        const tpoints = await tRepo.find({ where: { "_campaign": req.params.id } });
         campaign[0].talkingPoint = tpoints;
 
         // LOAD CANVASSERS FROM DB
         const canva = await getManager()
             .createQueryBuilder(Canvasser, "canvasser")
-            .leftJoinAndSelect("canvasser._campaign", "campaign")
+            .leftJoinAndSelect("canvasser._campaigns", "campaign")
             .leftJoinAndSelect("canvasser._ID", "user")
             .where("campaign._ID = :ID", { ID: req.params.id })
             .getMany();
@@ -212,7 +211,7 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         res.render('view-campaign', {
             id: campaign[0].ID,
             name: campaign[0].name,
-            manager: campaign[0].manager,
+            manager: campaign[0].managers,
             assignment: "",
             sDate: campaign[0].startDate,
             endDate: campaign[0].endDate,

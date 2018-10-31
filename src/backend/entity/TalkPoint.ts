@@ -3,19 +3,19 @@ import { Campaign } from "./Campaign";
 
 @Entity()
 export class TalkPoint{
-    @ManyToOne(type => Campaign, {primary: true})
-    private _campaignID!:Campaign;
+    @ManyToOne(type => Campaign, {primary: true, eager: true})
+    private _campaign!:Campaign;
     @PrimaryColumn({name: "talk"})
     private _talk!:string;
 
-    public get campaignID(){
-        return this._campaignID;
+    public get campaign(){
+        return this._campaign;
     }
     public get talk(){
         return this._talk;
     }
-    public set campaignID(campaign:Campaign){
-        this._campaignID = campaign;
+    public set campaign(campaign:Campaign){
+        this._campaign = campaign;
     }
     public set talk(talk:string){
         this._talk = talk;

@@ -5,6 +5,7 @@ import { Canvasser } from "./Canvasser";
 import { Locations } from "./Locations";
 import { Questionaire } from "./Questionaire";
 import { TalkPoint } from "./TalkPoint";
+import { Results } from "./Results";
 
 @Entity()
 export class Campaign {
@@ -14,7 +15,7 @@ export class Campaign {
     private _name!:string;
     @ManyToMany(type => CampaignManager, {cascade: true, eager: true})
     @JoinTable({name: "campaign_manager_mapping"})
-    private _manager:CampaignManager[];
+    private _managers:CampaignManager[];
     @OneToOne(type => Assignment, {nullable: true})
     @JoinColumn()
     private _assignment!: Assignment;
@@ -27,10 +28,18 @@ export class Campaign {
     private _endDate!:Date;
     @Column({name: "avgDuration"})
     private _avgDuration!:number;
-    @OneToMany(type => Questionaire, qt => qt.campaignID)
+    @OneToMany(type => Questionaire, qt => qt.campaign)
     private _question!:Questionaire[];
-    @OneToMany(type => TalkPoint, tp => tp.campaignID)
+    @OneToMany(type => TalkPoint, tp => tp.campaign)
     private _talkingPoint!:TalkPoint[];
+    @OneToMany(type => Results, res => res.campaign)
+    private _results!: Results[];
+    public get results(): Results[] {
+        return this._results;
+    }
+    public set results(value: Results[]) {
+        this._results = value;
+    }
 
     public get ID():number {
         return this._ID;
@@ -38,8 +47,8 @@ export class Campaign {
     public get name():string {
         return this._name;
     }
-    public get manager():CampaignManager[] {
-        return this._manager;
+    public get managers():CampaignManager[] {
+        return this._managers;
     }
     public get assignment():Assignment {
         return this._assignment;
@@ -68,8 +77,8 @@ export class Campaign {
     public set name(name:string){
         this._name = name;
     }
-    public set manager(value:CampaignManager[]){
-        this._manager = value;
+    public set managers(value:CampaignManager[]){
+        this._managers = value;
     }
     public set assignment(assignemnt:Assignment){
         this._assignment = assignemnt;

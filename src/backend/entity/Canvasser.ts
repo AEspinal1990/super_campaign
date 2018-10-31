@@ -14,18 +14,18 @@ export class Canvasser{
 
     @ManyToMany(type => Campaign, {cascade: true, eager: true, nullable: true})
     @JoinTable({name: "campaign_canvasser_mapping"})
-    private _campaign!: Campaign[];
+    private _campaigns!: Campaign[];
 
     @ManyToMany(type => Task,  {cascade: true})
     @JoinTable({name: "canvasser_task_mapping"})
     private _task!:Task[];
     @ManyToMany(type => Availability, {cascade: true, nullable: true})
     @JoinTable({name: "canvasser_availability_mapping"})
-    private _availableDate!: Availability[];
+    private _availableDates!: Availability[];
 
     @ManyToMany(type => AssignedDate)
     @JoinTable({name: "canvasser_assignedDate_mapping"})
-    private _assignedDate!:AssignedDate[];
+    private _assignedDates!:AssignedDate[];
     
     @ManyToMany(type => Results)
     @JoinTable({name: "canvasser_results_mapping"})
@@ -34,17 +34,17 @@ export class Canvasser{
     public get ID(): User {
         return this._ID;
     }
-    public get campaignID(): Campaign[] {
-        return this._campaign;
+    public get campaigns(): Campaign[] {
+        return this._campaigns;
     }
     public get task():Task[] {
         return this._task;
     }
-    public get availableDate():Availability[]{
-        return this._availableDate;
+    public get availableDates():Availability[]{
+        return this._availableDates;
     }
-    public get assignedDate(): AssignedDate[]{
-        return this._assignedDate;
+    public get assignedDates(): AssignedDate[]{
+        return this._assignedDates;
     }
     public get results(): Results[] {
         return this._results;
@@ -52,17 +52,17 @@ export class Canvasser{
     public set ID(value: User) {
         this._ID = value;
     }
-    public set campaignID(value: Campaign[]) {
-        this._campaign = value;
+    public set campaigns(value: Campaign[]) {
+        this._campaigns = value;
     }
     public set task(value:Task[]){
         this._task = value;
     }
-    public set availableDate(value:Availability[]){
-        this._availableDate = value;
+    public set availableDates(value:Availability[]){
+        this._availableDates = value;
     }
-    public set assignedDate(value:AssignedDate[]){
-        this._assignedDate = value;
+    public set assignedDates(value:AssignedDate[]){
+        this._assignedDates = value;
     }
     public set results(value: Results[]) {
         this._results = value;
