@@ -72,27 +72,27 @@ router.post('/', async (req: Request, res: Response) => {
      * Create Campaign then save it.
      */
     campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
-    //await campaignCreator.saveCampaign(campaign);
+    await campaignCreator.saveCampaign(campaign);
     campaignLogger.info(`Saved campaign: ${campaign._name}`);
 
     /**
      * Parse the talking points then save them.
      */
     talkingPoints = campaignCreator.getTalkingPoints(campaign, req.body.campaign.talkingPoints);
-    //await campaignCreator.saveTalkingPoints(talkingPoints);
+    await campaignCreator.saveTalkingPoints(talkingPoints);
     campaignLogger.info(`Saved talking points for: ${campaign._name}`);
 
     /**
      * Parse the questionaire then save it.
      */
     questionaire = campaignCreator.getQuestionaire(campaign, req.body.campaign.questionaire);
-    //await campaignCreator.saveQuestionaire(questionaire);
+    await campaignCreator.saveQuestionaire(questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
     /**
      * Parse locations then save them
      */
-    locations = campaignCreator.getLocations(req.body.campaign.locations);
+    locations = campaignCreator.getLocations(campaign, req.body.campaign.locations);
     //console.log(locations);
 
     res.send('okay');

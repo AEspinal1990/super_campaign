@@ -8,7 +8,8 @@ import { User } from '../backend/entity/User';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
+    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
+    Promise: Promise
 });
 
 // function to build campaign data
@@ -163,21 +164,35 @@ function constructAddress(location){
 }
 
 async function getCoords(address) {
-    let c;
-    await googleMapsClient.geocode({ address: address }, function (err, response) {
-        if (!err) {
-            c = response.json.results[0].geometry.location;
-            console.log('Coordinates', c);
-            return c;
-        } else {
-            console.log("Geocode not found");
-        }
-        // CALLBACK FUNCTION - IN ORDER TO OBTAIN RESULTS, MUST OCCUR IN HERE
-    });
-    return c;
+    // let c;
+    // await googleMapsClient.geocode({ address: address })
+    //     .asPromise()
+    //     .then(response => console.log(response.json.results[0].geometry.location))
+    //     .catch(err => console.log(err));
+    // console.log('GREAT!', c);
+
+    // await googleMapsClient.geocode({ address: address }, function (err, response) {
+    //     if (!err) {
+    //         var coord = response.json.results[0].geometry.location;
+    //         console.log(coord)
+    //     } else {
+    //         console.log("Geocode not found");
+    //     }
+    //     // CALLBACK FUNCTION - IN ORDER TO OBTAIN RESULTS, MUST OCCUR IN HERE
+    //     //saveLocations(coord);
+    // });
+    // function saveLocations(coord) {
+    //     location.lat = Number(coord.lat);
+    //     location.long = Number(coord.lng);
+    //     campaign.locations.push(newLocation);
+    //     Manager.save(newCampaign).catch(e => console.log(e));
+    //}
+    
 };
 
-export const getLocations = async locations => {
+export const getLocations = async (campaign, locations) => {
+    const Manager = getManager();
+
     locations = locations.trim().split('\n');
 
     let places = [];
@@ -192,13 +207,28 @@ export const getLocations = async locations => {
         places[i].zip = getZip(locations[i]);
 
         address = constructAddress(places[i]);
-        let coords = await getCoords(address);
+
+        /**
+         * WTF is going on here!?!?
+         */
+        await googleMapsClient.geocode({ address: address }, function (err, response) {
+            if (!err) {
+                var coord = response.json.results[0].geometry.location;
+            } else {
+                return console.log("Geocode not found");
+            }
+            
+            places[i].lat = Number(coord.lat);
+            places[i].long = Number(coord.lng);
+            campaign.locations.push(places[i]);
+            
+            Manager.save(campaign).catch(e => console.log(e));
+        });
         
-        console.log(coords);
-        places[i].lat = -1;
-        places[i].long = -1;
     }
     return places;    
+
+    
 };
 
 
