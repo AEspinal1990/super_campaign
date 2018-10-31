@@ -12,8 +12,8 @@ export class CompletedLocation {
     private _locationID!:Locations[];
     @OneToMany(type => Results, res => res.completedLocation)
     private _resultID!:Results[];
-    @ManyToOne(type => Task, tas => tas.completedLocations, {primary: true, cascade: true})
-    @JoinColumn({name: "taskID"})
+    @OneToOne(type => Task, {cascade: true})
+    // @JoinColumn({name: "task"})
     private _task!:Task;
 
     public get ID(): number{

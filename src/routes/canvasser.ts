@@ -5,42 +5,10 @@ import { Canvasser }      from '../backend/entity/Canvasser';
 
 const router: Router = Router();
 
-const fs = require('fs');
-const path = require('path');
-const env = process.env.NODE_ENV || 'development';
-const logDir = 'log';
+const winston = require('winston');
+const logger = require('../util/logger');
+const adminLogger = winston.loggers.get('canvasserLogger');
 
-
-// Create the log directory if it does not exist
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
-const { createLogger, format, transports } = require('winston');
-
-const filename = path.join(logDir, 'authentication.log');
-
-const logger = createLogger({
-  // change level if in dev environment versus production
-  level: env === 'development' ? 'debug' : 'info',
-  format: format.combine(
-    format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }),
-    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-  ),
-  transports: [
-    new transports.Console({
-      level: 'info',
-      format: format.combine(
-        format.colorize(),
-        format.printf(
-          info => `${info.timestamp} ${info.level}: ${info.message}`
-        )
-      )
-    }),
-    new transports.File({ filename })
-  ]
-});
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next()
@@ -62,7 +30,7 @@ router.get('/:id/availability', isAuthenticated, async(req: Request, res: Respon
     .getMany();
 
 
-    logger.info(`Edit Availability - Canvasser changed his availablility`);
+    adminLogger.info(`/${req.params.id}/availability - Changed availablility`);
 });
 
 export {router as canvasserRouter}

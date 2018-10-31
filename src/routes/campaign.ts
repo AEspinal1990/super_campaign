@@ -16,40 +16,12 @@ const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
 });
 
-const { createLogger, format, transports } = require('winston');
 const router: Router = Router();
-const path = require('path');
-const env = process.env.NODE_ENV || 'development';
-const logDir = 'log';
 
-// Create the log directory if it does not exist
-if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
-}
+const winston = require('winston');
+const logger = require('../util/logger');
+const campaignLogger = winston.loggers.get('campaignLogger');
 
-const filename = path.join(logDir, 'campaign.log');
-const logger = createLogger({
-    // change level if in dev environment versus production
-    level: env === 'development' ? 'debug' : 'info',
-    format: format.combine(
-        format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss'
-        }),
-        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-    ),
-    transports: [
-        new transports.Console({
-            level: 'info',
-            format: format.combine(
-                format.colorize(),
-                format.printf(
-                    info => `${info.timestamp} ${info.level}: ${info.message}`
-                )
-            )
-        }),
-        new transports.File({ filename })
-    ]
-});
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next()
@@ -68,7 +40,7 @@ router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
     campaignCreator.createCampaign(req.body.campaign);
-    logger.info(`CREATE CAMPAIGN - Created a campaign`);
+    campaignLogger.info(`/campaign - Created a campaign`);
     if (res.status(200))
         res.send("Campaign Created!");
     else
@@ -81,7 +53,7 @@ router.post('/', async (req: Request, res: Response) => {
 router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
-
+    
     const campaign = await campaignRepository.find({ where: { "_ID": campaignID } }).catch(e => console.log(e));
     if (campaign === undefined) {
         console.log('not found')
@@ -168,7 +140,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
             campaignCanvassers: campaignCanvassersString,
             campaignID: req.params.id
         });
-        logger.info(`EDIT CAMPAIGN - Editted a campaign`);
+        campaignLogger.info(`/edit/${req.params.id} - Updated Campaign`);
     }
 });
 
