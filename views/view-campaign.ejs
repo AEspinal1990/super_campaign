@@ -14,7 +14,15 @@
             td {
                 border: 1px solid black;
             }
+        
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px;  /* The height is 400 pixels */
+            width: 100%;  /* The width is the width of the web page */
+            background-color: grey;
+        }
         </style>
+  
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -23,8 +31,14 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-    <script async defer src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk"></script>
+    
+
+    <!--
     <script type="application/json" src="locations/view-campaign-location.JSON"></script>
+    <script type="text/javascript" src="/scripts/map-view.js"></script>
+    -->
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 </head>
@@ -166,11 +180,58 @@
             <% } %>
         </table>
 
-        <div style="display: none;"></div>
+        <div id="map"></div>
 
-        <div id="map" style="width:500px;height:380px;">
-        </div>
+        <script>
+            var map;
+            var uluru = {lat: -25.344, lng: 131.036};
+
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: uluru,
+                    zoom: 4
+                });
+            }
+
+
+            var markers = [];
+            var getMarkerUniqueId = function(lat, lng) {
+                return lat + '_' + lng;
+            }
+            function addMarker(location) {
+                var markerId = getMarkerUniqueId(location.lat, location.lng);
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    id: markerId
+                });
+                markers[markerId] = marker;
+            }
+            var removeMarker = function(marker, markerId) {
+	            marker.setMap(null); // set markers setMap to null to remove it from map
+	            delete markers[markerId]; // delete marker instance from markers object
+            }; 
+            
+            var socket = io();
+            $(document).ready(function() {
+                
+                socket.on('geocodes', function(geocodes) {
+                    centerGeocode = {lat: parseFloat(geocodes[0].lat), lng: parseFloat(geocodes[0].lng)};
+                    console.log("FRONT:" + geocodes);
+                    console.log("GEOCODE" + centerGeocode);
+                    addMarker(uluru);
+
+                    addMarker(centerGeocode);
+                });
+                
+            });
+            
+        </script>    
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
+
     </div>
+
 </body>
 <script type="text/javascript" src="/scripts/map-view.js" async defer></script>
 

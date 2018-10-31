@@ -10,8 +10,15 @@ const logDir = 'log';
 if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
 }
+
 const adminLogFilename = path.join(logDir, 'admin.log'); 
 const appLogFilename = path.join(logDir, 'application.log');
+const campaignLogFilename = path.join(logDir, 'campaign.log');
+const canvassLogFilename = path.join(logDir, 'canvass.log');
+const managerLogFilename = path.join(logDir, 'manager.log');
+const authLogFilename = path.join(logDir, 'authentication.log');
+
+
 winston.loggers.add('adminLogger', {
     // change level if in dev environment versus production
     level: env === 'development' ? 'debug' : 'info',
@@ -30,6 +37,28 @@ winston.loggers.add('adminLogger', {
             )
         }),
         new winston.transports.File({ filename: adminLogFilename })
+    ]
+});
+
+
+winston.loggers.add('authLogger', {
+    // change level if in dev environment versus production
+    level: env === 'development' ? 'debug' : 'info',
+    format: format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new winston.transports.Console({
+            level: 'info',
+            format: format.combine(
+                format.colorize(),
+                format.printf(
+                info => `${info.timestamp} ${info.level}: ${info.message}`
+                )
+            )
+        }),
+        new winston.transports.File({ filename: authLogFilename })
     ]
 });
 
@@ -56,89 +85,67 @@ winston.loggers.add('appLogger', {
 });
 
 
-// winston.loggers.add('campaignLogger', {
-//     // change level if in dev environment versus production
-//     level: env === 'development' ? 'debug' : 'info',
-//     format: format.combine(
-//         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-//         format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-//     ),
-//     transports: [
-//         new winston.transports.Console({
-//             level: 'info',
-//             format: format.combine(
-//                 format.colorize(),
-//                 format.printf(
-//                 info => `${info.timestamp} ${info.level}: ${info.message}`
-//                 )
-//             )
-//         }),
-//         new winston.transports.File({ filename: 'campaign.log' })
-//     ]
-// });
+winston.loggers.add('campaignLogger', {
+    // change level if in dev environment versus production
+    level: env === 'development' ? 'debug' : 'info',
+    format: format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new winston.transports.Console({
+            level: 'info',
+            format: format.combine(
+                format.colorize(),
+                format.printf(
+                info => `${info.timestamp} ${info.level}: ${info.message}`
+                )
+            )
+        }),
+        new winston.transports.File({ filename: campaignLogFilename })
+    ]
+});
 
 
-// winston.loggers.add('canvasserLogger', {
-//     // change level if in dev environment versus production
-//     level: env === 'development' ? 'debug' : 'info',
-//     format: format.combine(
-//         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-//         format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-//     ),
-//     transports: [
-//         new winston.transports.Console({
-//             level: 'info',
-//             format: format.combine(
-//                 format.colorize(),
-//                 format.printf(
-//                 info => `${info.timestamp} ${info.level}: ${info.message}`
-//                 )
-//             )
-//         }),
-//         new winston.transports.File({ filename: 'canvasser.log' })
-//     ]
-// });
+winston.loggers.add('canvasserLogger', {
+    // change level if in dev environment versus production
+    level: env === 'development' ? 'debug' : 'info',
+    format: format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new winston.transports.Console({
+            level: 'info',
+            format: format.combine(
+                format.colorize(),
+                format.printf(
+                info => `${info.timestamp} ${info.level}: ${info.message}`
+                )
+            )
+        }),
+        new winston.transports.File({ filename: canvassLogFilename })
+    ]
+});
 
 
-// winston.loggers.add('managerLogger', {
-//     // change level if in dev environment versus production
-//     level: env === 'development' ? 'debug' : 'info',
-//     format: format.combine(
-//         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-//         format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-//     ),
-//     transports: [
-//         new winston.transports.Console({
-//             level: 'info',
-//             format: format.combine(
-//                 format.colorize(),
-//                 format.printf(
-//                 info => `${info.timestamp} ${info.level}: ${info.message}`
-//                 )
-//             )
-//         }),
-//         new winston.transports.File({ filename: 'manager.log' })
-//     ]
-// });
-
-
-// winston.loggers.add('appLogger', {
-//     // change level if in dev environment versus production
-//     level: env === 'development' ? 'debug' : 'info',
-//     format: format.combine(
-//         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-//         format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-//     ),
-//     transports: [
-//         new winston.transports.Console({
-//             level: 'info',
-//             format: format.combine(
-//                 format.colorize(),
-//                 format.printf(
-//                 info => `${info.timestamp} ${info.level}: ${info.message}`
-//                 )
-//             )
-//         }),
-//         new winston.transports.File({ filename: appLogFilename })
-//     ]
-// });
+winston.loggers.add('managerLogger', {
+    // change level if in dev environment versus production
+    level: env === 'development' ? 'debug' : 'info',
+    format: format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new winston.transports.Console({
+            level: 'info',
+            format: format.combine(
+                format.colorize(),
+                format.printf(
+                info => `${info.timestamp} ${info.level}: ${info.message}`
+                )
+            )
+        }),
+        new winston.transports.File({ filename: managerLogFilename })
+    ]
+});
