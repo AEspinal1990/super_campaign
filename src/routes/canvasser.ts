@@ -32,15 +32,15 @@ router.get('/:id/availability', isAuthenticated, async(req: Request, res: Respon
     .leftJoinAndSelect("canvasser._assignedDate", "assDate")
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getMany();
-    console.log(canva);
+    console.log(canvas);
 
     // do some stuff
     var avail = new Availability();
     avail.availableDate = new Date();
-    canva[0].availableDate = [avail];
+    canvas[0].availableDate = [avail];
     await getManager().save(avail);
     console.log("After availability save");
-    await getManager().save(canva[0]);
+    await getManager().save(canvas[0]);
     const canv = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
     .leftJoinAndSelect("canvasser._campaignID", "campaign")
