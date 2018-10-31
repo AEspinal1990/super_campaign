@@ -184,12 +184,13 @@
 
         <script>
             var map;
-            var uluru = {lat: -25.344, lng: 131.036};
+            var usa = {lat: 37.09024, lng: -95.7129};
+            var markers = [];
 
             function initMap() {
                 map = new google.maps.Map(document.getElementById('map'), {
-                    center: uluru,
-                    zoom: 4
+                    center: usa,
+                    zoom: 2
                 });
             }
 
@@ -198,6 +199,7 @@
             var getMarkerUniqueId = function(lat, lng) {
                 return lat + '_' + lng;
             }
+            //Adds marker to map and push to the array
             function addMarker(location) {
                 var markerId = getMarkerUniqueId(location.lat, location.lng);
                 var marker = new google.maps.Marker({
@@ -208,21 +210,37 @@
                 });
                 markers[markerId] = marker;
             }
+            
+            //** sets the map on all markers in the array
+            function setMapOnAll(map) {
+                for (marker in markers) {
+                    markers[marker].setMap(map);
+                }                
+            }
+                  // Removes the markers from the map, but keeps them in the array.
+            function clearMarkers() {
+                setMapOnAll(null);
+            }
+            // Deletes all markers in the array by removing references to them.
+            function deleteMarkers() {
+                clearMarkers();
+                markers = [];
+            }
+
             var removeMarker = function(marker, markerId) {
 	            marker.setMap(null); // set markers setMap to null to remove it from map
 	            delete markers[markerId]; // delete marker instance from markers object
             }; 
-            
+
             var socket = io();
             $(document).ready(function() {
-                
                 socket.on('geocodes', function(geocodes) {
-                    centerGeocode = {lat: parseFloat(geocodes[0].lat), lng: parseFloat(geocodes[0].lng)};
-                    console.log("FRONT:" + geocodes);
-                    console.log("GEOCODE" + centerGeocode);
-                    addMarker(uluru);
-
-                    addMarker(centerGeocode);
+                    console.log("ALL:" + geocodes);
+                    for(i in geocodes) {
+                        parsedGeocode = {lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng)};
+                        console.log("EACH" + parsedGeocode);
+                        addMarker(parsedGeocode);
+                    }
                 });
                 
             });

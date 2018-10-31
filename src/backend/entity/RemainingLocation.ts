@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinColumn, JoinTable} from "typeorm"
+import {Entity, PrimaryGeneratedColumn, OneToOne, ManyToMany, JoinColumn, JoinTable} from "typeorm"
 import { Locations } from "./Locations";
 import { Task } from "./Task";
 
@@ -6,18 +6,12 @@ import { Task } from "./Task";
 export class RemainingLocation{
     @PrimaryGeneratedColumn({name: "ID"})
     private _ID!:number;
-    @ManyToMany(type => Locations, {primary: true})
+    @ManyToMany(type => Locations, {eager: true, cascade: true})
     @JoinTable({name: "remaining_locations_mapping"})
     private _locationID!:Locations[];
-    @ManyToOne(type => Task, tas => tas.remainingLocations)
-    @JoinColumn({name: "taskID"})
+    @OneToOne(type => Task)
+    // @JoinColumn({name: "task"})
     private _task!: Task;
-
-    // constructor (ID:number, locationID:Locations, task:Task){
-    //     this._ID = ID;
-    //     this._locationID = locationID;
-    //     this._task = task;
-    // }
 
     public get ID(){
         return this._ID;

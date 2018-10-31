@@ -32,16 +32,6 @@ export class Canvasser{
     @JoinTable({name: "canvasser_results_mapping"})
     private _results!: Results[];
  
-    // constructor (ID:User, campaignID:Campaign, tasksRemaining:number[], tasksCompleted:number[], 
-    //     datesAvailable:Date[], datesAssigned:Date[]){
-    //         this._ID = ID;
-    //         this._campaignID = campaignID;
-    //         this._tasksRemaining = tasksRemaining;
-    //         this._tasksCompleted = tasksCompleted;
-    //         this._datesAvailable = datesAvailable;
-    //         this._datesAssigned = datesAssigned;
-    //     }
-
     public get ID(): User {
         return this._ID;
     }
