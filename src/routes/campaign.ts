@@ -39,55 +39,12 @@ router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-      
-    let startDate;
-    let endDate;
-    let avgDuration;
-    let campaign;
-
-    /**
-     * Grab dates needed to create campaign object
-     */
-    startDate = campaignCreator.getDate(req.body.campaign.startDate);
-    endDate = campaignCreator.getDate(req.body.campaign.endDate);
-    avgDuration = Number(req.body.campaign.averageExpectedDuration);
-
-    /**
-     * Create Campaign then save it.
-     */
-    campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
-    await campaignCreator.saveCampaign(campaign);
-    campaignLogger.info(`Saved campaign: ${campaign._name}`);
-
-    /**
-     * Parse the talking points then save them.
-     */
-    await campaignCreator.saveTalkingPoints(campaign, req.body.campaign.talkingPoints);
-    campaignLogger.info(`Saved talking points for: ${campaign._name}`);
-
-    /**
-     * Parse the questionaire then save it.
-     */
-    await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
-    campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
-
-    /**
-     * Save this campaigns locations
-     */
-    await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
-    campaignLogger.info(`Saved locations for: ${campaign._name}`);
-
-    /**
-     * Save campaign managers
-     */
-    campaignCreator.saveManagers(campaign, req.body.campaign.managers);
-    campaignLogger.info(`Saved managers for: ${campaign._name}`);
-
-    /**
-     * Save canavassers
-     */
-
-    res.send('okay');
+    campaignCreator.createCampaign(req.body.campaign);
+    campaignLogger.info(`/campaign - Created a campaign`);
+    if (res.status(200))
+        res.send("Campaign Created!");
+    else
+        res.send("Error!");
 });
 
 /**
@@ -196,7 +153,7 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
 
 /**
  * GET for view campaign
- */ 
+ */
 router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo

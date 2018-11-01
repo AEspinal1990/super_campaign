@@ -8,8 +8,7 @@ import { User } from '../backend/entity/User';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
-    Promise: Promise
+    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
 });
 
 // function to build campaign data
@@ -50,229 +49,21 @@ export const createTalkingPoints = campaignData => {
     return allTalkingPoints;
 };
 
-export const getDate = date => {
-    date = date.split("-");
-    return new Date(date[0], date[1], date[2]);
-};
-
-export const initCampaign = (name, sDate, eDate, avgDuration) => {
-    const newCampaign: Campaign = new Campaign();
-    newCampaign.name = name;
-    newCampaign.startDate = sDate;
-    newCampaign.endDate = eDate;
-    newCampaign.avgDuration = avgDuration;
-    return newCampaign;
-};
-
-export const saveCampaign = async campaign => {
-    const Manager = getManager();
-    await Manager.save(campaign).catch(e => console.log(e));
-};
-
-const getTalkingPoints = (campaign, talkingPoints) => {
-    // Split up points by line breaks and remove carriage returns
-    talkingPoints = talkingPoints.trim().split("\n");
-    for(let i in talkingPoints) {
-        talkingPoints[i] = talkingPoints[i].replace('\r','');
-    }
-
-    /**
-     * Create talking points and insert into array
-     */
-    let points = [];
-    for (let i in talkingPoints) {
-        points.push(new TalkPoint());
-        points[i].campaign = campaign;
-        points[i].talk = talkingPoints[i];       
-    }
-
-    return points;
-};
-
-export const saveTalkingPoints = (campaign, talkingPoints) => {   
-    const Manager = getManager();
-    talkingPoints = getTalkingPoints(campaign, talkingPoints);
-
-    /**
-     * Save each indivdual talking point to the DB.
-     */
-    talkingPoints.forEach( async point => {
-        await Manager.save(point).catch(e => console.log(e));
-    });
-};
-
-const getQuestionaire = (campaign, questionaire) => {
+//function to build questionnaires
+export const createQuestionnaires = campaignData => {
+    let newCampaign = createCampaignInfo(campaignData);
+    let questionaire = campaignData.questionaire;
     questionaire = questionaire.trim().split("\n");
-    for(let i in questionaire) {
-        questionaire[i] = questionaire[i].replace('\r','');
-    }
-    
-
-    /**
-     * Create questions and insert into array
-     */
-    let questions = [];
+    let allquestionnaires = [];
     for (let i in questionaire) {
-        questions.push(new Questionaire());
-        questions[i].campaign = campaign;
-        questions[i].question = questionaire[i];
+        let newQuestionaire: Questionaire = new Questionaire();
+        newQuestionaire.campaign = newCampaign;
+        newQuestionaire.question = questionaire[i];
+        allquestionnaires[i] = newQuestionaire;
     }
-
-    return questions;
-};
-
-export const saveQuestionaire = (campaign, questionaire) => {
-    const Manager = getManager();
-    questionaire = getQuestionaire(campaign, questionaire);
-
-    /**
-     * Save each indivdual question to the DB.
-     */
-    questionaire.forEach( async question => {
-        await Manager.save(question).catch(e => console.log(e));
-    });
-};
-
-function getStreetNumber(location) {
-    return parseInt(location.split(',')[0]);
-};
-
-function getStreet(location){
-    return (location.split(',')[1]).trim();
-};
-
-function getUnit(location) {
-    let unit = location.split(',')[2];
-    if(unit === undefined){
-        return '';
-    }
-    return unit.trim();
-};
-
-function getCity(location) {
-    return (location.split(',')[3]).trim();
-};
-
-function getState(location) {
-    return (location.split(',')[4]).trim();
-};
-
-function getZip(location) {
-    let zip = (location.split(',')[5]);
-    parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
-    return zip;
-};
-
-function constructAddress(location){
-    var address =
-        location.streetNumber + " " +
-        location.street + ", " +
-        location.city + ", " +
-        location.state + " " +
-        location.zipcode;
-    return address;
+    return allquestionnaires;
 
 };
-
-
-
-export const saveLocations = async (campaign, locations) => {
-    const Manager = getManager();
-
-    locations = locations.trim().split('\n');
-
-    let places = [];
-    let address;
-    for(let i in locations) {
-        places.push(new Locations());
-        places[i].streetNumber = getStreetNumber(locations[i]);
-        places[i].street = getStreet(locations[i]);
-        places[i].unit = getUnit(locations[i]);
-        places[i].city = getCity(locations[i]);
-        places[i].state = getState(locations[i]);
-        places[i].zip = getZip(locations[i]);
-
-        address = constructAddress(places[i]);
-
-        /**
-         * WTF is going on here!?!?
-         */
-        await googleMapsClient.geocode({ address: address }, function (err, response) {
-            if (!err) {
-                var coord = response.json.results[0].geometry.location;
-            } else {
-                return console.log("Geocode not found");
-            }
-            
-            places[i].lat = Number(coord.lat);
-            places[i].long = Number(coord.lng);
-            campaign.locations.push(places[i]);
-            
-            Manager.save(campaign).catch(e => console.log(e));
-        });
-        
-    }
-    return places;    
-
-    
-};
-
-function getManagers(managers) {
-
-    managers = managers.split("\n");
-    for(let i in managers) {
-        if(managers[i] === '\r' || managers[i] === ' ' ||managers[i] === '' ){
-            managers.splice(i,1);
-        }
-    }
-
-    for(let i in managers) {
-        managers[i] = managers[i].replace('\r','');
-    }
-
-    return managers;
-};
-
-export const saveManagers = async (campaign, managers) => {
-    const Manager = getManager();
-    let usr;
-    let cm;
-
-    managers = getManagers(managers);
-    
-
-    campaign.managers = [];
-    for (let i in managers) {
-        if (managers[i] != "") {
-            usr = await getManager()
-                .findOne(User, { where: { "_employeeID": managers[i] } });
-            
-            // If user exist
-            if(usr !== undefined){
-                cm = await getManager()
-                    .findOne(CampaignManager, { where: { "_ID": usr } });
-
-                // If user is a campaign manager
-                if(cm !== undefined){
-                    campaign.managers.push(cm);
-                } else {
-                    console.log(`${usr._username} is not a campaign manager`);
-                }
-                
-            } else {
-                console.log(`${managers[i]} does not exist`);
-            }
-            
-        }
-    }
-    await Manager.save(campaign);
-};
-
-
-export const saveCanavaser = async (campaign, canvassers) => {
-    
-};
-
 
 export const createCampaign = async campaignData => {
     const Manager = getManager();
@@ -293,13 +84,11 @@ export const createCampaign = async campaignData => {
     ///////////////////////////////////
 
     //For Camapaign Object
-
     //Parse date from format YYYY-MM-DD
     startDate = startDate.split("-");
     startDate = new Date(startDate[0], startDate[1], startDate[2]);
     endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
-
     //Assign parsed data to new campaign object
     const newCampaign: Campaign = new Campaign();
     newCampaign.name = campaignName;
@@ -315,7 +104,6 @@ export const createCampaign = async campaignData => {
         let newTalkingPoint: TalkPoint = new TalkPoint();
         newTalkingPoint.campaign = newCampaign;
         newTalkingPoint.talk = talkingPoints[i];
-        console.log('Saving the talking point', newTalkingPoint);
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
     //For Questionaire Objects
@@ -376,7 +164,7 @@ export const createCampaign = async campaignData => {
         }
     }
 
-    campaignManager = campaignManager.split("\n");
+   campaignManager = campaignManager.split("\n");
     //initialize manager
     newCampaign.managers = [];
 
