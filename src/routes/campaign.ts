@@ -1,20 +1,13 @@
-import { Request, Response, Router } from 'express';
-import { getManager, getRepository } from 'typeorm';
-import { Campaign } from '../backend/entity/Campaign';
-import * as campaignEditor from '../util/campaignEditor';
-import * as campaignCreator from '../util/campaignCreator';
-import { Questionaire } from '../backend/entity/Questionaire';
-import { TalkPoint } from '../backend/entity/TalkPoint';
-import { Canvasser } from '../backend/entity/Canvasser';
-import { Assignment } from '../backend/entity/Assignment';
-import { Locations } from '../backend/entity/Locations';
-import * as fs from 'fs';
-import server, { io } from '../server';
+import { Request, Response, Router }    from 'express';
+import { getManager, getRepository }    from 'typeorm';
+import { Campaign }                     from '../backend/entity/Campaign';
+import * as campaignEditor              from '../util/campaignEditor';
+import * as campaignCreator             from '../util/campaignCreator';
+import { Questionaire }                 from '../backend/entity/Questionaire';
+import { TalkPoint }                    from '../backend/entity/TalkPoint';
+import { Canvasser }                    from '../backend/entity/Canvasser';
+import server, { io }                   from '../server';
 
-
-const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
-});
 
 const router: Router = Router();
 
@@ -55,8 +48,7 @@ router.post('/', async (req: Request, res: Response) => {
     /**
      * Create Campaign then save it.
      */
-    campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
-    await campaignCreator.saveCampaign(campaign);
+    campaign = await campaignCreator.saveCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
     campaignLogger.info(`Saved campaign: ${campaign._name}`);
 
     /**
@@ -80,14 +72,16 @@ router.post('/', async (req: Request, res: Response) => {
     /**
      * Save campaign managers
      */
-    campaignCreator.saveManagers(campaign, req.body.campaign.managers);
+    await campaignCreator.saveManagers(campaign, req.body.campaign.managers);
     campaignLogger.info(`Saved managers for: ${campaign._name}`);
 
     /**
      * Save canavassers
      */
+    await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
+    campaignLogger.info(`Saved canavassers for: ${campaign._name}`);
 
-    res.send('okay');
+    res.render('create-campaign');
 });
 
 /**
