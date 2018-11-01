@@ -72,21 +72,21 @@ router.post('/', async (req: Request, res: Response) => {
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
     /**
+     * Save campaign managers
+     */
+    await campaignCreator.saveManagers(campaign, req.body.campaign.managers);
+    campaignLogger.info(`Saved managers for: ${campaign._name}`);
+
+    /**
      * Save this campaigns locations
      */
     await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
     campaignLogger.info(`Saved locations for: ${campaign._name}`);
 
     /**
-     * Save campaign managers
-     */
-    campaignCreator.saveManagers(campaign, req.body.campaign.managers);
-    campaignLogger.info(`Saved managers for: ${campaign._name}`);
-
-    /**
      * Save canavassers
      */
-    campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
+    await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
     res.send('okay');
 });
 
@@ -198,27 +198,14 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
  * GET for view campaign
  */
 router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
-    const campaignRepo = getRepository(Campaign);
-    var campaign = await campaignRepo
-        .find({ where: { "_ID": req.params.id } })
+    var campaign = await getManager().find(Campaign, 
+        { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
-    // console.log(campaign[0]);
+    console.log(campaign[0]);
 
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");
-        res.status(404).render('view-campaign', {
-            id: "",
-            name: "",
-            manager: "",
-            assignment: "",
-            location: "",
-            sDate: "",
-            eDate: "",
-            duration: "",
-            question: "",
-            points: "",
-            canvasser: ""
-        });
+        res.status(404).send('Campaign with ID: '+req.params.id+' was not found!');
     } else {
         // MANUAL LOAD FROM DB - CM AND TALKING POINTS
         const qRepo = getRepository(Questionaire);

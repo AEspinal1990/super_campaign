@@ -16,9 +16,9 @@ export class Locations {
     private _state!: string;
     @Column({ name: "zipcode" })
     private _zipcode!: number;
-    @Column("decimal", { precision: 10, scale: 6, name: "lat"})
+    @Column("decimal", { precision: 10, scale: 6, name: "lat", nullable: true, default: null})
     private _lat!: number;
-    @Column("decimal", {precision: 10, scale: 6, name: "long"})
+    @Column("decimal", {precision: 10, scale: 6, name: "long", nullable: true, default: null})
     private _long!: number;
 
     public get ID(): number {
