@@ -68,11 +68,9 @@ router.post('/:id/availability', isAuthenticated, async(req: Request, res: Respo
     const mm = "03";
     const dd = "27";
     const date = `${yyyy} - ${mm} - `
-
-
 });
 
-router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/:id/view-tasks', isAuthenticated, async(req: Request, res: Response) => {
     const canv = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
     .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -81,12 +79,22 @@ router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Res
     .leftJoinAndSelect("canvasser._availableDates", "avaDate")
     .leftJoinAndSelect("canvasser._assignedDates", "assDate")
     .leftJoinAndSelect("canvasser._results", "results")
+    .leftJoinAndSelect("canvasser._task", "task")
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getOne();
     console.log(canv);
 
+    if (canv === undefined){
+        res.render("view-tasks" ,{
+            // send undefined
+        });
+    } else {
+        res.render("view-tasks" ,{
+            // send canvasser's tasks
+        });
+    }
 
-    adminLogger.info(`/${req.params.id}/view-assignment - View Tasks`);
+    adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
     
 });
 
