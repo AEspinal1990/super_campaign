@@ -201,13 +201,13 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
     var campaign = await getManager().find(Campaign, 
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
-    console.log(campaign[0]);
+    // console.log(campaign[0]);
 
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");
         res.status(404).send('Campaign with ID: '+req.params.id+' was not found!');
     } else {
-        // MANUAL LOAD FROM DB - CM AND TALKING POINTS
+        // MANUAL LOAD FROM DB - Questoinaire AND TALKING POINTS
         const qRepo = getRepository(Questionaire);
         const questionaire = await qRepo.find({ where: { "_campaign": campaign[0].ID } });
         campaign[0].question = questionaire;
@@ -235,7 +235,7 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         io.on('connection', function(socket) {
             socket.emit('geocodes', geocodes);
             console.log('someone CONNECTED:');
-            console.log(geocodes);            
+            // console.log(geocodes);            
         });
 
         res.render('view-campaign', {

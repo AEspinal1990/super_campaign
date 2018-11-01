@@ -193,7 +193,6 @@ export const editCampaign = async (campaignData, campaignID) => {
                     .delete()
                     .where("_ID = :ID", {ID: locationCopy[i].ID})
                     .execute();
-                locationCopy.splice(Number(i), 1);
             }
         }
     }

@@ -47,7 +47,7 @@ export const createTalkingPoints = campaignData => {
 
 export const getDate = date => {
     date = date.split("-");
-    return new Date(date[0], date[1], date[2]);
+    return new Date(date[0], date[1]-1, date[2]);
 };
 
 export const initCampaign = (name, sDate, eDate, avgDuration) => {
