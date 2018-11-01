@@ -135,11 +135,11 @@ export const saveQuestionaire = (campaign, questionaire) => {
 
 function getStreetNumber(location) {
     return parseInt(location.split(',')[0]);
-}
+};
 
 function getStreet(location){
     return (location.split(',')[1]).trim();
-}
+};
 
 function getUnit(location) {
     let unit = location.split(',')[2];
@@ -147,21 +147,21 @@ function getUnit(location) {
         return '';
     }
     return unit.trim();
-}
+};
 
 function getCity(location) {
     return (location.split(',')[3]).trim();
-}
+};
 
 function getState(location) {
     return (location.split(',')[4]).trim();
-}
+};
 
 function getZip(location) {
     let zip = (location.split(',')[5]);
     parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
     return zip;
-}
+};
 
 function constructAddress(location){
     var address =
@@ -172,7 +172,7 @@ function constructAddress(location){
         location.zipcode;
     return address;
 
-}
+};
 
 
 
@@ -231,7 +231,7 @@ function getManagers(managers) {
     }
 
     return managers;
-}
+};
 
 export const saveManagers = async (campaign, managers) => {
     const Manager = getManager();
@@ -266,9 +266,12 @@ export const saveManagers = async (campaign, managers) => {
         }
     }
     await Manager.save(campaign);
-}
+};
 
 
+export const saveCanavaser = async (campaign, canvassers) => {
+    
+};
 
 
 export const createCampaign = async campaignData => {

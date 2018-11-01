@@ -81,6 +81,11 @@ router.post('/', async (req: Request, res: Response) => {
      * Save campaign managers
      */
     campaignCreator.saveManagers(campaign, req.body.campaign.managers);
+    campaignLogger.info(`Saved managers for: ${campaign._name}`);
+
+    /**
+     * Save canavassers
+     */
 
     res.send('okay');
 });
