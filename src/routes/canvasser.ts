@@ -84,6 +84,9 @@ router.get('/:id/view-tasks', isAuthenticated, async(req: Request, res: Response
     .getOne();
     console.log(canv);
 
+    // make some checks?
+    
+
     if (canv === undefined){
         res.render("view-tasks" ,{
             // send undefined

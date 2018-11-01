@@ -196,7 +196,7 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
 
 /**
  * GET for view campaign
- */ 
+ */
 router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepo = getRepository(Campaign);
     var campaign = await campaignRepo
