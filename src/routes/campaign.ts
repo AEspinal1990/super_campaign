@@ -39,33 +39,17 @@ router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-    
-    // campaignCreator.createCampaign(req.body.campaign);
-    // campaignLogger.info(`/campaign - Created a campaign`);
-    // if (res.status(200))
-    //     res.send("Campaign Created!");
-    // else
-    //     res.send("Error!");
-
-    
-   
+      
     let startDate;
     let endDate;
     let avgDuration;
     let campaign;
-    let talkingPoints;
-    let questionaire;
-    let locations;
 
     /**
-     * Grab dates from input and create Date objects
+     * Grab dates needed to create campaign object
      */
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);
-    
-    /**
-     * Grab the expected average duration spent at each location.
-     */
     avgDuration = Number(req.body.campaign.averageExpectedDuration);
 
     /**
@@ -78,22 +62,25 @@ router.post('/', async (req: Request, res: Response) => {
     /**
      * Parse the talking points then save them.
      */
-    talkingPoints = campaignCreator.getTalkingPoints(campaign, req.body.campaign.talkingPoints);
-    await campaignCreator.saveTalkingPoints(talkingPoints);
+    await campaignCreator.saveTalkingPoints(campaign, req.body.campaign.talkingPoints);
     campaignLogger.info(`Saved talking points for: ${campaign._name}`);
 
     /**
      * Parse the questionaire then save it.
      */
-    questionaire = campaignCreator.getQuestionaire(campaign, req.body.campaign.questionaire);
-    await campaignCreator.saveQuestionaire(questionaire);
+    await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
     /**
-     * Parse locations then save them
+     * Save this campaigns locations
      */
-    locations = campaignCreator.getLocations(campaign, req.body.campaign.locations);
-    //console.log(locations);
+    await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
+    campaignLogger.info(`Saved locations for: ${campaign._name}`);
+
+    /**
+     * Save campaign managers
+     */
+    campaignCreator.saveManagers(campaign, req.body.campaign.managers);
 
     res.send('okay');
 });
