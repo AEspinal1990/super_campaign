@@ -8,7 +8,7 @@
         <form action="/canvasser/availability/<%= canvasserID %>" method="POST">
             <div class="container">
                 <h3>Availability</h3>
-                <input type="text" class="form-control date" name=editAvailability[dates] placeholder="No dates selected. Click to open calendar.">
+                <input type="text" class="form-control date" name=editAvailability[dates] placeholder="No dates selected. Click to open calendar." value=<%= availableOrAssigned %>>
             </div>
             <button type="submit" class="btn btn-default">Submit</button>	    
         </form>

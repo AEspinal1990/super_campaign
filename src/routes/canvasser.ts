@@ -76,14 +76,33 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
         res.send("Wrong Link (Canvasser ID)");
     } else {
         adminLogger.info(`/availability/${req.params.id} - Changed availablility`);
+        //combine available and assigned dates to be shown on calendar
+        var availableOrAssigned = "";
+        for (let avail in canvas.availableDates) {
+            let curDate = canvas.availableDates[avail].availableDate;
+            let curDateStr = curDate.getMonth + "/" + curDate.getDate + "/" + curDate.getFullYear + ",";
+            availableOrAssigned += curDateStr;
+            console.log(curDateStr);
+        }
+        //Remove the las comma added on previous loop
+        if (availableOrAssigned !== "") {
+            availableOrAssigned = availableOrAssigned.slice(0, -1);
+        }
+        for (let avail in canvas.assignedDates) {
+            let curDate = canvas.assignedDates[avail].assignedDate;
+            let curDateStr = "," + curDate.getMonth + "/" + curDate.getDate + "/" + curDate.getFullYear;
+            availableOrAssigned += curDateStr;
+        }
+        // if available dates is empty, then the first comma is not needed in the second for loop
+        if(canvas.availableDates == []) {
+            availableOrAssigned = availableOrAssigned.slice(1);
+        }
         //res.send('You want to edit your availablity.');
         res.render('edit-availability', {
-            availableDates: canvas.availableDates,
-            assignedDates: canvas.assignedDates,
+            availableOrAssigned: availableOrAssigned,
             canvasserID: req.params.id
         });
     }
-
 });
 
 router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
@@ -124,11 +143,19 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
     canv.availableDates = [];
     for (let i in newDates){
         var avail = new Availability();
-        //avail.availableDate = new Date(
-            //newDates[i][0], newDates[i][1], newDates[i][2]);
-        avail.availableDate = new Date(newDates[i]);
-        canv.availableDates.push(avail);
+        let newDateParts = newDates[i].split("/");
+        //create Date is in year/month/date format but our format is month/date/year
+        console.log(newDateParts);
+        if (newDateParts == null) {
+
+        } else {
+            avail.availableDate = new Date(
+                newDateParts[i][2], newDateParts[i][0], newDateParts[i][1]);
+            canv.availableDates.push(avail);
+        }
     }
+    console.log(canv.availableDates);
+    /*
     // delete old available dates that are unused
     for (let i in availCopy){
         for (let j in canv.availableDates){
@@ -145,6 +172,7 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
             }
         }
     }
+    */
     await getManager().save(canv);
 });
 
