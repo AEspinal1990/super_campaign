@@ -5,6 +5,7 @@ import { Canvasser } from '../backend/entity/Canvasser';
 import { Availability } from '../backend/entity/Availability';
 import { Results } from '..//backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
+import { managerRouter } from './manager';
 
 const router: Router = Router();
 
@@ -86,9 +87,9 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
 });
 
 router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
-    console.log(req.body.editAvailability);
+    console.log(req.body.editAvailability.dates);
     //new dates passed in from frontend
-    var newDates = [];
+    var newDates = req.body.editAvailability.dates.split(",");
     /**
      * Parse data received into a useable format.
      */
@@ -123,8 +124,9 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
     canv.availableDates = [];
     for (let i in newDates){
         var avail = new Availability();
-        avail.availableDate = new Date(
-            newDates[i][0], newDates[i][1], newDates[i][2]);
+        //avail.availableDate = new Date(
+            //newDates[i][0], newDates[i][1], newDates[i][2]);
+        avail.availableDate = new Date(newDates[i]);
         canv.availableDates.push(avail);
     }
     // delete old available dates that are unused
@@ -143,6 +145,7 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
             }
         }
     }
+    await getManager().save(canv);
 });
 
 router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
 $('.date').datepicker({
     multidate: true,
-    format: 'mm-dd-yyyy',
+    format: 'mm/dd/yyyy',
 });
