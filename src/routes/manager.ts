@@ -10,6 +10,7 @@ import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { RelationCountAttribute } from 'typeorm/query-builder/relation-count/RelationCountAttribute';
 import { Results } from '../backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
+import { Questionaire } from '../backend/entity/Questionaire';
 
 const router: Router = Router();
 const winston   = require('winston');
@@ -128,13 +129,14 @@ router.get('/view-assignments/:id', isAuthenticated, async (req: Request, res: R
 
 router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
-        { where: { "_ID": req.params.id } });
-    console.log(campaign);
+        { where: { "_ID": req.params.id }});
+    var question = await getManager().find(Questionaire,
+        {where: {"_campaign": campaign}});
     /*
         create dummy Results data
     */
     var results = [];
-    for (let i in campaign.question) {
+    for (var i=0;i<question.length;i++) {
         var result = new Results();
         result.campaign = campaign;
         result.answer = true;
@@ -143,9 +145,11 @@ router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) 
         result.completedLocation = new CompletedLocation();
         result.completedLocation.locations = [campaign.locations[0]];
         await getManager().save(result.completedLocation);
+        results.push(result);
     }
     await getManager().save(results);
     campaign.results = results;
+    console.log(results);
     /*
          End of Dummy Results data
      */
@@ -157,14 +161,13 @@ router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) 
         });
     console.log(resul);
 
-    if (result === undefined) {
-        res.status(404).render("view-results", {
-            // undefined values
-        });
+    if (resul === undefined) {
+        res.status(404).send("No results were found for this campaign.");
     } else {
-        res.status(200).render("view-results", {
-            // actual results values
-        });
+        // res.status(200).render("view-results", {
+        //     result: resul
+        // });
+        res.send(resul);
     }
 })
 

@@ -125,18 +125,20 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
 
     // make some checks?
 
-
-    if (canv === undefined) {
-        res.send('You have no tasks assigned.');
-    } else {
-        res.render("view-tasks", {
-            // send canvasser's tasks
-        });
-    }
-    if (res.status(200))
+    if (res.status(200)){
+        if (canv === undefined) {
+            res.send('You have no tasks assigned.');
+        } else {
+            // res.render("view-tasks", {
+            //     tasks: canv.task
+            // });
+            res.send(canv.task);
+        }
         res.send("Available Date Updated.");
-    else
+    }
+    else{
         res.send("Error updating available dates");
+    }
 
     adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 
