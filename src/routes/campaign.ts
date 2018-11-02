@@ -39,12 +39,55 @@ router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-    campaignCreator.createCampaign(req.body.campaign);
-    campaignLogger.info(`/campaign - Created a campaign`);
-    if (res.status(200))
-        res.send("Campaign Created!");
-    else
-        res.send("Error!");
+      
+    let startDate;
+    let endDate;
+    let avgDuration;
+    let campaign;
+
+    /**
+     * Grab dates needed to create campaign object
+     */
+    startDate = campaignCreator.getDate(req.body.campaign.startDate);
+    endDate = campaignCreator.getDate(req.body.campaign.endDate);
+    avgDuration = Number(req.body.campaign.averageExpectedDuration);
+
+    /**
+     * Create Campaign then save it.
+     */
+    campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
+    await campaignCreator.saveCampaign(campaign);
+    campaignLogger.info(`Saved campaign: ${campaign._name}`);
+
+    /**
+     * Parse the talking points then save them.
+     */
+    await campaignCreator.saveTalkingPoints(campaign, req.body.campaign.talkingPoints);
+    campaignLogger.info(`Saved talking points for: ${campaign._name}`);
+
+    /**
+     * Parse the questionaire then save it.
+     */
+    await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
+    campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
+
+    /**
+     * Save campaign managers
+     */
+    await campaignCreator.saveManagers(campaign, req.body.campaign.managers);
+    campaignLogger.info(`Saved managers for: ${campaign._name}`);
+
+    /**
+     * Save this campaigns locations
+     */
+    await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
+    campaignLogger.info(`Saved locations for: ${campaign._name}`);
+
+    /**
+     * Save canavassers
+     */
+    await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
+    res.send('okay');
 });
 
 /**
@@ -155,29 +198,16 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
  * GET for view campaign
  */
 router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
-    const campaignRepo = getRepository(Campaign);
-    var campaign = await campaignRepo
-        .find({ where: { "_ID": req.params.id } })
+    var campaign = await getManager().find(Campaign, 
+        { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
     // console.log(campaign[0]);
 
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");
-        res.status(404).render('view-campaign', {
-            id: "",
-            name: "",
-            manager: "",
-            assignment: "",
-            location: "",
-            sDate: "",
-            eDate: "",
-            duration: "",
-            question: "",
-            points: "",
-            canvasser: ""
-        });
+        res.status(404).send('Campaign with ID: '+req.params.id+' was not found!');
     } else {
-        // MANUAL LOAD FROM DB - CM AND TALKING POINTS
+        // MANUAL LOAD FROM DB - Questoinaire AND TALKING POINTS
         const qRepo = getRepository(Questionaire);
         const questionaire = await qRepo.find({ where: { "_campaign": campaign[0].ID } });
         campaign[0].question = questionaire;
@@ -205,7 +235,7 @@ router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => 
         io.on('connection', function(socket) {
             socket.emit('geocodes', geocodes);
             console.log('someone CONNECTED:');
-            console.log(geocodes);            
+            // console.log(geocodes);            
         });
 
         res.render('view-campaign', {

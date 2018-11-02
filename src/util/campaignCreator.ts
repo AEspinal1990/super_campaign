@@ -8,20 +8,16 @@ import { User } from '../backend/entity/User';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
+    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
+    Promise: Promise
 });
 
 // function to build campaign data
 export const createCampaignInfo = campaignData => {
     let campaignName = campaignData.campaignName;
-    let campaignManager = campaignData.managers;
     let startDate = campaignData.startDate;
     let endDate = campaignData.endDate;
     let averageExpectedDuration = campaignData.averageExpectedDuration;
-    //let talkingPoints = campaignData.talkingPoints;
-    //let questionaire = campaignData.questionaire;
-    //let locations = campaignData.locations;
-    //let canvassers = campaignData.canvassers;
     startDate = startDate.split("-");
     startDate = new Date(startDate[0], startDate[1], startDate[2]);
     endDate = endDate.split("-");
@@ -49,147 +45,260 @@ export const createTalkingPoints = campaignData => {
     return allTalkingPoints;
 };
 
-//function to build questionnaires
-export const createQuestionnaires = campaignData => {
-    let newCampaign = createCampaignInfo(campaignData);
-    let questionaire = campaignData.questionaire;
-    questionaire = questionaire.trim().split("\n");
-    let allquestionnaires = [];
-    for (let i in questionaire) {
-        let newQuestionaire: Questionaire = new Questionaire();
-        newQuestionaire.campaign = newCampaign;
-        newQuestionaire.question = questionaire[i];
-        allquestionnaires[i] = newQuestionaire;
-    }
-    return allquestionnaires;
-
+export const getDate = date => {
+    date = date.split("-");
+    return new Date(date[0], date[1]-1, date[2]);
 };
 
-export const createCampaign = async campaignData => {
-    const Manager = getManager();
-
-    //ASSIGN campaignData to variables
-    let campaignName = campaignData.campaignName;
-    let campaignManager = campaignData.managers;
-    let startDate = campaignData.startDate;
-    let endDate = campaignData.endDate;
-    let talkingPoints = campaignData.talkingPoints;
-    let questionaire = campaignData.questionaire;
-    let averageExpectedDuration = campaignData.averageExpectedDuration;
-    let locations = campaignData.locations;
-    let canvasser = campaignData.canvassers;
-
-    ///////////////////////////////////
-    //PARSE THE DATA
-    ///////////////////////////////////
-
-    //For Camapaign Object
-    //Parse date from format YYYY-MM-DD
-    startDate = startDate.split("-");
-    startDate = new Date(startDate[0], startDate[1], startDate[2]);
-    endDate = endDate.split("-");
-    endDate = new Date(endDate[0], endDate[1], endDate[2]);
-    //Assign parsed data to new campaign object
+export const initCampaign = (name, sDate, eDate, avgDuration) => {
     const newCampaign: Campaign = new Campaign();
-    newCampaign.name = campaignName;
-    newCampaign.startDate = startDate;
-    newCampaign.endDate = endDate;
-    newCampaign.avgDuration = averageExpectedDuration;
-    //Save Campaign Object to database
-    await Manager.save(newCampaign).catch(e => console.log(e));
+    newCampaign.name = name;
+    newCampaign.startDate = sDate;
+    newCampaign.endDate = eDate;
+    newCampaign.avgDuration = avgDuration;
+    return newCampaign;
+};
 
-    //For Talking Points
-    talkingPoints = talkingPoints.split("\n");
+export const saveCampaign = async campaign => {
+    const Manager = getManager();
+    await Manager.save(campaign).catch(e => console.log(e));
+};
+
+const getTalkingPoints = (campaign, talkingPoints) => {
+    // Split up points by line breaks and remove carriage returns
+    talkingPoints = talkingPoints.trim().split("\n");
     for (let i in talkingPoints) {
-        let newTalkingPoint: TalkPoint = new TalkPoint();
-        newTalkingPoint.campaign = newCampaign;
-        newTalkingPoint.talk = talkingPoints[i];
-        await Manager.save(newTalkingPoint).catch(e => console.log(e));
+        talkingPoints[i] = talkingPoints[i].replace('\r', '');
     }
-    //For Questionaire Objects
-    //Parse Questionaire for Questionaire table
+
+    /**
+     * Create talking points and insert into array
+     */
+    let points = [];
+    for (let i in talkingPoints) {
+        points.push(new TalkPoint());
+        points[i].campaign = campaign;
+        points[i].talk = talkingPoints[i];
+    }
+
+    return points;
+};
+
+export const saveTalkingPoints = (campaign, talkingPoints) => {
+    const Manager = getManager();
+    talkingPoints = getTalkingPoints(campaign, talkingPoints);
+
+    /**
+     * Save each indivdual talking point to the DB.
+     */
+    talkingPoints.forEach(async point => {
+        await Manager.save(point).catch(e => console.log(e));
+    });
+};
+
+const getQuestionaire = (campaign, questionaire) => {
     questionaire = questionaire.trim().split("\n");
     for (let i in questionaire) {
-        let newQuestionaire: Questionaire = new Questionaire();
-        newQuestionaire.campaign = newCampaign;
-        newQuestionaire.question = questionaire[i];
-        await Manager.save(newQuestionaire).catch(e => console.log(e));
+        questionaire[i] = questionaire[i].replace('\r', '');
     }
-    await Manager.save(newCampaign).catch(e => console.log(e));
 
-    //For Location Objects
-    //Parse Locations for All Locations of Campaign Table
-    locations = locations.split("\n");
+    /**
+     * Create questions and insert into array
+     */
+    let questions = [];
+    for (let i in questionaire) {
+        questions.push(new Questionaire());
+        questions[i].campaign = campaign;
+        questions[i].question = questionaire[i];
+    }
 
-    //Initialize array of campaign locations
-    newCampaign.locations = [];
+    return questions;
+};
 
+export const saveQuestionaire = (campaign, questionaire) => {
+    const Manager = getManager();
+    questionaire = getQuestionaire(campaign, questionaire);
+
+    /**
+     * Save each indivdual question to the DB.
+     */
+    questionaire.forEach(async question => {
+        await Manager.save(question).catch(e => console.log(e));
+    });
+};
+
+function getStreetNumber(location) {
+    return parseInt(location.split(',')[0]);
+};
+
+function getStreet(location) {
+    return (location.split(',')[1]).trim();
+};
+
+function getUnit(location) {
+    let unit = location.split(',')[2];
+    if (unit === undefined) {
+        return '';
+    }
+    return unit.trim();
+};
+
+function getCity(location) {
+    return (location.split(',')[3]).trim();
+};
+
+function getState(location) {
+    return (location.split(',')[4]).trim();
+};
+
+function getZip(location) {
+    let zip = (location.split(',')[5]);
+    parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
+    return zip.trim();
+};
+
+function constructAddress(location) {
+    var address =
+        location.streetNumber + " " +
+        location.street + ", " +
+        location.city + ", " +
+        location.state + " " +
+        location.zipcode;
+    return address;
+};
+
+export const saveLocations = async (campaign, locations) => {
+    const Manager = getManager();
+
+    locations = locations.trim().split('\n');
+
+    let places = [];
+    let address;
+    campaign.locations = [];
     for (let i in locations) {
-        if (locations[i] != "") {
-            //create location object
-            let locationParse = locations[i];
-            locationParse = locationParse.split(", ");
-            let newLocation: Locations = new Locations();
-            newLocation.streetNumber = parseInt(locationParse[0]);
-            newLocation.street = locationParse[1];
-            newLocation.unit = locationParse[2];
-            newLocation.city = locationParse[3];
-            newLocation.state = locationParse[4];
-            newLocation.zipcode = parseInt(locationParse[5]);
-            newLocation.lat = -1;
-            newLocation.long = -1;
-            // get geocode and add
-            var address =
-                newLocation.streetNumber + " " +
-                newLocation.street + ", " +
-                newLocation.city + ", " +
-                newLocation.state + " " +
-                newLocation.zipcode;
+        places.push(new Locations());
+        places[i].streetNumber = getStreetNumber(locations[i]);
+        places[i].street = getStreet(locations[i]);
+        places[i].unit = getUnit(locations[i]);
+        places[i].city = getCity(locations[i]);
+        places[i].state = getState(locations[i]);
+        places[i].zipcode = getZip(locations[i]);
 
-            await googleMapsClient.geocode({ address: address }, function (err, response) {
-                if (!err) {
-                    var coord = response.json.results[0].geometry.location;
-                } else {
-                    console.log("Geocode not found");
-                }
-                // CALLBACK FUNCTION - IN ORDER TO OBTAIN RESULTS, MUST OCCUR IN HERE
-                saveLocations(coord);
-            });
-            function saveLocations(coord) {
-                newLocation.lat = Number(coord.lat);
-                newLocation.long = Number(coord.lng);
-                newCampaign.locations.push(newLocation);
-                Manager.save(newCampaign).catch(e => console.log(e));
+        address = constructAddress(places[i]);
+        /**
+         * WTF is going on here!?!?
+         */
+        await googleMapsClient.geocode({ address: address }, async function (err, response) {
+            if (!err) {
+                var coord = response.json.results[0].geometry.location;
+                updateLocation(coord);
+            } else {
+                return console.log("Geocode not found");
             }
+        });
+        function updateLocation(coord) {
+            places[i].lat = Number(coord.lat);
+            places[i].long = Number(coord.lng);
+            getManager().save(places[i]);
+            return places;
+        }
+        campaign.locations.push(places[i]);
+    }
+    await Manager.save(campaign).catch(e => console.log('error saving location', e))
+        .catch(e => console.log('Error saving location', e));
+};
+
+function getManagers(managers) {
+    managers = managers.split("\n");
+    for (let i in managers) {
+        if (managers[i] === '\r' || managers[i] === ' ' || managers[i] === '') {
+            managers.splice(i, 1);
         }
     }
 
-   campaignManager = campaignManager.split("\n");
-    //initialize manager
-    newCampaign.managers = [];
+    for (let i in managers) {
+        managers[i] = managers[i].replace('\r', '');
+    }
 
-    for (var i = 0; i < campaignManager.length; i++) {
-        if (campaignManager[i] != "") {
-            const use = await getManager()
-                .findOne(User, { where: { "_employeeID": campaignManager[i] } });
-            const cm = await getManager()
-                .findOne(CampaignManager, { where: { "_ID": use } });;
-            newCampaign.managers.push(cm);
+    return managers;
+};
+
+function getCanvassers(canavassers) {
+    canavassers = canavassers.split("\n");
+    for (let i in canavassers) {
+        if (canavassers[i] === '\r' || canavassers[i] === ' ' || canavassers[i] === '') {
+            canavassers.splice(i, 1);
         }
     }
-    await Manager.save(newCampaign);
 
-   //Parse Locations for All Locations of Campaign Table
-    const canvassers: string[] = canvasser.split("\n");
+    for (let i in canavassers) {
+        canavassers[i] = canavassers[i].replace('\r', '');
+    }
 
-    for (var i = 0; i < canvassers.length; i++) {
+    return canavassers;
+};
+
+export const saveManagers = async (campaign, managers) => {
+    let usr;
+    let cm;
+
+    managers = getManagers(managers);
+
+    campaign.managers = [];
+    for (let i in managers) {
+        if (managers[i] != "") {
+            usr = await getManager()
+                .findOne(User, { where: { "_employeeID": managers[i] } });
+
+            // If user exist
+            if (usr !== undefined) {
+                cm = await getManager()
+                    .findOne(CampaignManager, { where: { "_ID": usr } });
+
+                // If user is a campaign manager
+                if (cm !== undefined) {
+                    campaign.managers.push(cm);
+                } else {
+                    console.log(`${usr._username} is not a campaign manager`);
+                }
+
+            } else {
+                console.log(`${managers[i]} does not exist`);
+            }
+
+        }
+    }
+};
+
+
+export const saveCanavaser = async (campaign, canvassers) => {
+    let usr;
+    let canvass;
+    canvassers = getCanvassers(canvassers);
+
+    campaign.canvassers = [];
+    for (let i in canvassers) {
         if (canvassers[i] != "") {
-            const us = await getManager()
-                .findOne(User, { where: { "_employeeID": canvassers[i] } })
-            const ca = await getManager()
-                .findOne(Canvasser, { where: { "_ID": us } });
-            ca.campaigns.push(newCampaign);
-            await Manager.save(ca);
+            usr = await getManager()
+                .findOne(User, { where: { "_employeeID": canvassers[i] } });
+            // If user exist
+            if (usr !== undefined) {
+                canvass = await getManager()
+                    .findOne(Canvasser, { where: { "_ID": usr } });
+                // If user is a canvasser
+                if (canvass !== undefined) {
+                    campaign.canvassers.push(canvass);
+                    canvass.campaigns.push(campaign);
+                } else {
+                    console.log(`${usr._username} is not a canvasser`);
+                }
+
+            } else {
+                console.log(`${canvassers[i]} does not exist`);
+            }
+
         }
     }
+    await getManager().save(campaign.canvassers)
+        .catch(e => console.log('Error', e));
 };

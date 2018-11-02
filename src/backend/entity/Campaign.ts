@@ -27,11 +27,11 @@ export class Campaign {
     private _endDate!:Date;
     @Column({name: "avgDuration"})
     private _avgDuration!:number;
-    @OneToMany(type => Questionaire, qt => qt.campaign)
+    @OneToMany(type => Questionaire, qt => qt.campaign, {cascade: true})
     private _question!:Questionaire[];
-    @OneToMany(type => TalkPoint, tp => tp.campaign)
+    @OneToMany(type => TalkPoint, tp => tp.campaign, {cascade: true})
     private _talkingPoint!:TalkPoint[];
-    @OneToMany(type => Results, res => res.campaign)
+    @OneToMany(type => Results, res => res.campaign, {nullable: true})
     private _results!: Results[];
     public get results(): Results[] {
         return this._results;
