@@ -18,6 +18,11 @@ const winston   = require('winston');
 const logger    = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
 
+const googleMapsClient = require('@google/maps').createClient({
+    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
+    Promise: Promise
+});
+
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next()
@@ -74,9 +79,28 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
     /**
      * Generate an estimate of the number of task needed to canvass each location
+     * Used for estimate needed by OR-Tools
      */
     let numTask = managerTools.estimateTask(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
     console.log("Create Assignment = number of tasks: ", numTask);
+
+    /**
+     * Create tasks
+     */
+    let tasks = managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
+    
+    // let result;
+    // let coord1 = managerTools.getCoords(locations[0]);
+    // let coord2 =  managerTools.getCoords(locations[1]);
+    // await googleMapsClient.directions({
+    //     origin: coord1, 
+    //     destination: coord2
+    // })
+    // .asPromise()
+    // .then(res => result = res)
+    // .catch(e => console.log(e));
+    // console.log(result.json.routes[0].legs[0].duration);
+    res.status(200).send('Create Assignment');
 
     // /////////////////////////////////////
     // ///////// relations testing /////////
@@ -98,7 +122,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     // let campaig = await getManager().findOne(Campaign,
     //     { where: { "_ID": campaign.ID }, relations: ["_assignment"] })
     // console.log(campaig);
-    res.status(200).send('Create Assignment');
     
 });
 

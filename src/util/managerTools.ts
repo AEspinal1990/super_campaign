@@ -79,3 +79,18 @@ export const estimateTask = (locations, avgDuration, travelSpeed, workdayDuratio
     let numTask = (avgDistance + avgDuration) / workdayDuration;
     return numTask;
 }
+
+function getCoords(location) {
+    return [Number(location.lat), Number(location.long)];
+};
+
+export const generateTasks = (locations, avgDuration, travelSpeed, workdayDuration) => {
+    let duration;
+    let coords = []
+    // Get all the coordinates
+    locations.forEach(location => {
+        coords.push(getCoords(location));
+    });
+    console.log(coords);
+
+};
