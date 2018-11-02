@@ -21,11 +21,18 @@ const isAuthenticated = (req, res, next) => {
     }
 }
 
+router.get('/calendar', async(req: Request, res: Response) => {
+    res.render('edit-availability');
+
+});
 
 /**
  * GET and POST for Edit Availability
  */
-router.get('/:id/availability', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
+
+    //Commented out backend while testing fronend
+    /*
     const canvas = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
     .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -52,13 +59,19 @@ router.get('/:id/availability', isAuthenticated, async(req: Request, res: Respon
     .where("campaign._ID = :ID", { ID: req.params.id})
     .getOne();
     console.log(canv);
+*/
     //
+        res.render('edit-availability', {
 
+        });
+    ////
+    /*
     adminLogger.info(`/${req.params.id}/availability - Changed availablility`);
     res.send('You want to edit your availablity.');
+    */
 });
 
-router.post('/:id/availability', isAuthenticated, async(req: Request, res: Response) => {
+router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
     
     /**
      * Parse data received into a useable format.
@@ -68,11 +81,13 @@ router.post('/:id/availability', isAuthenticated, async(req: Request, res: Respo
     const mm = "03";
     const dd = "27";
     const date = `${yyyy} - ${mm} - `
+    res.send('hello');
 
 
 });
 
 router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Response) => {
+    /*
     const canv = await getManager()
     .createQueryBuilder(Canvasser, "canvasser")
     .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -87,6 +102,7 @@ router.get('/:id/view-assignment', isAuthenticated, async(req: Request, res: Res
 
 
     adminLogger.info(`/${req.params.id}/view-assignment - View Tasks`);
+    */
     
 });
 
