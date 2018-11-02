@@ -47,7 +47,7 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
        .leftJoinAndSelect("canvasser._assignedDates", "assDate")
        .where("canvasser._ID = :ID", { ID: req.params.id })
        .getOne();
-    //console.log(canvas);
+    console.log(canvas);
 /*
     // relations testing //
     var avail = new Availability();
@@ -72,16 +72,17 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
     console.log(canv);
 */
     if (canvas == undefined) {
-        res.send("Wrong Link (Canvasser ID)")
+        res.send("Wrong Link (Canvasser ID)");
+    } else {
+        adminLogger.info(`/availability/${req.params.id} - Changed availablility`);
+        //res.send('You want to edit your availablity.');
+        res.render('edit-availability', {
+            availableDates: canvas.availableDates,
+            assignedDates: canvas.assignedDates,
+            canvasserID: req.params.id
+        });
     }
 
-    adminLogger.info(`/availability/${req.params.id} - Changed availablility`);
-    //res.send('You want to edit your availablity.');
-    res.render('edit-availability', {
-        availableDates: canvas.availableDates,
-        assignedDates: canvas.assignedDates,
-        canvasserID: req.params.id
-    });
 });
 
 router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
@@ -95,7 +96,8 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
     const mm = "03";
     const dd = "27";
     const date = `${yyyy} - ${mm} - ${dd}`
-
+    /* //Removing line for leftJoinAndSelect campaign for now...not sure if it is necessary (it also restircts canvassers to needing a campaign first)
+    //also changed where(campaign._ID to canvasser._ID)
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -104,6 +106,14 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
+        */
+    const canv = await getManager()
+       .createQueryBuilder(Canvasser, "canvasser")
+       .leftJoinAndSelect("canvasser._ID", "user")
+       .leftJoinAndSelect("canvasser._availableDates", "avaDate")
+       .leftJoinAndSelect("canvasser._assignedDates", "assDate")
+       .where("canvasser._ID = :ID", { ID: req.params.id })
+       .getOne();
     // copy canvasser's old available dates
     var availCopy = [];
     for (let i in canv.availableDates){
