@@ -109,13 +109,7 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
     console.log(req.body.editAvailability.dates);
     //new dates passed in from frontend
     var newDates = req.body.editAvailability.dates.split(",");
-    /**
-     * Parse data received into a useable format.
-     */
-    const yyyy = "2018";
-    const mm = "03";
-    const dd = "27";
-    const date = `${yyyy} - ${mm} - ${dd}`
+
     /* //Removing line for leftJoinAndSelect campaign for now...not sure if it is necessary (it also restircts canvassers to needing a campaign first)
     //also changed where(campaign._ID to canvasser._ID)
     const canv = await getManager()
@@ -155,7 +149,7 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
         }
     }
     console.log(canv.availableDates);
-    /*
+
     // delete old available dates that are unused
     for (let i in availCopy){
         for (let j in canv.availableDates){
@@ -172,7 +166,7 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
             }
         }
     }
-    */
+
     await getManager().save(canv);
 });
 
