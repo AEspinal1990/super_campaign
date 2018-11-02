@@ -29,8 +29,8 @@ router.get('/calendar', async(req: Request, res: Response) => {
  * GET and POST for Edit Availability
  */
 router.get('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
-
     
+/** 
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -39,12 +39,25 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
-    console.log(canvas);
-
+        */
+    const canvas = await getManager()
+       .createQueryBuilder(Canvasser, "canvasser")
+       .leftJoinAndSelect("canvasser._ID", "user")
+       .leftJoinAndSelect("canvasser._availableDates", "avaDate")
+       .leftJoinAndSelect("canvasser._assignedDates", "assDate")
+       .where("canvasser._ID = :ID", { ID: req.params.id })
+       .getOne();
+    //console.log(canvas);
+/*
     // relations testing //
     var avail = new Availability();
     avail.availableDate = new Date();
-    canvas.availableDates = [avail];
+    if(canvas == undefined) {
+        canvas.availableDates = [];
+    } else {
+        canvas.availableDates = [avail];
+
+    }
     await getManager().save(avail);
     console.log("After availability save");
     await getManager().save(canvas);
@@ -57,18 +70,22 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
     console.log(canv);
+*/
+    if (canvas == undefined) {
+        res.send("Wrong Link (Canvasser ID)")
+    }
 
+    adminLogger.info(`/availability/${req.params.id} - Changed availablility`);
+    //res.send('You want to edit your availablity.');
     res.render('edit-availability', {
-        availableDates: canv.availableDates
+        availableDates: canvas.availableDates,
+        assignedDates: canvas.assignedDates,
+        canvasserID: req.params.id
     });
-
-
-    adminLogger.info(`/${req.params.id}/availability - Changed availablility`);
-    res.send('You want to edit your availablity.');
-
 });
 
 router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
+    console.log(req.body.editAvailability);
     //new dates passed in from frontend
     var newDates = [];
     /**
