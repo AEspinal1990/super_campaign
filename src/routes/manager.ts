@@ -127,7 +127,7 @@ router.get('/view-assignments/:id', isAuthenticated, async (req: Request, res: R
     //send to frontend
 });
 
-router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id }});
     var question = await getManager().find(Questionaire,
@@ -149,7 +149,7 @@ router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) 
     }
     await getManager().save(results);
     campaign.results = results;
-    console.log(results);
+    //console.log(results);
     /*
          End of Dummy Results data
      */
@@ -167,7 +167,10 @@ router.get('/:id/results', isAuthenticated, async (req: Request, res: Response) 
         // res.status(200).render("view-results", {
         //     result: resul
         // });
-        res.send(resul);
+        res.render('view-results', {
+            resultsTableView: resul,
+            id: req.params.id
+        })
     }
 })
 

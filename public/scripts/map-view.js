@@ -1,56 +1,51 @@
-// var map;
-// var socket;
-// // setInterval(function () {
-// // }, 10000);
-// // var geocodes;
-// async function initialize() {
-//     // var docGeoCodes = document.getElementsByClassName('geocodes');
-//     // var codes = new Array();
-//     // for (var i=0;i<docGeoCodes.length;i++){
-//     //     codes.push(docGeoCodes[i].innerHTML);
-//     // }
-//     // alert(codes.join(', '));
+var map;
+var usa = {lat: 37.09024, lng: -95.7129};
+var markers = [];
 
-//     var mapProp = {
-//         center: new google.maps.LatLng(40.7128, -74.0060),
-//         zoom: 7,
-//         mapTypeId: google.maps.MapTypeId.ROADMAP
-//     };
-//     map = new google.maps.Map(document.getElementById("map"), mapProp);
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: usa,
+        zoom: 2
+    });
+}
 
-//     //google.maps.event.trigger(map, 'resize');
-//     var room = "view"
-//     socket = io.connect();
-//     socket.on('connect', function () {
-//         socket.emit('room', room);
-//     })
-//     socket.on('view-campaign-geocodes', function (geocode) {
-//         console.log(geocode);
-//         loadMarkers(geocode);
-//     });
 
-// }
+var markers = [];
+var getMarkerUniqueId = function(lat, lng) {
+    return lat + '_' + lng;
+}
+//Adds marker to map and push to the array
+function addMarker(location) {
+    var markerId = getMarkerUniqueId(location.lat, location.lng);
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        animation: google.maps.Animation.DROP,
+        id: markerId
+    });
+    markers[markerId] = marker;
+}
 
-// function loadMarkers(geocodes) {
-//     console.log("geocodes: "+geocodes);
-//     for (let i in geocodes) {
-//         var coord = new google.maps.LatLng(geocodes[i].lat, geocodes[i].lng);
-//         var marker = new google.maps.Marker({
-//             map: map,
-//             position: coord
-//         });
-//         // marker.setMap(map);
-//     }
-//     var infowindow = new google.maps.InfoWindow();
+//** sets the map on all markers in the array
+function setMapOnAll(map) {
+    for (marker in markers) {
+        markers[marker].setMap(map);
+    }                
+}
 
-//     google.maps.event.addListener(marker, 'click', function () {
-//         infowindow.setContent(text);
-//         infowindow.open(map, marker);
-//     });
-//     // window.location.reload(true);
-    
-// }
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+    setMapOnAll(null);
+}
+// Deletes all markers in the array by removing references to them.
+function deleteMarkers() {
+    clearMarkers();
+    markers = [];
+}
 
-// google.maps.event.addDomListener(window, 'load', initialize);
+var removeMarker = function(marker, markerId) {
+    marker.setMap(null); // set markers setMap to null to remove it from map
+    delete markers[markerId]; // delete marker instance from markers object
+}; 
 
-// // window.onload(initialize());
+

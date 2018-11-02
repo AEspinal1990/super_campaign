@@ -1,4 +1,86 @@
 <% include ./partials/header %>
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+        
+</head>
+<style>
+    .content {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 10px;
+        }
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+        /* Set the size of the div element that contains the map */
+    #map {
+        height: 400px;  /* The height is 400 pixels */
+        width: 100%;  /* The width is the width of the web page */
+        background-color: grey;
+    }
+</style>
+<body>
+    <h1>Campaign <%= id %></h1>
+    <div>
+        <h2>Results Table View</h1>
+        <table>
+            <tr>
+                <td>ID</td>
+                <td>Answer</td>
+                <td>AnswerNumber</td>
+                <td>Rating</td>
+                <td>Completed Location ID</td>
+            </tr>
+            <% for (var i = 0; i < resultsTableView.length; i++) { %>
+                <tr>
+                    <td>
+                        <%= resultsTableView[i]._ID %>
+                    </td>
+                    <td>
+                        <%= resultsTableView[i]._answer %>
+                    </td>    
+                    <td>
+                        <%= resultsTableView[i]._answerNumber %>
+                    </td>
+                    <td>
+                        <%= resultsTableView[i]._rating %>
+                    </td>
+                    <td>
+                        <%= resultsTableView[i]._completedLocation._ID %>
+                    </td>                
+                </tr>
+            <% } %>
+        </table>
+    </div>
+    <div>
+        <h2>Results Map View</h1>
+        <div id="map"></div>
+    </div>
+    
+</body>
+<script src="/scripts/map-view.js"></script>
+<script>
+    var socket = io();
+    $(document).ready(function() {
+        socket.on('geocodes', function(geocodes) {
+            deleteMarkers();
+            console.log("EMPTY" +markers);
+            console.log("ALL:" + geocodes);
+            for(i in geocodes) {
+                parsedGeocode = {lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng)};
+                console.log("EACH" + parsedGeocode);
+                addMarker(parsedGeocode);
+            }
+            map.setZoom(5);
+            map.setCenter(new google.maps.LatLng(parseFloat(geocodes[0].lat),parseFloat(geocodes[0].lng)));
 
+        });
+    });
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
 
 <% include ./partials/footer %>
