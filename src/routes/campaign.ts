@@ -6,39 +6,24 @@ import * as campaignCreator from '../util/campaignCreator';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
 import { Canvasser } from '../backend/entity/Canvasser';
-import { Assignment } from '../backend/entity/Assignment';
-import { Locations } from '../backend/entity/Locations';
-import * as fs from 'fs';
 import server, { io } from '../server';
 
-
-const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
-});
-
+const middleware = require('../middleware');
 const router: Router = Router();
 
 const winston = require('winston');
 const logger = require('../util/logger');
 const campaignLogger = winston.loggers.get('campaignLogger');
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next()
-    } else {
-        // res.redirect('/login');
-        res.redirect('/');
-    }
-}
 
 /**
  * GET and POST for create Campaign
  */
-router.get('/new', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/new', middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('create-campaign');
 });
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
       
     let startDate;
     let endDate;
@@ -93,7 +78,7 @@ router.post('/', async (req: Request, res: Response) => {
 /**
  * GET and POST for edit Campaign
  */
-router.get('/edit/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/edit/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     
@@ -186,7 +171,7 @@ router.get('/edit/:id', isAuthenticated, async (req: Request, res: Response) => 
     }
 });
 
-router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     campaignEditor.editCampaign(req.body.campaign, req.params.id);
     if (res.status(200))
         res.send("Campaign Edited!");
@@ -197,7 +182,7 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * GET for view campaign
  */
-router.get('/view/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     var campaign = await getManager().find(Campaign, 
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));

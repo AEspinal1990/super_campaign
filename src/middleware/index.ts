@@ -19,4 +19,12 @@ middlewareObj.isAdmin = (req: Request, res: Response, next: NextFunction) => {
     }    
 }
 
+middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
+    if (req.isAuthenticated() && req.user[0]._permission === 1) {
+        return next()
+    } else {
+        res.redirect('/');
+    }    
+}
+
 module.exports = middlewareObj;
