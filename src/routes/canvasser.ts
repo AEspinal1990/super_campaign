@@ -106,7 +106,6 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
 });
 
 router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
-    console.log(req.body.editAvailability.dates);
     //new dates passed in from frontend
     var newDates = req.body.editAvailability.dates.split(",");
 
@@ -130,30 +129,26 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
        .getOne();
     // copy canvasser's old available dates
     var availCopy = [];
-    for (let i in canv.availableDates){
-        availCopy.push(canv.availableDates.splice(0,1));
+    while(canv.availableDates.length > 0){
+        availCopy.push(canv.availableDates.splice(0,1)[0]);
     }
     // copy canvasser's new available dates
     canv.availableDates = [];
     for (let i in newDates){
         var avail = new Availability();
         let newDateParts = newDates[i].split("/");
-        //create Date is in year/month/date format but our format is month/date/year
-        console.log(newDateParts);
         if (newDateParts == null) {
 
         } else {
             avail.availableDate = new Date(
-                newDateParts[i][2], newDateParts[i][0], newDateParts[i][1]);
+                newDateParts[2], newDateParts[0], newDateParts[1]);
             canv.availableDates.push(avail);
         }
     }
-    console.log(canv.availableDates);
-
     // delete old available dates that are unused
     for (let i in availCopy){
         for (let j in canv.availableDates){
-            if (availCopy[i] === canv.availableDates[j]){
+            if (+availCopy[i].availableDate === +canv.availableDates[j].availableDate){
                 canv.availableDates[j].ID = availCopy[i].ID;
                 break;
             }
