@@ -149,10 +149,10 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
         if (canv === undefined) {
             res.send('You have no tasks assigned.');
         } else {
-            // res.render("view-tasks", {
-            //     tasks: canv.task
-            // });
-            res.send(canv.task);
+            res.render("view-tasks", {
+                tasks: canv.task
+            });
+            // res.send(canv.task);
         }
         res.send("Available Date Updated.");
     }
