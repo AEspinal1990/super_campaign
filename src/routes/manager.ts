@@ -132,7 +132,7 @@ router.get('/view-assignments/:id', isAuthenticated, async (req: Request, res: R
     //send to frontend
 });
 
-router.get('/createdummyresult', async (req: Request, res: Response) => {
+router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id }});
     var question = await getManager().find(Questionaire,
@@ -141,14 +141,16 @@ router.get('/createdummyresult', async (req: Request, res: Response) => {
         create dummy Results data
     */
     var results = [];
+    var completed = new CompletedLocation();
+    completed.locations = [];
     for (var i=0;i<question.length;i++) {
         var result = new Results();
         result.campaign = campaign;
         result.answer = true;
         result.answerNumber = Number(i);
         result.rating = 5;
-        result.completedLocation = new CompletedLocation();
-        result.completedLocation.locations = [campaign.locations[0]];
+        result.completedLocation = completed;
+        result.completedLocation.locations.push(campaign.locations[0]);
         await getManager().save(result.completedLocation);
         results.push(result);
     }
@@ -162,35 +164,15 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         { where: { "_ID": req.params.id }});
     var question = await getManager().find(Questionaire,
         {where: {"_campaign": campaign}});
-    /*
-        create dummy Results data
-    */
-    // var results = [];
-    // for (var i=0;i<question.length;i++) {
-    //     var result = new Results();
-    //     result.campaign = campaign;
-    //     result.answer = true;
-    //     result.answerNumber = Number(i);
-    //     result.rating = 5;
-    //     result.completedLocation = new CompletedLocation();
-    //     result.completedLocation.locations = [campaign.locations[0]];
-    //     console
-    //     await getManager().save(result.completedLocation);
-    //     results.push(result);
-    // }
-    // await getManager().save(results);
-    // campaign.results = results;
-    // console.log(results);
-    /*
-         End of Dummy Results data
-     */
 
     var resul = await getManager().find(Results,
     {
         where: { "_campaign": campaign },
-        relations: ["_completedLocation"]
+        relations: ["_completedLocation", "_completedLocation._locations"]
     });
     console.log(resul);
+    campaign.results = resul;
+    console.log(campaign.getLocationsResults());
 
     function ResultDetails (location_Id, rating, coord) {
         this.location_Id = location_Id;
@@ -203,8 +185,8 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         //coords.push(managerTools.getCoords2(location));
     });
 
-    console.log(campaign.locations)
-    console.log(coords)
+    // console.log(campaign.locations)
+    // console.log(coords)
     if (resul === undefined) {
         res.status(404).send("No results were found for this campaign.");
     } else {
