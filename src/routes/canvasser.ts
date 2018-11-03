@@ -79,18 +79,17 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
         //combine available and assigned dates to be shown on calendar
         var availableOrAssigned = "";
         for (let avail in canvas.availableDates) {
-            let curDate = canvas.availableDates[avail].availableDate;
-            let curDateStr = curDate.getMonth + "/" + curDate.getDate + "/" + curDate.getFullYear + ",";
+            let curDate = new Date(canvas.availableDates[avail].availableDate);
+            let curDateStr = "" + curDate.getMonth() + "/" + curDate.getDate() + "/" + curDate.getFullYear() + ",";
             availableOrAssigned += curDateStr;
-            console.log(curDateStr);
         }
         //Remove the las comma added on previous loop
         if (availableOrAssigned !== "") {
             availableOrAssigned = availableOrAssigned.slice(0, -1);
         }
         for (let avail in canvas.assignedDates) {
-            let curDate = canvas.assignedDates[avail].assignedDate;
-            let curDateStr = "," + curDate.getMonth + "/" + curDate.getDate + "/" + curDate.getFullYear;
+            let curDate = new Date(canvas.assignedDates[avail].assignedDate);
+            let curDateStr = "," + curDate.getMonth() + "/" + curDate.getDate() + "/" + curDate.getFullYear();
             availableOrAssigned += curDateStr;
         }
         // if available dates is empty, then the first comma is not needed in the second for loop
