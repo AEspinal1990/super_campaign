@@ -93,7 +93,7 @@ router.post('/', async (req: Request, res: Response) => {
 /**
  * GET and POST for edit Campaign
  */
-router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/edit/:id', isAuthenticated, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     
@@ -124,7 +124,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
 
         //parse questions back to input form
         let questionaireRepository = getRepository(Questionaire);
-        let questionaire = await questionaireRepository.find({ where: { "_campaign._ID": campaignID } }).catch(e => console.log(e));
+        let questionaire = await questionaireRepository.find({ where: { "_Campaign_ID": campaignID } }).catch(e => console.log(e));
         campaign[0].question = questionaire;
         let questionsInput = "";
         for (let i in campaign[0].question) {
@@ -132,7 +132,7 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         }
         //parse talking points back to input form
         let talkPointRepository = getRepository(TalkPoint);
-        let talkPoint = await talkPointRepository.find({ where: { "_campaign._ID": campaignID } }).catch(e => console.log(e));
+        let talkPoint = await talkPointRepository.find({ where: { "_Campaign_ID": campaignID } }).catch(e => console.log(e));
         campaign[0].talkingPoint = talkPoint;
         let talkPointInput = "";
         for (let i in campaign[0].talkingPoint) {
@@ -142,7 +142,8 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         //parse locations back to input form
         let locationsInput = "";
         for (let i in campaign[0].locations) {
-            locationsInput += campaign[0].locations[i].streetNumber + ", " +
+            
+            locationsInput += campaign[0].locations[i]._streetNumber + ", " +
                 campaign[0].locations[i].street + ", " +
                 campaign[0].locations[i].unit + ", " +
                 campaign[0].locations[i].city + ", " +
@@ -169,7 +170,6 @@ router.get('/:id/edit', isAuthenticated, async (req: Request, res: Response) => 
         for (let i in campaignCanvasser) {
             campaignCanvassersString += campaignCanvasser[i].ID.employeeID + "\n";
         }
-
         res.status(200).render('edit-campaign', {
             campaignName: campaign[0].name,
             campaignManagers: campaignManagersString,
@@ -197,7 +197,7 @@ router.post('/:id', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * GET for view campaign
  */
-router.get('/:id/view', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view/:id', isAuthenticated, async (req: Request, res: Response) => {
     var campaign = await getManager().find(Campaign, 
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
