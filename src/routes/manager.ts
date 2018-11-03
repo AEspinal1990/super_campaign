@@ -72,27 +72,37 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Used for estimate needed by OR-Tools
      */
     let numTask = managerTools.estimateTask(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    console.log("Create Assignment = number of tasks: ", numTask);
 
     /**
      * Create tasks
      */
     let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    tasks.forEach(task => task = managerTools.decorateTask(task, campaign))
-    console.log(tasks);
+    tasks.forEach(task => {
+        task = managerTools.decorateTask(task, campaign);  
+    });
 
-    // let result;
-    // let coord1 = managerTools.getCoords(locations[0]);
-    // let coord2 =  managerTools.getCoords(locations[1]);
-    // await googleMapsClient.directions({
-    //     origin: coord1, 
-    //     destination: coord2
-    // })
-    // .asPromise()
-    // .then(res => result = res)
-    // .catch(e => console.log(e));
-    // console.log(result.json.routes[0].legs[0].duration);
-    res.status(200).send('Create Assignment');
+    /**
+     * Create Assignment from the generated Tasks
+     */
+    assignment.tasks = [];
+    tasks.forEach(task => assignment.tasks.push(task));
+
+    console.log(assignment);
+
+    /**
+     * Assign new Assignment to the campaign
+     */
+    campaign.assignment = assignment
+
+    /**
+     * Save new assignment and update campaign
+     */
+    await getManager().save(assignment)
+        .then(res => console.log('Successfully created an assignment'))
+        .catch(e => console.log('Assignment Error: ', e));
+    await getManager().save(campaign)
+        .then(res => console.log('Successfully updated campaign with a new assignment'))
+        .catch(e => console.log('Campaign Update Error: ', e));
 
     // /////////////////////////////////////
     // ///////// relations testing /////////
@@ -114,7 +124,8 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     // let campaig = await getManager().findOne(Campaign,
     //     { where: { "_ID": campaign.ID }, relations: ["_assignment"] })
     // console.log(campaig);
-    
+    res.status(200).send('Create Assignment');
+
 });
 
 router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {

@@ -1,11 +1,15 @@
-import * as fs from 'fs';
-import { Canvasser } from '../backend/entity/Canvasser';
-import { getManager } from 'typeorm';
-import { Task } from '../backend/entity/Task';
+import * as fs                  from 'fs';
+import { Canvasser }            from '../backend/entity/Canvasser';
+import { getManager }           from 'typeorm';
+import { Task }                 from '../backend/entity/Task';
+import { RemainingLocation }    from '../backend/entity/RemainingLocation';
+
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
     Promise: Promise
 });
+
+
 
 /**
  * Trip object used to help with creation of task
@@ -165,15 +169,15 @@ function determineModeOfTransportation(travelSpeed) {
  * @param travelSpeed 
  * @param workdayDuration 
  */
-export const generateTasks = async (locations, avgDuration, travelSpeed, workdayDuration) => {
+export const generateTasks = async (locations, avgDuration, travelSpeed, workday) => {
     
     let remainingLocations = [];
-    let tasks = [];
-    let trips = [];
+    let t = [];
     let coords = []
-    let totalTime;
     let tripTime;
     let mode;
+    let durOfTask = 0;
+    let i = 0;
 
     // Get all the coordinates
     locations.forEach(location => {
@@ -183,38 +187,53 @@ export const generateTasks = async (locations, avgDuration, travelSpeed, workday
     // Determine mode of transportation based off 
     // of travelSpeed in mph - walk, bike, or car
     mode = determineModeOfTransportation(travelSpeed);    
-
-    // Calculate the time it takes to get from starting location
-    // to the next and repeat untill all locations are visited.
-    for(let i = 0; i < coords.length - 1; i++) {
-        tripTime = await getTripTime(coords[i], coords[i+1], mode, avgDuration);
-        trips.push(new Trip(locations[i], locations[i+1], tripTime));        
-    }
     
-    // Create the tasks
-    totalTime = 0;
-    trips.forEach(trip => {
-        tripTime = Number(trip.tripTime);
-        if (totalTime + tripTime < workdayDuration) {
-            remainingLocations.push(trip);
-            totalTime += tripTime;
-        }    
-        else if (totalTime === 0 && tripTime > workdayDuration) {
-            tasks.push(createTask(remainingLocations));
-        }        
-        else {
-            tasks.push(createTask(remainingLocations));
-            totalTime += tripTime;
-            remainingLocations.push(trip);
-        }
+    // Create arrays of remainingLocations that are properties of
+    // a task.    
+    while(coords.length > 1) {
+        tripTime = await getTripTime(coords[i], coords[i+1], mode, avgDuration);
         
-    });
-
-    if (tripTime !== 0) {
-        tasks.push(createTask(remainingLocations));
+        // A to B fits in workday
+        if (tripTime + durOfTask <= workday) {
+            remainingLocations.push(locations[i]);
+            durOfTask += tripTime;
+            locations.shift();
+            coords.shift();
+        }
+        // Getting to B takes longer than workday.
+        // Make a single Task into a business trip
+        else if(tripTime > workday) {
+            remainingLocations.push(locations[i]);
+            t.push(remainingLocations);
+            remainingLocations = [];
+            t.push([locations[i+1]]);
+            locations.shift();
+            coords.shift();
+        }
+        // Adding A to B would exceed workday
+        // Stop at A make B part of the next task
+        else {
+            remainingLocations.push(locations[i]);
+            t.push(remainingLocations);      
+            remainingLocations = [];
+            durOfTask = 0;
+            locations.shift();
+            coords.shift();
+        }        
     }
 
+    // Enter the remaining locations into a task.
+    if (remainingLocations.length > 0) { 
+        t.push(remainingLocations);
+        remainingLocations = [];
+    }
+
+    // Create tasks
+    let tasks = [];
+    t.forEach(task => tasks.push(createTask(task)));
+    //console.log(tasks);
     return tasks;
+
 };
 
 /**
@@ -224,7 +243,8 @@ export const generateTasks = async (locations, avgDuration, travelSpeed, workday
  */
 function createTask(remainingLocations) {
     let task = new Task();
-    task.remainingLocation = remainingLocations;
+    task.remainingLocation = new RemainingLocation();
+    task.remainingLocation.locations = remainingLocations;
     task.status = false;
     task.scheduledOn = new Date();
     return task;
@@ -237,10 +257,10 @@ function createTask(remainingLocations) {
  * @param campaign 
  */
 export const decorateTask = (task, campaign) =>{
-    console.log('RL', task.remainingLocation)
     task.campaignID = campaign.ID;
-    //task.currentLocation = task.remainingLocations[];
+    task.currentLocation = task.remainingLocation.locations[0];
     task.completedLocation = null;
+    return task;
 }
 
 
