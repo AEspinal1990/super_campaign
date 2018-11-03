@@ -72,27 +72,37 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Used for estimate needed by OR-Tools
      */
     let numTask = managerTools.estimateTask(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    console.log("Create Assignment = number of tasks: ", numTask);
 
     /**
      * Create tasks
      */
     let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    tasks.forEach(task => task = managerTools.decorateTask(task, campaign))
-    console.log(tasks);
+    tasks.forEach(task => {
+        task = managerTools.decorateTask(task, campaign);  
+    });
 
-    // let result;
-    // let coord1 = managerTools.getCoords(locations[0]);
-    // let coord2 =  managerTools.getCoords(locations[1]);
-    // await googleMapsClient.directions({
-    //     origin: coord1, 
-    //     destination: coord2
-    // })
-    // .asPromise()
-    // .then(res => result = res)
-    // .catch(e => console.log(e));
-    // console.log(result.json.routes[0].legs[0].duration);
-    res.status(200).send('Create Assignment');
+    /**
+     * Create Assignment from the generated Tasks
+     */
+    assignment.tasks = [];
+    tasks.forEach(task => assignment.tasks.push(task));
+
+    console.log(assignment);
+
+    /**
+     * Assign new Assignment to the campaign
+     */
+    campaign.assignment = assignment
+
+    /**
+     * Save new assignment and update campaign
+     */
+    await getManager().save(assignment)
+        .then(res => console.log('Successfully created an assignment'))
+        .catch(e => console.log('Assignment Error: ', e));
+    await getManager().save(campaign)
+        .then(res => console.log('Successfully updated campaign with a new assignment'))
+        .catch(e => console.log('Campaign Update Error: ', e));
 
     // /////////////////////////////////////
     // ///////// relations testing /////////
@@ -114,7 +124,8 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     // let campaig = await getManager().findOne(Campaign,
     //     { where: { "_ID": campaign.ID }, relations: ["_assignment"] })
     // console.log(campaig);
-    
+    res.status(200).send('Create Assignment');
+
 });
 
 router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {
@@ -132,7 +143,7 @@ router.get('/view-assignments/:id', isAuthenticated, async (req: Request, res: R
     //send to frontend
 });
 
-router.get('/createdummyresult', async (req: Request, res: Response) => {
+router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id }});
     var question = await getManager().find(Questionaire,
@@ -141,14 +152,16 @@ router.get('/createdummyresult', async (req: Request, res: Response) => {
         create dummy Results data
     */
     var results = [];
+    var completed = new CompletedLocation();
+    completed.locations = [];
     for (var i=0;i<question.length;i++) {
         var result = new Results();
         result.campaign = campaign;
         result.answer = true;
         result.answerNumber = Number(i);
         result.rating = 5;
-        result.completedLocation = new CompletedLocation();
-        result.completedLocation.locations = [campaign.locations[0]];
+        result.completedLocation = completed;
+        result.completedLocation.locations.push(campaign.locations[0]);
         await getManager().save(result.completedLocation);
         results.push(result);
     }
@@ -162,35 +175,15 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         { where: { "_ID": req.params.id }});
     var question = await getManager().find(Questionaire,
         {where: {"_campaign": campaign}});
-    /*
-        create dummy Results data
-    */
-    // var results = [];
-    // for (var i=0;i<question.length;i++) {
-    //     var result = new Results();
-    //     result.campaign = campaign;
-    //     result.answer = true;
-    //     result.answerNumber = Number(i);
-    //     result.rating = 5;
-    //     result.completedLocation = new CompletedLocation();
-    //     result.completedLocation.locations = [campaign.locations[0]];
-    //     console
-    //     await getManager().save(result.completedLocation);
-    //     results.push(result);
-    // }
-    // await getManager().save(results);
-    // campaign.results = results;
-    // console.log(results);
-    /*
-         End of Dummy Results data
-     */
 
     var resul = await getManager().find(Results,
     {
         where: { "_campaign": campaign },
-        relations: ["_completedLocation"]
+        relations: ["_completedLocation", "_completedLocation._locations"]
     });
     console.log(resul);
+    campaign.results = resul;
+    console.log(campaign.getLocationsResults());
 
     function ResultDetails (location_Id, rating, coord) {
         this.location_Id = location_Id;
@@ -203,8 +196,8 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         //coords.push(managerTools.getCoords2(location));
     });
 
-    console.log(campaign.locations)
-    console.log(coords)
+    // console.log(campaign.locations)
+    // console.log(coords)
     if (resul === undefined) {
         res.status(404).send("No results were found for this campaign.");
     } else {

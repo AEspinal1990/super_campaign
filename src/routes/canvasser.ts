@@ -211,12 +211,14 @@ router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Resp
                     index = Number(i);
                 }
             }
-            for (let i in canv.task[index].remainingLocation) {
+            for (let i in canv.task[index].remainingLocation.locations) {
                 geocodes.push({
-                    lat: canv.task[index].remainingLocation[i].lat,
-                    lng: canv.task[index].remainingLocation[i].long
+                    lat: canv.task[index].remainingLocation.locations[i].lat,
+                    lng: canv.task[index].remainingLocation.locations[i].long
                 });
             }
+            console.log(geocodes);
+            console.log(canv.task[index]);
             io.on('connection', function (socket) {
                 socket.emit('task-geocodes', geocodes);
             });
