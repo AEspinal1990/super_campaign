@@ -77,8 +77,10 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Create tasks
      */
-    let tasks = managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    
+    let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
+    tasks.forEach(task => task = managerTools.decorateTask(task, campaign))
+    console.log(tasks);
+
     // let result;
     // let coord1 = managerTools.getCoords(locations[0]);
     // let coord2 =  managerTools.getCoords(locations[1]);

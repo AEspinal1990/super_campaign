@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { Canvasser } from '../backend/entity/Canvasser';
 import { getManager } from 'typeorm';
+import { Task } from '../backend/entity/Task';
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
     Promise: Promise
@@ -166,8 +167,11 @@ function determineModeOfTransportation(travelSpeed) {
  */
 export const generateTasks = async (locations, avgDuration, travelSpeed, workdayDuration) => {
     
+    let remainingLocations = [];
+    let tasks = [];
     let trips = [];
     let coords = []
+    let totalTime;
     let tripTime;
     let mode;
 
@@ -187,10 +191,58 @@ export const generateTasks = async (locations, avgDuration, travelSpeed, workday
         trips.push(new Trip(locations[i], locations[i+1], tripTime));        
     }
     
+    // Create the tasks
+    totalTime = 0;
     trips.forEach(trip => {
-        console.log(trip);
+        tripTime = Number(trip.tripTime);
+        if (totalTime + tripTime < workdayDuration) {
+            remainingLocations.push(trip);
+            totalTime += tripTime;
+        }    
+        else if (totalTime === 0 && tripTime > workdayDuration) {
+            tasks.push(createTask(remainingLocations));
+        }        
+        else {
+            tasks.push(createTask(remainingLocations));
+            totalTime += tripTime;
+            remainingLocations.push(trip);
+        }
+        
     });
+
+    if (tripTime !== 0) {
+        tasks.push(createTask(remainingLocations));
+    }
+
+    return tasks;
 };
+
+/**
+ * Returns a Task object with only the remainingLocations, status,
+ * and scheduledOn properties assigned.
+ * @param remainingLocations 
+ */
+function createTask(remainingLocations) {
+    let task = new Task();
+    task.remainingLocation = remainingLocations;
+    task.status = false;
+    task.scheduledOn = new Date();
+    return task;
+}
+
+/**
+ * Decorates a Task object with its campaignID,
+ * currentLocation, and completedLocatoin.
+ * @param task 
+ * @param campaign 
+ */
+export const decorateTask = (task, campaign) =>{
+    console.log('RL', task.remainingLocation)
+    task.campaignID = campaign.ID;
+    //task.currentLocation = task.remainingLocations[];
+    task.completedLocation = null;
+}
+
 
 /**
  * Gets the total trip time from location A to location B
