@@ -1,27 +1,17 @@
-import { Request, Response, Router } from 'express';
-import { getManager } from 'typeorm';
-import { Campaign } from '../backend/entity/Campaign';
-import { Canvasser } from '../backend/entity/Canvasser';
-import { Assignment } from '../backend/entity/Assignment';
-import { Locations } from '../backend/entity/Locations';
-import * as fs from 'fs';
-import { Task } from '../backend/entity/Task';
-import { RemainingLocation } from '../backend/entity/RemainingLocation';
-import { RelationCountAttribute } from 'typeorm/query-builder/relation-count/RelationCountAttribute';
-import { Results } from '../backend/entity/Results';
-import { CompletedLocation } from '../backend/entity/CompletedLocation';
-import { Questionaire } from '../backend/entity/Questionaire';
-import * as managerTools from '../util/managerTools';
+import { Request, Response, Router }    from 'express';
+import { getManager }                   from 'typeorm';
+import { Campaign }                     from '../backend/entity/Campaign';
+import { Assignment }                   from '../backend/entity/Assignment';
+import { Results }                      from '../backend/entity/Results';
+import { CompletedLocation }            from '../backend/entity/CompletedLocation';
+import { Questionaire }                 from '../backend/entity/Questionaire';
+import * as managerTools                from '../util/managerTools';
 
 const router: Router = Router();
 const winston   = require('winston');
 const logger    = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
 
-const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
-    Promise: Promise
-});
 
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -87,8 +77,10 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Create tasks
      */
-    let tasks = managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    
+    let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
+    tasks.forEach(task => task = managerTools.decorateTask(task, campaign))
+    console.log(tasks);
+
     // let result;
     // let coord1 = managerTools.getCoords(locations[0]);
     // let coord2 =  managerTools.getCoords(locations[1]);

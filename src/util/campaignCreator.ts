@@ -59,10 +59,6 @@ export const initCampaign = (name, sDate, eDate, avgDuration) => {
     return newCampaign;
 };
 
-export const saveCampaign = async campaign => {
-    const Manager = getManager();
-    await Manager.save(campaign).catch(e => console.log(e));
-};
 
 const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
@@ -167,46 +163,7 @@ function constructAddress(location) {
     return address;
 };
 
-export const saveLocations = async (campaign, locations) => {
-    const Manager = getManager();
 
-    locations = locations.trim().split('\n');
-
-    let places = [];
-    let address;
-    campaign.locations = [];
-    for (let i in locations) {
-        places.push(new Locations());
-        places[i].streetNumber = getStreetNumber(locations[i]);
-        places[i].street = getStreet(locations[i]);
-        places[i].unit = getUnit(locations[i]);
-        places[i].city = getCity(locations[i]);
-        places[i].state = getState(locations[i]);
-        places[i].zipcode = getZip(locations[i]);
-
-        address = constructAddress(places[i]);
-        /**
-         * WTF is going on here!?!?
-         */
-        await googleMapsClient.geocode({ address: address }, async function (err, response) {
-            if (!err) {
-                var coord = response.json.results[0].geometry.location;
-                updateLocation(coord);
-            } else {
-                return console.log("Geocode not found");
-            }
-        });
-        function updateLocation(coord) {
-            places[i].lat = Number(coord.lat);
-            places[i].long = Number(coord.lng);
-            getManager().save(places[i]);
-            return places;
-        }
-        campaign.locations.push(places[i]);
-    }
-    await Manager.save(campaign).catch(e => console.log('error saving location', e))
-        .catch(e => console.log('Error saving location', e));
-};
 
 function getManagers(managers) {
     managers = managers.split("\n");
@@ -271,6 +228,48 @@ export const saveManagers = async (campaign, managers) => {
 };
 
 
+export const saveLocations = async (campaign, locations) => {
+    const Manager = getManager();
+
+    locations = locations.trim().split('\n');
+
+    let places = [];
+    let address;
+    campaign.locations = [];
+    for (let i in locations) {
+        places.push(new Locations());
+        places[i].streetNumber = getStreetNumber(locations[i]);
+        places[i].street = getStreet(locations[i]);
+        places[i].unit = getUnit(locations[i]);
+        places[i].city = getCity(locations[i]);
+        places[i].state = getState(locations[i]);
+        places[i].zipcode = getZip(locations[i]);
+
+        address = constructAddress(places[i]);
+        /**
+         * WTF is going on here!?!?
+         */
+        await googleMapsClient.geocode({ address: address }, async function (err, response) {
+            if (!err) {
+                var coord = response.json.results[0].geometry.location;
+                updateLocation(coord);
+            } else {
+                return console.log("Geocode not found");
+            }
+        });
+        function updateLocation(coord) {
+            places[i].lat = Number(coord.lat);
+            places[i].long = Number(coord.lng);
+            getManager().save(places[i]);
+            return places;
+        }
+        campaign.locations.push(places[i]);
+    }
+    await Manager.save(campaign).catch(e => console.log('error saving location', e))
+        .catch(e => console.log('Error saving location', e));
+};
+
+
 export const saveCanavaser = async (campaign, canvassers) => {
     let usr;
     let canvass;
@@ -302,3 +301,9 @@ export const saveCanavaser = async (campaign, canvassers) => {
     await getManager().save(campaign.canvassers)
         .catch(e => console.log('Error', e));
 };
+
+export const saveCampaign = async campaign => {
+    const Manager = getManager();
+    await Manager.save(campaign).catch(e => console.log(e));
+};
+

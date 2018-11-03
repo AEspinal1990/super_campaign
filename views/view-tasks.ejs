@@ -1,3 +1,35 @@
 <% include ./partials/header %>
 
+<div>
+    <% for (var i=0; i < tasks.length; i++ ) { %>
+
+    <div style="border: 5px;margin: auto;">
+        <form action='/canvasser/view-task-detail' method='POST'>
+            <h3>Task ID</h3>
+            <p>
+                <%= tasks[i]._ID %>
+            </p>
+            <input type="hidden" name="taskID" value="<%= tasks[i]._ID %>">
+            <input type="hidden" name="campaignID" value="<%= campaignID %>">
+            <input type="hidden" name="canvasserID" value="<%= id %>">
+
+            <h3>Scheduled On</h3>
+            <p>
+                <%= tasks[i]._scheduledOn %>
+            </p>
+
+            <h3>Task Status</h3>
+            <p>
+                <% if (tasks[i]._status == true) { %>
+                Completed
+                <% } else { %>
+                Active
+                <% } %>
+            </p>
+            <input type="submit" value="Details"> 
+        </form>
+    </div>
+    <% } %>
+</div>
+
 <% include ./partials/footer %>
