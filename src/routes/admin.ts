@@ -18,6 +18,8 @@ import * as authSystem  from '../config/auth';
 var passwordValidator = require('password-validator');
 const router: Router = Router();
 
+const middleware = require('../middleware');
+
 const passwordSchema:any = new passwordValidator();
 passwordSchema
     .is().min(8)                                    // Minimum length 8
@@ -30,19 +32,10 @@ passwordSchema
     'Password','password','Qwert1!']);     
 
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next()
-    } else {
-        res.redirect('/');
-    }
-}
-
-
 /**
  * View and Edit Global Parameters
  */
-router.get('/globals', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/globals', middleware.isAdmin, async(req: Request, res: Response) => {
     let raw_gp = fs.readFileSync('src/globals.json');
     // @ts-ignore
     let global_params = JSON.parse(raw_gp);
@@ -54,7 +47,7 @@ router.get('/globals', isAuthenticated, async(req: Request, res: Response) => {
 
 // Can't be run when checking for changes in files. Will cause app to crash
 // Needs to be run with 'npm start'
-router.post('/globals', isAuthenticated, async(req: Request, res: Response) => {
+router.post('/globals', middleware.isAdmin, async(req: Request, res: Response) => {
     let taskLimit = req.body.global.taskLimit;
     let avgSpeed = req.body.global.avgSpeed;
     adminLogger.info(`${req.user[0]._username} changed globals. Avgspeed is now ${avgSpeed} and taskLimit is now ${taskLimit}`);
@@ -127,7 +120,7 @@ router.post('/', [
 });
 
 
-router.get('/:username', isAuthenticated, async(req: Request, res: Response) => {
+router.get('/:username', middleware.isAdmin, async(req: Request, res: Response) => {
     
     const userRepository = getRepository(User);
     const username = req.params.username;
@@ -156,7 +149,7 @@ router.get('/:username', isAuthenticated, async(req: Request, res: Response) => 
     }
 });
 
-router.post('/:username', isAuthenticated, async(req: Request, res: Response) => {
+router.post('/:username', middleware.isAdmin, async(req: Request, res: Response) => {
     let originalUsername = req.params.username;
 
     // TODO: Error handling needed for when user not found
@@ -207,7 +200,7 @@ router.post('/:username', isAuthenticated, async(req: Request, res: Response) =>
     res.send('hello');
 });
 
-router.delete('/:username', isAuthenticated, async(req: Request, res: Response) => {    
+router.delete('/:username', middleware.isAdmin, async(req: Request, res: Response) => {    
     
     // EmployeeID is required to remove user from roled table
     const userRepository = getRepository(User);    

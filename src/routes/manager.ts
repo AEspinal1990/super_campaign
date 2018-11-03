@@ -11,7 +11,7 @@ const router: Router = Router();
 const winston   = require('winston');
 const logger    = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
-
+const middleware = require('../middleware');
 
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -85,6 +85,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Create Assignment from the generated Tasks
      */
     assignment.tasks = [];
+    //console.log(tasks);
     tasks.forEach(task => assignment.tasks.push(task));
 
     console.log(assignment);
@@ -93,16 +94,16 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Assign new Assignment to the campaign
      */
     campaign.assignment = assignment
-
+    //console.log(campaign)
     /**
      * Save new assignment and update campaign
      */
-    await getManager().save(assignment)
-        .then(res => console.log('Successfully created an assignment'))
-        .catch(e => console.log('Assignment Error: ', e));
-    await getManager().save(campaign)
-        .then(res => console.log('Successfully updated campaign with a new assignment'))
-        .catch(e => console.log('Campaign Update Error: ', e));
+    // await getManager().save(assignment)
+    //     .then(res => console.log('Successfully created an assignment'))
+    //     .catch(e => console.log('Assignment Error: ', e));
+    // await getManager().save(campaign)
+    //     .then(res => console.log('Successfully updated campaign with a new assignment'))
+    //     .catch(e => console.log('Campaign Update Error: ', e));
 
     // /////////////////////////////////////
     // ///////// relations testing /////////
