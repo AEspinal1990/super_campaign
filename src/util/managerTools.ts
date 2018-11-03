@@ -84,6 +84,10 @@ function getCoords(location) {
     return [Number(location.lat), Number(location.long)];
 };
 
+export function getCoords2(location) {
+    return [Number(location.lat), Number(location.long)];
+};
+
 export const generateTasks = (locations, avgDuration, travelSpeed, workdayDuration) => {
     let duration;
     let coords = []

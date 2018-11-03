@@ -174,6 +174,17 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         });
     console.log(resul);
 
+    let id_coords_mapping = {
+        identification: Number,
+        results: Number,
+        coord: [Number, Number]
+    }
+    // campaign.locations.forEach( location => {
+    //     coords.push(managerTools.getCoords2(location));
+    // });
+
+    console.log(campaign.locations)
+    console.log(id_coords_mapping)
     if (resul === undefined) {
         res.status(404).send("No results were found for this campaign.");
     } else {

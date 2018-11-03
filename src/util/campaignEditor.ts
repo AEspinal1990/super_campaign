@@ -149,7 +149,7 @@ export const editCampaign = async (campaignData, campaignID) => {
     }
     //deep copy
     var locationCopy = [];
-    for (let i in thisCampaign[0].locations ){
+    while(thisCampaign[0].locations.length > 0){
         locationCopy.push(thisCampaign[0].locations.splice(0,1)[0]);
     }
     //Update Locations

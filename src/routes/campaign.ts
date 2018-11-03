@@ -124,7 +124,7 @@ router.get('/edit/:id', isAuthenticated, async (req: Request, res: Response) => 
 
         //parse questions back to input form
         let questionaireRepository = getRepository(Questionaire);
-        let questionaire = await questionaireRepository.find({ where: { "_Campaign_ID": campaignID } }).catch(e => console.log(e));
+        let questionaire = await questionaireRepository.find({ where: { "Campaign_ID": campaignID } }).catch(e => console.log(e));
         campaign[0].question = questionaire;
         let questionsInput = "";
         for (let i in campaign[0].question) {
@@ -132,7 +132,7 @@ router.get('/edit/:id', isAuthenticated, async (req: Request, res: Response) => 
         }
         //parse talking points back to input form
         let talkPointRepository = getRepository(TalkPoint);
-        let talkPoint = await talkPointRepository.find({ where: { "_Campaign_ID": campaignID } }).catch(e => console.log(e));
+        let talkPoint = await talkPointRepository.find({ where: { "Campaign_ID": campaignID } }).catch(e => console.log(e));
         campaign[0].talkingPoint = talkPoint;
         let talkPointInput = "";
         for (let i in campaign[0].talkingPoint) {
@@ -144,7 +144,7 @@ router.get('/edit/:id', isAuthenticated, async (req: Request, res: Response) => 
         for (let i in campaign[0].locations) {
             
             locationsInput += campaign[0].locations[i]._streetNumber + ", " +
-                campaign[0].locations[i].street + ", " +
+                campaign[0].locations[i]._street + ", " +
                 campaign[0].locations[i].unit + ", " +
                 campaign[0].locations[i].city + ", " +
                 campaign[0].locations[i].state + ", " +
