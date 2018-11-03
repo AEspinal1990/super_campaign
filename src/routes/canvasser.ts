@@ -163,6 +163,8 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
 
 
     await getManager().save(canv);
+    //redirect after finish posting
+    res.send("Done Editing Availability");
 });
 
 router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Response) => {
