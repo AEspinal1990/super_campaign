@@ -2,139 +2,31 @@
 
 <div>
     <% for (var i=0; i < tasks.length; i++ ) { %>
-    <div style="border: 5px;margin: auto;" onclick="">
-        <h3>Task ID</h3>
-        <p>
-            <%= tasks[i]._ID %>
-        </p>
 
-        <h3>Scheduled On</h3>
-        <p>
-            <%= tasks[i]._scheduledOn %>
-        </p>
+    <div style="border: 5px;margin: auto;">
+        <form action='/canvasser/view-task-detail/<%= id %>' method='POST'>
+            <h3>Task ID</h3>
+            <p>
+                <%= tasks[i]._ID %>
+            </p>
+            <input type="hidden" name="taskID" value="<%= tasks[i]._ID %>">
+            
+            <h3>Scheduled On</h3>
+            <p>
+                <%= tasks[i]._scheduledOn %>
+            </p>
 
-        <h3>Task Status</h3>
-        <p>
-            <% if (tasks[i]._status == true) { %>
-            Completed
-            <% } else { %>
-            Active
-            <% } %>
-        </p>
-
-        <div id="togDIV" style="display: none;">
-            <% if (tasks[i]._remainingLocation != undefined) { %>
-            <h3>Remaining Locations</h3>
-            <table>
-                <tr>
-                    <th>Street Number</th>
-                    <th>Street</th>
-                    <th>Unit</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Zipcode</th>
-                </tr>
-                <% for(var j=0; j < tasks[i]._remainingLocation._locations.length; j++) { %>
-                <tr>
-                    <td>
-                        <%= tasks[i]._remainingLocation._locations[j]._streetNumber %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._remainingLocation._locations[j]._street %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._remainingLocation._locations[j]._unit %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._remainingLocation._locations[j]._city %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._remainingLocation._locations[j]._state %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._remainingLocation._locations[j]._zipcode %>
-                    </td>
-                </tr>
+            <h3>Task Status</h3>
+            <p>
+                <% if (tasks[i]._status == true) { %>
+                Completed
+                <% } else { %>
+                Active
                 <% } %>
-            </table>
-            <% } %>
-
-            <% if (tasks[i]._completedLocation != undefined) { %>
-            <h3>Completed Locations</h3>
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Street Number</th>
-                    <th>Street</th>
-                    <th>Unit</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Zipcode</th>
-                </tr>
-                <% for(var j=0; j < tasks[i]._completedLocation._locations.length; j++) { %>
-                <tr>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._ID %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._streetNumber %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._street %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._unit %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._city %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._state %>
-                    </td>
-                    <td>
-                        <%= tasks[i]._completedLocation._locations[j]._zipcode %>
-                    </td>
-                </tr>
-                <% } %>
-            </table>
-
-                <% if (tasks[i]._completedLocation._results != undefined) { %>
-                <h3>Results</h3>
-                
-                    <% for (var j=0; j < tasks[i]._completedLocation.length; j++) { %>
-                        <div style="border: 1px">
-                            <h4>Location ID</h4>
-                            <p>
-                                <%= tasks[i]._completedLocation[j]._locations._ID %>
-                            </p>
-
-                            <% for (var k=0; k < tasks[i]._completedLocation[j]._results.length; k++) { %>
-                                <h3>
-                                    <%= tasks[i]._completedLocation[j]._results[k]._answerNumber %>
-                                </h3>
-                                <p>
-                                    <%= tasks[i]._completedLocation[j]._results[k]._answer %>
-                                </p>
-                            <% } %>
-                        </div>
-                    <% } %>
-                <% } %>
-            <% } %>
-        </div>
+            </p>
+        </form>
     </div>
     <% } %>
 </div>
-
-<script>
-    function toggler() {
-        var elem = document.getElementById("togDIV");
-
-        if (elem.style.display === "none") {
-            elem.style.display = "block";
-        } else {
-            elem.style.display = "none";
-        }
-    }
-</script>
 
 <% include ./partials/footer %>
