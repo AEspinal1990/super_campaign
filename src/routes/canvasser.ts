@@ -107,19 +107,10 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
 
 router.post('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
     //new dates passed in from frontend
+    if (req.body.editAvailability.dates === ''){
+        return;
+    }
     var newDates = req.body.editAvailability.dates.split(",");
-
-    /* //Removing line for leftJoinAndSelect campaign for now...not sure if it is necessary (it also restircts canvassers to needing a campaign first)
-    //also changed where(campaign._ID to canvasser._ID)
-    const canv = await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._ID", "user")
-        .leftJoinAndSelect("canvasser._availableDates", "avaDate")
-        .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .where("campaign._ID = :ID", { ID: req.params.id })
-        .getOne();
-        */
     const canv = await getManager()
        .createQueryBuilder(Canvasser, "canvasser")
        .leftJoinAndSelect("canvasser._ID", "user")
@@ -137,9 +128,7 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
     for (let i in newDates){
         var avail = new Availability();
         let newDateParts = newDates[i].split("/");
-        if (newDateParts == null) {
-
-        } else {
+        if (newDateParts != null) {
             avail.availableDate = new Date(
                 newDateParts[2], newDateParts[0], newDateParts[1]);
             canv.availableDates.push(avail);
@@ -161,6 +150,18 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
             }
         }
     }
+
+    /*
+        Handling edited AssignedDates
+            Approach: Create new assignments when dates for assignedDate(s) are edited
+            Cons:   -Lots of overhead (a lot of calls to database and run of algorithm) 
+                    -Possible issues when intergrating concurrency
+            Pros:   -Easy to implement
+    */
+    // delete all assignedDates for all canvassers in campaign
+    
+    // redirect to create assignment
+
 
     await getManager().save(canv);
 });
