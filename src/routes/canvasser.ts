@@ -134,6 +134,8 @@ router.post('/availability/:id', isAuthenticated, async (req: Request, res: Resp
     */
 
     await getManager().save(canv);
+    //redirect after finish posting
+    res.send("Done Editing Availability");
 });
 
 router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Response) => {
@@ -152,23 +154,25 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
     */
     // console.log("starting dummy");
     // var task = new Task();
-    // task.ID = 1;
+    // task.ID = 2;
     // task.campaignID = 1;
     // task.status = false;
     // task.scheduledOn = new Date();
     // var rml = new RemainingLocation();
-    // rml.ID = 1;
+    // rml.ID = 2;
     // task.remainingLocation = rml;
     // rml.task = task;
-    // rml.locations = [await getManager().findOne(Locations)];
+    // rml.locations = [await getManager().findOne(Locations, {
+    //     where: {"_ID": 2}
+    // })];
     // console.log(rml);
     // task.completedLocation = new CompletedLocation();
     // canv.task.push(task);
-    // rml.ID = 1;
+    // rml.ID = 2;
     // await getManager().save(canv);
     // await getManager().save(rml);
     // await getManager().save(canv);
-    
+
     if (canv === undefined) {
         res.send('You have no tasks assigned.');
     } else {
@@ -183,11 +187,12 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
 });
 
 router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Response) => {
-    // console.log(req.body.campaignID);
+    console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
+        // .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._results", "results")
+        // .leftJoinAndSelect("canvasser._results", "results")
         .leftJoinAndSelect("canvasser._task", "task")
         .leftJoinAndSelect("task._remainingLocation", "rmL")
         .leftJoinAndSelect("rmL._locations", "fmLs")
@@ -217,7 +222,8 @@ router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Resp
             });
 
             res.render("view-task-detail", {
-                task: canv.task[index]
+                task: canv.task[index],
+                canvasserID: req.body.canvasserID
             });
         }
     } else {

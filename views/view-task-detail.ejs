@@ -1,5 +1,9 @@
 <% include ./partials/header %>
 
+<form action="/canvasser/<%= canvasserID %>/view-tasks/" method="GET">
+    <input type="submit" value="Back">
+</form>
+
 <div id="map"></div>
 <div>
     <% if (task._remainingLocation != undefined) { %>
