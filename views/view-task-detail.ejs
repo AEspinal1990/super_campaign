@@ -1,7 +1,8 @@
 <% include ./partials/header %>
 
+<div id="map"></div>
 <div>
-    <% if (tasks._remainingLocation != undefined) { %>
+    <% if (task._remainingLocation != undefined) { %>
 
     <h3>Remaining Locations</h3>
     <table>
@@ -13,33 +14,31 @@
             <th>State</th>
             <th>Zipcode</th>
         </tr>
-        <% for(var j=0; j < tasks._remainingLocation._locations.length; j++) { %>
+        <% for(var j=0; j < task._remainingLocation._locations.length; j++) { %>
         <tr>
             <td>
-                <%= tasks._remainingLocation._locations[j]._streetNumber %>
+                <%= task._remainingLocation._locations[j]._streetNumber %>
             </td>
             <td>
-                <%= tasks._remainingLocation._locations[j]._street %>
+                <%= task._remainingLocation._locations[j]._street %>
             </td>
             <td>
-                <%= tasks._remainingLocation._locations[j]._unit %>
+                <%= task._remainingLocation._locations[j]._unit %>
             </td>
             <td>
-                <%= tasks._remainingLocation._locations[j]._city %>
+                <%= task._remainingLocation._locations[j]._city %>
             </td>
             <td>
-                <%= tasks._remainingLocation._locations[j]._state %>
+                <%= task._remainingLocation._locations[j]._state %>
             </td>
             <td>
-                <%= tasks._remainingLocation._locations[j]._zipcode %>
+                <%= task._remainingLocation._locations[j]._zipcode %>
             </td>
         </tr>
         <% } %>
     </table>
     <% } %>
 </div>
-<div id="map"></div>
-
 
 <script>
     var map;
@@ -86,18 +85,12 @@
         markers = [];
     }
 
-    var removeMarker = function (marker, markerId) {
-        marker.setMap(null); // set markers setMap to null to remove it from map
-        delete markers[markerId]; // delete marker instance from markers object
-    };
-
     var socket = io();
     $(document).ready(function () {
         socket.on('task-geocodes', function (geocodes) {
             deleteMarkers();
             for (i in geocodes) {
                 parsedGeocode = { lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng) };
-                console.log("EACH" + parsedGeocode);
                 addMarker(parsedGeocode);
             }
             map.setZoom(5);

@@ -7,6 +7,9 @@ import { Results } from '..//backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { managerRouter } from './manager';
 import { io } from '../server';
+import { Task } from '../backend/entity/Task';
+import { RemainingLocation } from '../backend/entity/RemainingLocation';
+import { Locations } from '../backend/entity/Locations';
 
 const router: Router = Router();
 
@@ -137,54 +140,88 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._ID", "user")
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
-    console.log("Canvasser: ", canv);
 
+    // check when a canvaseer is in many campaigns. check the list of campaigns
+
+    /*
+        Make dummy task data
+    */
+    // console.log("starting dummy");
+    // var task = new Task();
+    // task.ID = 1;
+    // task.campaignID = 1;
+    // task.status = false;
+    // task.scheduledOn = new Date();
+    // var rml = new RemainingLocation();
+    // rml.ID = 1;
+    // task.remainingLocation = rml;
+    // rml.task = task;
+    // rml.locations = [await getManager().findOne(Locations)];
+    // console.log(rml);
+    // task.completedLocation = new CompletedLocation();
+    // canv.task.push(task);
+    // rml.ID = 1;
+    // await getManager().save(canv);
+    // await getManager().save(rml);
+    // await getManager().save(canv);
+    
     if (canv === undefined) {
         res.send('You have no tasks assigned.');
     } else {
-        // var geocodes = canv.task
-        // io.on('connection', function(socket) {
-        //     socket.emit('view-geocodes', geocodes);
-        // });
-
         res.render("view-tasks", {
             tasks: canv.task,
-            id: canv.ID.employeeID
+            id: canv.ID.employeeID,
+            campaignID: req.params.id
         });
-        // res.send(canv.task);
     }
 
     adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Response) => {
+    // console.log(req.body.campaignID);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
         .leftJoinAndSelect("canvasser._results", "results")
         .leftJoinAndSelect("canvasser._task", "task")
-        .where("campaign._ID = :ID", { ID: req.params.id })
+        .leftJoinAndSelect("task._remainingLocation", "rmL")
+        .leftJoinAndSelect("rmL._locations", "fmLs")
+        .where("campaign._ID = :ID", { ID:  req.body.campaignID})
         .getOne();
 
     if (res.status(200)) {
         if (canv === undefined) {
+            res.send('Error retreiving task ' + req.body.taskID);
+        } else {
             var index;
+            var geocodes = [];
 
-            for (let i in canv.task){
-                if (canv.task[i].ID == req.body.taskID){
+            for (let i in canv.task) {
+                if (canv.task[i].ID == req.body.taskID) {
                     index = Number(i);
                 }
             }
+            for (let i in canv.task[index].remainingLocation) {
+                geocodes.push({
+                    lat: canv.task[index].remainingLocation[i].lat,
+                    lng: canv.task[index].remainingLocation[i].long
+                });
+            }
+            io.on('connection', function (socket) {
+                socket.emit('task-geocodes', geocodes);
+            });
 
             res.render("view-task-detail", {
                 task: canv.task[index]
             });
-        } else {
-            res.send('Error retreiving task '+req.params.id);
         }
     } else {
-        res.status(404).send("Details of Task " + req.params.id + " was not found");
+        res.status(404).send("Details of Task " + req.body.taskID + " was not found");
     }
 });
 
