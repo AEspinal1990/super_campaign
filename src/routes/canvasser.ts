@@ -30,17 +30,6 @@ router.get('/calendar', async(req: Request, res: Response) => {
  * GET and POST for Edit Availability
  */
 router.get('/availability/:id', isAuthenticated, async(req: Request, res: Response) => {
-    
-/** 
-    const canvas = await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._ID", "user")
-        .leftJoinAndSelect("canvasser._availableDates", "avaDate")
-        .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .where("campaign._ID = :ID", { ID: req.params.id })
-        .getOne();
-        */
     const canvas = await getManager()
        .createQueryBuilder(Canvasser, "canvasser")
        .leftJoinAndSelect("canvasser._ID", "user")
@@ -49,29 +38,6 @@ router.get('/availability/:id', isAuthenticated, async(req: Request, res: Respon
        .where("canvasser._ID = :ID", { ID: req.params.id })
        .getOne();
     console.log(canvas);
-/*
-    // relations testing //
-    var avail = new Availability();
-    avail.availableDate = new Date();
-    if(canvas == undefined) {
-        canvas.availableDates = [];
-    } else {
-        canvas.availableDates = [avail];
-
-    }
-    await getManager().save(avail);
-    console.log("After availability save");
-    await getManager().save(canvas);
-    const canv = await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._ID", "user")
-        .leftJoinAndSelect("canvasser._availableDates", "avaDate")
-        .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .where("campaign._ID = :ID", { ID: req.params.id })
-        .getOne();
-    console.log(canv);
-*/
     if (canvas == undefined) {
         res.send("Wrong Link (Canvasser ID)");
     } else {
@@ -156,11 +122,12 @@ router.post('/availability/:id', isAuthenticated, async(req: Request, res: Respo
             Cons:   -Lots of overhead (a lot of calls to database and run of algorithm) 
                     -Possible issues when intergrating concurrency
             Pros:   -Easy to implement
-    */
+    ====================================================================================
     // delete all assignedDates for all canvassers in campaign
     
     // redirect to create assignment
 
+    */
 
     await getManager().save(canv);
 });
@@ -177,9 +144,6 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
         .leftJoinAndSelect("canvasser._task", "task")
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
-    console.log(canv);
-
-    // make some checks?
 
     if (res.status(200)){
         if (canv === undefined) {
@@ -197,7 +161,6 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
     }
 
     adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
-
 });
 
 export { router as canvasserRouter }
