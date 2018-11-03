@@ -3,26 +3,13 @@ import { Canvasser }            from '../backend/entity/Canvasser';
 import { getManager }           from 'typeorm';
 import { Task }                 from '../backend/entity/Task';
 import { RemainingLocation }    from '../backend/entity/RemainingLocation';
+import { Assignment }           from '../backend/entity/Assignment';
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
     Promise: Promise
 });
 
-
-
-/**
- * Trip object used to help with creation of task
- * 
- * @param origin 
- * @param destination 
- * @param tripTime 
- */
-function Trip(origin, destination, tripTime) {
-    this.origin = origin;
-    this.destination = destination;
-    this.tripTime = tripTime;
-}
 
 
 /**
@@ -68,16 +55,36 @@ export const getCampaignLocations = campaign => {
  * a campaign
  * @param campaignID 
  */
-export const getAvailableCanvassers = async (campaignID) => {
+export const getAvailableCanvassers = async campaignID => {
     return await getManager()
-    .createQueryBuilder(Canvasser, "canvasser")
-    .leftJoinAndSelect("canvasser._campaigns", "campaign")
-    .leftJoinAndSelect("canvasser._ID", "user")
-    .leftJoinAndSelect("canvasser._availableDates", "avaDate")
-    .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-    .where("campaign._ID = :ID", { ID: campaignID })
-    .getMany();
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._availableDates", "avaDate")
+        .leftJoinAndSelect("canvasser._assignedDates", "assDate")
+        .where("campaign._ID = :ID", { ID: campaignID })
+        .getMany();
 };
+
+
+
+/**
+ * Returns the tasks for a campaign
+ * @param campaignID 
+ */
+export const getCampaignTask = async (campaignID) => {
+    return await getManager()
+        .createQueryBuilder(Task, "task")
+        .where("campaignID = :ID", { ID: campaignID })
+        .getMany();
+}
+
+export const getRemainingLocations = async taskID => {
+    return await getManager()
+        .createQueryBuilder(RemainingLocation, "remainingLocation")
+        .where("ID = :ID", { ID: taskID })
+        .getMany();
+}
 
 /**
  * Calculates the Manhattan Distance between two locations.
@@ -257,9 +264,9 @@ function createTask(remainingLocations) {
  * @param campaign 
  */
 export const decorateTask = (task, campaign) =>{
-    task.campaignID = campaign.ID;
-    task.currentLocation = task.remainingLocation.locations[0];
-    task.completedLocation = null;
+    task.campaignID = Number(campaign.ID);
+    //task.currentLocation = task.remainingLocation.locations[0];
+    
     return task;
 }
 
