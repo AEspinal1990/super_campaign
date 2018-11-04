@@ -246,27 +246,25 @@ export const saveLocations = async (campaign, locations) => {
         places[i].zipcode = getZip(locations[i]);
 
         address = constructAddress(places[i]);
-        /**
-         * WTF is going on here!?!?
-         */
         await googleMapsClient.geocode({ address: address }, async function (err, response) {
             if (!err) {
                 var coord = response.json.results[0].geometry.location;
-                updateLocation(coord);
+                var result = await updateLocation(coord);
+                console.log(result);
             } else {
                 return console.log("Geocode not found");
             }
         });
-        function updateLocation(coord) {
+        async function updateLocation(coord) {
             places[i].lat = Number(coord.lat);
             places[i].long = Number(coord.lng);
-            getManager().save(places[i]);
+            await getManager().save(places[i]);
             return places;
         }
         campaign.locations.push(places[i]);
     }
-    await Manager.save(campaign).catch(e => console.log('error saving location', e))
-        .catch(e => console.log('Error saving location', e));
+    // await Manager.save(campaign).catch(e => console.log('error saving location', e))
+    //     .catch(e => console.log('Error saving location', e));
 };
 
 
