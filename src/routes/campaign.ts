@@ -29,48 +29,40 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
     let endDate;
     let avgDuration;
     let campaign;
-
-    /**
-     * Grab dates needed to create campaign object
-     */
+    
+    // Grab dates needed to create campaign object 
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);
     avgDuration = Number(req.body.campaign.averageExpectedDuration);
 
-    /**
-     * Create Campaign then save it.
-     */
+    
+    // Create Campaign then save it.   
     campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
     await campaignCreator.saveCampaign(campaign);
     campaignLogger.info(`Saved campaign: ${campaign._name}`);
 
-    /**
-     * Parse the talking points then save them.
-     */
+    
+    // Parse the talking points then save them.    
     await campaignCreator.saveTalkingPoints(campaign, req.body.campaign.talkingPoints);
     campaignLogger.info(`Saved talking points for: ${campaign._name}`);
 
-    /**
-     * Parse the questionaire then save it.
-     */
+    
+    // Parse the questionaire then save it.     
     await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
-    /**
-     * Save campaign managers
-     */
+    
+    // Save campaign managers    
     await campaignCreator.saveManagers(campaign, req.body.campaign.managers);
     campaignLogger.info(`Saved managers for: ${campaign._name}`);
 
-    /**
-     * Save this campaigns locations
-     */
+    
+    // Save this campaigns locations    
     await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
     campaignLogger.info(`Saved locations for: ${campaign._name}`);
 
-    /**
-     * Save canavassers
-     */
+    
+    //Save canavassers    
     await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
     res.send('okay');
 });
@@ -78,7 +70,7 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
 /**
  * GET and POST for edit Campaign
  */
-router.get('/edit/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     
@@ -167,7 +159,6 @@ router.get('/edit/:id', middleware.isAuthenticated, async (req: Request, res: Re
             campaignCanvassers: campaignCanvassersString,
             campaignID: req.params.id
         });
-        campaignLogger.info(`/edit/${req.params.id} - Updated Campaign`);
     }
 });
 

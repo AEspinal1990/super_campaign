@@ -7,6 +7,8 @@ import { CompletedLocation }            from '../backend/entity/CompletedLocatio
 import { Questionaire }                 from '../backend/entity/Questionaire';
 import * as managerTools                from '../util/managerTools';
 import { io } from '../server';
+import { RemainingLocation }    from '../backend/entity/RemainingLocation';
+import { Task }                 from '../backend/entity/Task';
 
 const router: Router = Router();
 const winston   = require('winston');
@@ -27,7 +29,7 @@ const isAuthenticated = (req, res, next) => {
 // const pyORT = spawn('python', ['../util/ortool.py']);
 
 router.post('/new-assignment/:id', async (req: Request, res: Response) => {
-
+    
     /**
      * Check if id corressponds to a campaign
      */
@@ -62,7 +64,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
     /**
      * Grab necessary data to create an assignment.
-     * Canvassers for this campaign
+     * Canvassers to put to work
      * Locations to canvass
      */
     let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
@@ -83,66 +85,111 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     });
 
     /**
+     * Associate each task with an assignment
+     */
+    tasks.forEach(task => task.assignment = assignment);
+
+    /**
      * Create Assignment from the generated Tasks
      */
-    assignment.tasks = [];
-    //console.log(tasks);
-    tasks.forEach(task => assignment.tasks.push(task));
-
-    console.log(assignment);
+    assignment.tasks = tasks;
+    
 
     /**
      * Assign new Assignment to the campaign
      */
-    campaign.assignment = assignment
-    //console.log(campaign)
+    campaign.assignment = assignment;
+
     /**
      * Save new assignment and update campaign
      */
-    // await getManager().save(assignment)
-    //     .then(res => console.log('Successfully created an assignment'))
-    //     .catch(e => console.log('Assignment Error: ', e));
-    // await getManager().save(campaign)
-    //     .then(res => console.log('Successfully updated campaign with a new assignment'))
-    //     .catch(e => console.log('Campaign Update Error: ', e));
+    await getManager().save(assignment)
+        .then(res => console.log('Successfully created an assignment'))
+        .catch(e => console.log('Assignment Error: ', e));
+    await getManager().save(campaign)
+        .then(res => console.log('Successfully updated campaign with a new assignment'))
+        .catch(e => console.log('Campaign Update Error: ', e));
 
     // /////////////////////////////////////
     // ///////// relations testing /////////
     // /////////////////////////////////////  
-    // let canvasser = await getManager().findOne(Canvasser, { where: { "_campaign_ID": campaign.ID } });
-    // let task = new Task();
-    // canvasser.task = [task];
-    // task.remainingLocation = new RemainingLocation();
-    // task.remainingLocation.locations = campaign.locations;
-    // task.scheduledOn = new Date();
-    // task.assignment = assignment;
-    // task.campaignID = Number(campaign.ID);
-    // task.status = false;
-    // assignment.tasks = [task];
-    // campaign.assignment = assignment;
-    // await getManager().save(assignment);
-    // await getManager().save(campaign);
-    // await getManager().save(canvasser);
-    // let campaig = await getManager().findOne(Campaign,
-    //     { where: { "_ID": campaign.ID }, relations: ["_assignment"] })
-    // console.log(campaig);
+    // //canvasser.task = [task];
+   
+    // //await getManager().save(canvasser);
+    
     res.status(200).send('Create Assignment');
 
 });
 
 router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {
     // get campaign id
-
+    
 
     // redirect to '/:id/view-assignment/:id'
 });
 
-router.get('/view-assignments/:id', isAuthenticated, async (req: Request, res: Response) => {
-    // use campaignID to get assignment
+router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Response) => {
+    
+    let campaign;
+    let tasks = [];
+    let remainingLocations = [];
+    let locations = [];
+    let taskLocations = [];
+    let campaignID = req.params.id;
+    
+    // Check if id corressponds to a campaign    
+    campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });    
+    if (campaign === undefined) {
+        console.log('not found');
+        return res.status(404).render('create-assignment', {
+            id: "",
+            name: "",
+            manager: "",
+            assignment: "",
+            location: "",
+            sDate: "",
+            eDate: "",
+            duration: "",
+            question: "",
+            points: "",
+            canvasser: ""
+        });
+    }
 
-    // use assignment to get tasks
+    // Grab all task with this campaign id
+    tasks = await managerTools.getCampaignTask(campaignID);
+    
+    // Grab all remaining locations for the tasks
+    for(let i in tasks){
+        let location = await managerTools.getRemainingLocations(tasks[i].ID);
+        remainingLocations.push(location);
+    }
+
+    // Get all the locations in remainingLocations
+    for(let i in remainingLocations) {
+        for(let j in remainingLocations[i]){
+            remainingLocations[i][j].locations.forEach(location => {
+                locations.push(location)
+            });            
+        }        
+        // Each iteration is one task.
+        // Limit 1 element to 1 task.
+        taskLocations.push(locations);
+        locations = [];
+    }
+
+    console.log(taskLocations.length);
+    
 
     //send to frontend
+    // For each task
+        // canvasser
+        // Locations with its coordinates
+        // number of locations
+        // Duration of task
+
+    let id = 2;
+    res.render('view-tasks', {tasks, campaignID, id})
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
