@@ -34,44 +34,41 @@ router.get('/calendar', async (req: Request, res: Response) => {
  * GET and POST for Edit Availability
  */
 router.get('/availability/:id', isAuthenticated, async (req: Request, res: Response) => {
+    let canvasserID = req.params.id;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._availableDates", "avaDate")
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .where("canvasser._ID = :ID", { ID: req.params.id })
+        .where("canvasser._ID = :ID", { ID: canvasserID })
         .getOne();
-    console.log(canvas);
+
     if (canvas == undefined) {
-        res.send("Wrong Link (Canvasser ID)");
-    } else {
-        adminLogger.info(`/availability/${req.params.id} - Changed availablility`);
-        //combine available and assigned dates to be shown on calendar
-        var availableOrAssigned = "";
-        for (let avail in canvas.availableDates) {
-            let curDate = new Date(canvas.availableDates[avail].availableDate);
-            let curDateStr = "" + curDate.getMonth() + "/" + curDate.getDate() + "/" + curDate.getFullYear() + ",";
-            availableOrAssigned += curDateStr;
-        }
-        //Remove the las comma added on previous loop
-        if (availableOrAssigned !== "") {
-            availableOrAssigned = availableOrAssigned.slice(0, -1);
-        }
-        for (let avail in canvas.assignedDates) {
-            let curDate = new Date(canvas.assignedDates[avail].assignedDate);
-            let curDateStr = "," + curDate.getMonth() + "/" + curDate.getDate() + "/" + curDate.getFullYear();
-            availableOrAssigned += curDateStr;
-        }
-        // if available dates is empty, then the first comma is not needed in the second for loop
-        if (canvas.availableDates == []) {
-            availableOrAssigned = availableOrAssigned.slice(1);
-        }
-        //res.send('You want to edit your availablity.');
-        res.render('edit-availability', {
-            availableOrAssigned: availableOrAssigned,
-            canvasserID: req.params.id
-        });
+        return res.send("Wrong Link (Canvasser ID)");
+    } 
+    
+    //combine available and assigned dates to be shown on calendar
+    var availableOrAssigned = "";
+    for (let avail in canvas.availableDates) {
+        let curDate = new Date(canvas.availableDates[avail].availableDate);
+        let curDateStr = "" + curDate.getMonth() + "/" + curDate.getDate() + "/" + curDate.getFullYear() + ",";
+        availableOrAssigned += curDateStr;
     }
+    //Remove the las comma added on previous loop
+    if (availableOrAssigned !== "") {
+        availableOrAssigned = availableOrAssigned.slice(0, -1);
+    }
+    for (let avail in canvas.assignedDates) {
+        let curDate = new Date(canvas.assignedDates[avail].assignedDate);
+        let curDateStr = "," + curDate.getMonth() + "/" + curDate.getDate() + "/" + curDate.getFullYear();
+        availableOrAssigned += curDateStr;
+    }
+    // if available dates is empty, then the first comma is not needed in the second for loop
+    if (canvas.availableDates == []) {
+        availableOrAssigned = availableOrAssigned.slice(1);
+    }
+
+    res.render('edit-availability', {availableOrAssigned, canvasserID});    
 });
 
 router.post('/availability/:id', isAuthenticated, async (req: Request, res: Response) => {

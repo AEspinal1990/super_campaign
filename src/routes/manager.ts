@@ -135,7 +135,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     let locations = [];
     let taskLocations = [];
     let campaignID = req.params.id;
-    
+    let numLocations = 0;
     // Check if id corressponds to a campaign    
     campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });    
     if (campaign === undefined) {
@@ -169,6 +169,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         for(let j in remainingLocations[i]){
             remainingLocations[i][j].locations.forEach(location => {
                 locations.push(location)
+                numLocations++;
             });            
         }        
         // Each iteration is one task.
@@ -177,7 +178,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         locations = [];
     }
 
-    console.log(taskLocations.length);
+    console.log(numLocations);
     
 
     //send to frontend
@@ -188,7 +189,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         // Duration of task
 
     let id = 2;
-    res.render('view-tasks', {tasks, campaignID, id})
+    res.render('view-tasks', {tasks, campaignID, id, numLocations})
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
