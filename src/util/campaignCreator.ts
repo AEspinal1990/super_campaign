@@ -45,6 +45,24 @@ export const createTalkingPoints = campaignData => {
     return allTalkingPoints;
 };
 
+export const createLocations = campaignData =>{
+    let locations = campaignData.locations;
+    locations = locations.trim().split('\n');
+    let allLocations = [];
+    for(let i in locations)
+    {
+        let newLocation: Locations = new Locations();
+        newLocation.streetNumber = getStreetNumber(locations[i]);
+        newLocation.street = getStreet(locations[i]);
+        newLocation.unit = getUnit(locations[i]);
+        newLocation.city = getCity(locations[i]);
+        newLocation.state = getState(locations[i]);
+        newLocation.zipcode = getZip(locations[i]);
+        allLocations[i] = newLocation;
+    }
+    return allLocations;
+}
+
 export const getDate = date => {
     date = date.split("-");
     return new Date(date[0], date[1]-1, date[2]);
