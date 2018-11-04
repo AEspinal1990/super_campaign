@@ -28,7 +28,7 @@ const isAuthenticated = (req, res, next) => {
 // const pyORT = spawn('python', ['../util/ortool.py']);
 
 router.post('/new-assignment/:id', async (req: Request, res: Response) => {
-
+    
     /**
      * Check if id corressponds to a campaign
      */
@@ -129,10 +129,15 @@ router.get('/view-assignments', isAuthenticated, async (req: Request, res: Respo
 
 router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Response) => {
     
-    /**
-     * Check if id corressponds to a campaign
-     */
-    let campaign = await getManager().findOne(Campaign, { where: { "_ID": req.params.id } });    
+    let campaign;
+    let tasks = [];
+    let remainingLocations = [];
+    let locations = [];
+    let taskLocations = [];
+    let campaignID = req.params.id;
+    
+    // Check if id corressponds to a campaign    
+    campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });    
     if (campaign === undefined) {
         console.log('not found');
         return res.status(404).render('create-assignment', {
@@ -151,12 +156,29 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     }
 
     // Grab all task with this campaign id
-    let tasks = await managerTools.getCampaignTask(campaign.ID);
+    tasks = await managerTools.getCampaignTask(campaignID);
     
     // Grab all remaining locations for the tasks
-    let remainingLocations = await managerTools.getRemainingLocations(tasks[1].ID)
-    console.log(remainingLocations);
-    // Grab all completed locations for the tasks
+    for(let i in tasks){
+        let location = await managerTools.getRemainingLocations(tasks[i].ID);
+        remainingLocations.push(location);
+    }
+
+    // Get all the locations in remainingLocations
+    for(let i in remainingLocations) {
+        for(let j in remainingLocations[i]){
+            remainingLocations[i][j].locations.forEach(location => {
+                locations.push(location)
+            });            
+        }        
+        // Each iteration is one task.
+        // Limit 1 element to 1 task.
+        taskLocations.push(locations);
+        locations = [];
+    }
+
+    console.log(taskLocations.length);
+    
 
     //send to frontend
     // For each task
@@ -165,8 +187,8 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         // number of locations
         // Duration of task
 
-    
-    res.send('OK')
+    let id = 2;
+    res.render('view-tasks', {tasks, campaignID, id})
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
