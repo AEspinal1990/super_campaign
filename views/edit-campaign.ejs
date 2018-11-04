@@ -47,7 +47,11 @@
         <br>
         <label for="locations">Create Assignment</label>
         <form action="/manager/new-assignment/<%= campaignID %>" method="POST">            
-            <button type="submit" class="btn btn-warning">Submit</button>
+            <button type="submit" class="btn btn-warning">Create Assignment</button>
+        </form>
+        <label for="locations">Delete</label>
+        <form action="/campaign/<%= campaignID %>?_method=DELETE"" method="POST">            
+            <button type="submit" class="btn btn-DANGER">Delete</button>
         </form>
 
 	</div>

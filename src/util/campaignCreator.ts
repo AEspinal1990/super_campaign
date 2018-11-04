@@ -270,15 +270,15 @@ export const saveLocations = async (campaign, locations) => {
         await googleMapsClient.geocode({ address: address }, async function (err, response) {
             if (!err) {
                 var coord = response.json.results[0].geometry.location;
-                updateLocation(coord);
+                await updateLocation(coord);
             } else {
                 return console.log("Geocode not found");
             }
         });
-        function updateLocation(coord) {
+        async function updateLocation(coord) {
             places[i].lat = Number(coord.lat);
             places[i].long = Number(coord.lng);
-            getManager().save(places[i]);
+            await getManager().save(places[i]);
             return places;
         }
         campaign.locations.push(places[i]);

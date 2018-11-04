@@ -35,20 +35,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      */
     let campaign = await getManager().findOne(Campaign, { where: { "_ID": req.params.id } });    
     if (campaign === undefined) {
-        console.log('not found');
-        return res.status(404).render('create-assignment', {
-            id: "",
-            name: "",
-            manager: "",
-            assignment: "",
-            location: "",
-            sDate: "",
-            eDate: "",
-            duration: "",
-            question: "",
-            points: "",
-            canvasser: ""
-        });
+        return res.status(404).send('Campaign not found');
     } 
         
     /**
@@ -110,12 +97,20 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         .then(res => console.log('Successfully updated campaign with a new assignment'))
         .catch(e => console.log('Campaign Update Error: ', e));
 
-    // /////////////////////////////////////
-    // ///////// relations testing /////////
-    // /////////////////////////////////////  
-    // //canvasser.task = [task];
-   
-    // //await getManager().save(canvasser);
+    /**
+     * Remove canvassers with no openings in schedule
+     */
+    canvassers = managerTools.removeBusy(canvassers);
+    
+    /**
+     * Assign tasks
+     */
+    canvassers = managerTools.assignTasks(canvassers, tasks);
+    canvassers.forEach(async canvasser => {
+        await getManager().save(canvasser)
+            .then(res => console.log('Successfully assigned task'))
+            .catch(e => console.log('Task Assigning Error', e))
+    });
     
     res.status(200).send('Create Assignment');
 
@@ -136,24 +131,11 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     let locations = [];
     let taskLocations = [];
     let campaignID = req.params.id;
-    
+    let numLocations = 0;
     // Check if id corressponds to a campaign    
     campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });    
     if (campaign === undefined) {
-        console.log('not found');
-        return res.status(404).render('create-assignment', {
-            id: "",
-            name: "",
-            manager: "",
-            assignment: "",
-            location: "",
-            sDate: "",
-            eDate: "",
-            duration: "",
-            question: "",
-            points: "",
-            canvasser: ""
-        });
+        return res.status(404).send('Assignment not found')
     }
 
     // Grab all task with this campaign id
@@ -170,6 +152,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         for(let j in remainingLocations[i]){
             remainingLocations[i][j].locations.forEach(location => {
                 locations.push(location)
+                numLocations++;
             });            
         }        
         // Each iteration is one task.
@@ -178,7 +161,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         locations = [];
     }
 
-    console.log(taskLocations.length);
+    console.log(numLocations);
     
 
     //send to frontend
@@ -189,7 +172,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         // Duration of task
 
     let id = 2;
-    res.render('view-tasks', {tasks, campaignID, id})
+    res.render('view-tasks', {tasks, campaignID, id, numLocations})
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
