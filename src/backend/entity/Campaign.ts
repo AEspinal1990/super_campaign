@@ -113,7 +113,9 @@ export class Campaign {
                             resultNum: this._results[i].answerNumber,
                             result: this._results[i].answer
                         }],
-                        rating: this._results[i].rating
+                        rating: this._results[i].rating,
+                        //K:
+                        coord: { lat: parseFloat(this._results[i].completedLocation.locations[0].lat.toString()), lng: parseFloat(this._results[i].completedLocation.locations[0].long.toString()) }
                     });
                 } else {
                     completedLocations = this.addResult(completedLocations, this._results[i]);

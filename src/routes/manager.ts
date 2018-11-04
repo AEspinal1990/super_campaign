@@ -6,6 +6,7 @@ import { Results }                      from '../backend/entity/Results';
 import { CompletedLocation }            from '../backend/entity/CompletedLocation';
 import { Questionaire }                 from '../backend/entity/Questionaire';
 import * as managerTools                from '../util/managerTools';
+import { io } from '../server';
 import { RemainingLocation }    from '../backend/entity/RemainingLocation';
 import { Task }                 from '../backend/entity/Task';
 
@@ -230,23 +231,29 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         where: { "_campaign": campaign },
         relations: ["_completedLocation", "_completedLocation._locations"]
     });
-    console.log(resul);
+    // console.log(resul);
     campaign.results = resul;
-    console.log(campaign.getLocationsResults());
 
     function ResultDetails (location_Id, rating, coord) {
         this.location_Id = location_Id;
         this.rating = rating;
-        this.coord = coord
+        this.coord = coord;
     }
-    let coords = []
+
     campaign.locations.forEach( location => {
         new ResultDetails (location.ID, 'results', managerTools.getCoords2(location));
         //coords.push(managerTools.getCoords2(location));
     });
 
-    // console.log(campaign.locations)
-    // console.log(coords)
+    // console.log(campaign.getLocationsResults()[0].coord);
+
+
+
+    //send all the locations results through the socket
+    io.on('connection', function (socket) {
+        socket.emit('result-details', campaign.getLocationsResults());
+    });
+
     if (resul === undefined) {
         res.status(404).send("No results were found for this campaign.");
     } else {
@@ -256,7 +263,7 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         res.render('view-results', {
             resultsTableView: resul,
             id: req.params.id
-        })
+        });
     }
 })
 

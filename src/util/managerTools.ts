@@ -151,7 +151,7 @@ function getCoords(location) {
 };
 
 export function getCoords2(location) {
-    return [Number(location.lat), Number(location.long)];
+    return {lat : Number(location.lat), lng: Number(location.long)};
 };
 
 /**
