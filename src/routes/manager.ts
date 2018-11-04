@@ -6,6 +6,7 @@ import { Results }                      from '../backend/entity/Results';
 import { CompletedLocation }            from '../backend/entity/CompletedLocation';
 import { Questionaire }                 from '../backend/entity/Questionaire';
 import * as managerTools                from '../util/managerTools';
+import * as resultStatisticsUtil        from '../util/resultStatisticsUtil';
 import { io } from '../server';
 import { RemainingLocation }    from '../backend/entity/RemainingLocation';
 import { Task }                 from '../backend/entity/Task';
@@ -230,7 +231,6 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         where: { "_campaign": campaign },
         relations: ["_completedLocation", "_completedLocation._locations"]
     });
-    // console.log(resul);
     campaign.results = resul;
 
     function ResultDetails (location_Id, rating, coord) {
@@ -244,8 +244,7 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
         //coords.push(managerTools.getCoords2(location));
     });
 
-    // console.log(campaign.getLocationsResults()[0].coord);
-
+    resultStatisticsUtil.getStatistics(req);
 
 
     //send all the locations results through the socket
@@ -256,9 +255,6 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
     if (resul === undefined) {
         res.status(404).send("No results were found for this campaign.");
     } else {
-        // res.status(200).render("view-results", {
-        //     result: resul
-        // });
         res.render('view-results', {
             resultsTableView: resul,
             id: req.params.id
