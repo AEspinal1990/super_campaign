@@ -45,7 +45,8 @@ export const createTalkingPoints = campaignData => {
     return allTalkingPoints;
 };
 
-export const createLocations = campaignData =>{
+//function to build campaign with locations
+export const createCampaignLocations = campaignData =>{
     let locations = campaignData.locations;
     locations = locations.trim().split('\n');
     let allLocations = [];
@@ -60,7 +61,9 @@ export const createLocations = campaignData =>{
         newLocation.zipcode = getZip(locations[i]);
         allLocations[i] = newLocation;
     }
-    return allLocations;
+    let campaign = createCampaignInfo(campaignData);
+    campaign.locations = allLocations;
+    return campaign;
 }
 
 export const getDate = date => {
