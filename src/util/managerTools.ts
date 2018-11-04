@@ -3,12 +3,32 @@ import { Canvasser }            from '../backend/entity/Canvasser';
 import { getManager }           from 'typeorm';
 import { Task }                 from '../backend/entity/Task';
 import { RemainingLocation }    from '../backend/entity/RemainingLocation';
-import { Assignment }           from '../backend/entity/Assignment';
+import { AssignedDate }         from '../backend/entity/AssignedDate';
+
+var _ = require('lodash');
+var moment = require('moment');
+moment().format();
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
     Promise: Promise
 });
+
+// Empty "campaign" object we return when user 
+// tries to access a page with an invalid campaign id.
+export const emptyCampaign = {
+    id: "",
+    name: "",
+    manager: "",
+    assignment: "",
+    location: "",
+    sDate: "",
+    eDate: "",
+    duration: "",
+    question: "",
+    points: "",
+    canvasser: ""
+};
 
 
 
@@ -322,3 +342,73 @@ function parseTripDuration(duration) {
     }
     return time;
 }
+
+export const removeBusy = (canvassers: Canvasser[]) => {
+    for(let i in canvassers) {
+        if (canvassers[i].availableDates.length === 0) {
+            canvassers.splice(Number(i), 1);
+        }
+    }
+    return canvassers;
+}
+
+export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
+
+    // Sort by dates to allow for easier front loading.
+    canvassers.forEach(canvasser => {
+        canvasser.availableDates = sortDates(canvasser.availableDates);
+        canvasser.assignedDates = [];
+    });
+
+    
+    // From all canvassers find the earliest date and insert task
+    let earliestDate;
+    let canvasserIndex;
+    tasks.forEach(task => {
+        // Since dates are already sorted earliest date will
+        // be at a canvassers first available date.
+        for (let i in canvassers) {
+            //console.log(canvassers)
+            let date = canvassersEarliestDates(canvassers[i].availableDates);
+            console.log(date);
+            if (earliestDate === undefined || date < earliestDate) {
+                canvasserIndex = i;
+                earliestDate = canvassers[i].availableDates[0].availableDate;
+            }            
+        }
+
+        // Found earliest date remove them from canvassers available list
+        // Insert into datesAssigned        
+        canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
+        earliestDate = undefined;        
+    });
+    
+    
+    return canvassers;
+};
+
+function assignTask(canvasser: Canvasser, task: Task) {
+
+    // Create AssignedDate object and insert into canvasser
+    
+    let assignedDate = new AssignedDate();
+    assignedDate.canvasserID = canvasser;
+    assignedDate.assignedDate = canvasser.availableDates[0].availableDate
+    canvasser.assignedDates.push(assignedDate);
+
+    // Remove date that was just assigned from available dates
+    canvasser.availableDates.shift();
+
+    return canvasser;
+}
+
+function canvassersEarliestDates(availbleDates) {    
+    console.log(availbleDates[0].availableDate)
+    return availbleDates[0].availableDate;    
+}
+
+function sortDates(availableDates) {
+    return _.orderBy(availableDates, (availableDate) => {
+        return new moment(availableDate.availableDate);
+    });
+};
