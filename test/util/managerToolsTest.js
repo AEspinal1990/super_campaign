@@ -3,11 +3,11 @@ const estimateTaskFunct = require('../../dist/util/managerTools.js').estimateTas
 const assert = require('chai').assert;
 const getAvgSpeedFunct = require('../../dist/util/managerTools.js').getAvgSpeed;
 const getWorkdayLimitFunct = require('../../dist/util/managerTools.js').getWorkdayLimit;
-const createCampaignLocationsFunct = require('../../dist/util/campaignCreator.js').createCampaignLocations;
+const createCampaignLocationsFunct = require('../../dist/util/campaignParser.js').createCampaignLocations;
 const fs = require('fs');
 
-//tests CampaignLocation
-describe("Campaign Locations Test", function(){
+//tests Locations object in Campaign
+describe("CreateCampaignLocations Test", function(){
     let campaignData = {
         campaignName: 'Campaign Name',
         startDate: '1990-02-26',
@@ -25,8 +25,12 @@ describe("Campaign Locations Test", function(){
     it("Expected Number of locations is 3", function(){
         assert.equal(locationRes.length,3);
     });
-    let expectedArr = campaignData['locations'].split("\n");
-    console.log(locationRes);
+    let expectedArr = campaignData['locations'].trim().split("\n");
+    for (i in expectedArr) {
+        expectedArr[i] = expectedArr[i].replace('\r','');
+    }
+    //console.log("expected:", expectedArr);
+    //console.log(locationRes);
     let idx = 0;
     locationRes.forEach(function(test){
         //console.log(test);
@@ -42,22 +46,22 @@ describe("Campaign Locations Test", function(){
         
         });
          it('Locations has correct streetnum', function(){
-             assert.equal(expectedField[0].trim(),test._streetNumber);
+             assert.equal(test._streetNumber,expectedField[0].trim());
         });
         it('Locations has correct street', function(){
-            assert.equal(expectedField[1].trim(),test._street);
+            assert.equal(test._street,expectedField[1].trim());
        });
         it('Locations has correct unit', function(){
-            assert.equal( expectedField[2].trim(),test._unit);
+            assert.equal(test._unit,expectedField[2].trim());
        });
        it('Locations has correct city', function(){
-        assert.equal(expectedField[3].trim(),test._city);
+        assert.equal(test._city,expectedField[3].trim());
         });
        it('Locations has correct state', function(){
-            assert.equal(expectedField[4].trim(),test._state);
+            assert.equal(test._state,expectedField[4].trim());
         });
         it('Locations has correct zipcode', function(){
-            assert.equal(expectedField[5].trim(),test._zipcode);
+            assert.equal(test._zipcode,expectedField[5].trim());
         });
         idx++;
     });
