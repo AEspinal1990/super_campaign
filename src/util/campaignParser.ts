@@ -43,12 +43,13 @@ export const initCampaign = (name, sDate, eDate, avgDuration) => {
 };
 
 
-export function getManagers(managers) {
-    sanitizeUsers(managers);
+export function getManagers(managers) {    
+    return sanitizeUsers(managers);    
 };
 
 
 export function sanitizeUsers(user) {
+    
     /**
      * Splits by \n then removes \r's
      */
