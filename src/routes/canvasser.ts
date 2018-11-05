@@ -169,7 +169,7 @@ router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: 
     canvasserLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task-detail', middleware.isCanvasser, async (req: Request, res: Response) => {
+router.post('/view-task-detail',  async (req: Request, res: Response) => {
     // console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")

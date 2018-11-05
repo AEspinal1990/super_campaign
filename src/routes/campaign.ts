@@ -64,7 +64,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     
     //Save canavassers    
     await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
-    res.send('okay');
+    res.send('Campaign Created Succesfully');
 });
 
 
@@ -121,9 +121,9 @@ let startDate;
     else {
         //parse Date
         let campaignStartDate: Date = campaign[0]._startDate;
-        let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
+        let campaignStartDateString = campaignStartDate.getFullYear() + "-" + (campaignStartDate.getMonth() + 1) + "-" + campaignStartDate.getDate();
         let campaignEndDate: Date = campaign[0]._endDate;
-        let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
+        let campaignEndDateString = campaignEndDate.getFullYear() + "-" + (campaignEndDate.getMonth() + 1) + "-" + campaignEndDate.getDate();
       
         //parse questions back to input form
        

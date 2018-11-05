@@ -50,7 +50,6 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
      * Locations to canvass
      */
     let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
-    console.log(canvassers);
     let locations = managerTools.getCampaignLocations(campaign);
 
     /**
@@ -89,7 +88,6 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
     /**
      * Remove canvassers with no openings in schedule
      */
-    console.log(canvassers);
     canvassers = managerTools.removeBusy(canvassers);
 
     /**
@@ -102,10 +100,10 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
      */
     await getManager().save(assignment)
         .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
-        .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${campaign.name}`));
+        .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
     await getManager().save(campaign)
         .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
-        .catch(e => managerLogger.error(`An error occured while updating ${campaign.name} with its new assignment`));
+        .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
 
     /**
      * Save canvassers with their assigned task
@@ -113,7 +111,7 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
     canvassers.forEach(async canvasser => {
         await getManager().save(canvasser)
             .then(res => managerLogger.info(`Assigned a task to ${canvasser.ID} `))
-            .catch(e => managerLogger.error(`An error occured while assigning a task to  ${canvasser.ID}`))
+            .catch(e => managerLogger.error(`An error occured while assigning a task to  ${e}`))
     });
 
     res.status(200).send('Create Assignment');
@@ -385,10 +383,10 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
         new ResultDetails(location.ID, 'results', managerTools.getCoords2(location));
         //coords.push(managerTools.getCoords2(location));
     });
-
-    resultStatisticsUtil.getStatistics(req);
+    var ratingResults = await resultStatisticsUtil.getRatingStatistics(req);
+    var questionaireResults = await resultStatisticsUtil.getQuestionStatistics(req);
     //console.log(campaign.getLocationsResults()[1].completedLocation._locations[0]._lat);
-
+    console.log(questionaireResults);
     //send all the locations results through the socket
     io.on('connection', function (socket) {
         socket.emit('result-details', campaign.getLocationsResults());
@@ -399,7 +397,9 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
     } else {
         res.render('view-results', {
             resultsTableView: resul,
-            id: req.params.id
+            id: req.params.id,
+            resultsSummary: questionaireResults,
+            ratingStatistics: ratingResults
         });
     }
 })
