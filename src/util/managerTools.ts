@@ -87,7 +87,6 @@ export const getAvailableCanvassers = async campaignID => {
 };
 
 
-
 /**
  * Returns the tasks for a campaign
  * @param campaignID 
@@ -303,6 +302,7 @@ export const decorateTask = (task, campaign) =>{
  */
 async function getTripTime(coord1, coord2, mode, avgDuration) {
     let tripTime;
+    
     await googleMapsClient.directions({
         origin: coord1, 
         destination: coord2,
