@@ -64,7 +64,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     
     //Save canavassers    
     await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
-    res.send('okay');
+    res.send('Campaign Created Succesfully');
 });
 
 
