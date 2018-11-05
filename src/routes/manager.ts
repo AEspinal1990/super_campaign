@@ -187,11 +187,10 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
             
         })
         //console.log(i, tasks[i].remainingLocations.length)
-        tasks[i].duration = 15
-        tasks[i].numLocations = tasks[i].remainingLocations.length;
         remainingLocations.push(location);
         test.push(location);
     }
+    
  
 
     // Remove canvassers with no task
@@ -200,27 +199,6 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
             canvassers.splice(i,1);
         }
     }
-
-    // Map canvassers to task - Will fix don't judge its 6:25am
-    // For each task
-    tasks.forEach(task => {
-
-        // Look in every canvasser
-        canvassers.forEach(canvasser => {
-
-            // Go through all their task
-            let t = canvasser._task;
-            t.forEach(canvasser_task => {
-                
-                // And find if this task is once of theirs
-                if(Number(canvasser_task._ID) === Number(task._ID)) {
-                    // found match insert this canvasser into task 
-                    task.canvasser = canvasser._ID._username;
-                }
-            })
-        })
-    });
-    
 
     // Get all the locations in remainingLocations
     for (let i in remainingLocations) {
@@ -236,15 +214,10 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
         taskLocations.push(locations);
         locations = [];
     }
-
-    // Calculate the duration of each task
-    tasks.forEach(task => {
-        //console.log(task.remainingLocations)
-        task = managerTools.findDuration(task, campaign);
-    })
     
     let id = 2;
-    res.render('view-tasks', { tasks, campaignID, id, numLocations })
+    tasks.forEach(task => console.log(task))
+    res.render('view-tasks', { tasks, campaignID, id, numLocations, remainingLocations })
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
