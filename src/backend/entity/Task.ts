@@ -24,6 +24,8 @@ export class Task{
     private _status!:boolean;
     @ManyToOne(type => Assignment, as => as.tasks)
     private _assignment!:Assignment;
+    @Column({ name: "duration" })
+    private _duration!: number;
 
     public get ID():number{
         return this._ID;
@@ -51,6 +53,12 @@ export class Task{
     }
     public get assignment():Assignment{
         return this._assignment;
+    }
+    public get duration(): number {
+        return this._duration;
+    }
+    public set duration(value: number) {
+        this._duration = value;
     }
     public set ID(ID:number){
         this._ID = ID;
