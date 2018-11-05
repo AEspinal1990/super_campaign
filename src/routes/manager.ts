@@ -135,12 +135,15 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     let taskLocations = [];
     let campaignID = req.params.id;
     let numLocations = 0;
+    let canvassers = [];
 
     // Check if id corressponds to a campaign    
     campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
     if (campaign === undefined) {
         return res.status(404).send('Assignment not found')
     }
+    canvassers = await managerTools.getCanvassers(campaignID);
+    //console.log(canvassers)
 
     // Grab all task with this campaign id
     tasks = await managerTools.getCampaignTask(campaignID);
@@ -150,13 +153,40 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
         //console.log(i, location)
         tasks[i].remainingLocations = locations;
-        tasks[i].canvasser = `Bob`;
-        tasks[i].numLocations = 7;
         tasks[i].duration = 15
+        tasks[i].numLocations = location.length;
         remainingLocations.push(location);
     }
 
-    // Grab each tasks canvasser
+    // Remove canvassers with no task
+    
+    for(let i = 0; i < canvassers.length; i++) {
+        if(canvassers[i]._task === undefined) {
+            canvassers.splice(i,1);
+        }
+    }
+    //console.log(canvassers[0]._ID._username)
+
+    // Map canvassers to task - Will fix don't judge its 6:25am
+    // For each task
+    tasks.forEach(task => {
+
+        // Look in every canvasser
+        canvassers.forEach(canvasser => {
+
+            // Go through all their task
+            let t = canvasser._task;
+            t.forEach(canvasser_task => {
+                
+                // And find if this task is once of theirs
+                if(Number(canvasser_task._ID) === Number(task._ID)) {
+                    // found match insert this canvasser into task 
+                    task.canvasser = canvasser._ID._username;
+                }
+            })
+        })
+    });
+    
 
     // Get all the locations in remainingLocations
     for (let i in remainingLocations) {

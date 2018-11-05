@@ -86,6 +86,26 @@ export const getAvailableCanvassers = async campaignID => {
         .getMany();
 };
 
+export const getCanvassers = async campaignID => {
+    return await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._task", "tasks")
+        .where("campaign._ID = :ID", { ID: campaignID })
+        .getMany();
+}
+
+
+
+export const getTaskCanvasser = async (taskID, canvasserID) => {
+    return await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._tasks", "tasks")
+        .where("canvasser._ID = :ID", {ID: canvasserID})
+        .where("tasks._ID = ID", {ID: taskID})
+        .getMany();
+};
 
 /**
  * Returns the tasks for a campaign
