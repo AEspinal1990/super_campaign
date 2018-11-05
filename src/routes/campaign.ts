@@ -70,7 +70,7 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
 /**
  * GET and POST for edit Campaign
  */
-router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) => {
+router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response) => {
     
 
 let startDate;
