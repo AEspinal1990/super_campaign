@@ -204,6 +204,41 @@ router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
     }
     res.send('ITs done');
 });
+router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
+    var campaign = await getManager().findOne(Campaign,
+        { where: { "_ID": req.params.id } });
+    var question = await getManager().find(Questionaire,
+        { where: { "_campaign": campaign } });
+    /*
+        create dummy Results data
+    */
+   function randomIntFromInterval(min,max) // min and max included
+   {
+       return Math.floor(Math.random()*(max-min+1)+min);
+   }
+
+    for (let j in campaign.locations) { // delete this loop for only 1 completed location
+        var results = [];
+        var completed = new CompletedLocation();
+        completed.locations = [];
+        for (var i = 0; i < question.length; i++) {
+            var result = new Results();
+            result.campaign = campaign;
+            if(randomIntFromInterval(1,2) == 1) {
+                result.answer = false;
+            } else {
+                result.answer = true;
+            }            result.answerNumber = Number(i);
+            result.rating = randomIntFromInterval(1,5);
+            result.completedLocation = completed;
+            result.completedLocation.locations.push(campaign.locations[j]);
+            await getManager().save(result.completedLocation);
+            results.push(result);
+        }
+        await getManager().save(results);
+    }
+    res.send('ITs done');
+});
 
 
 router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) => {
@@ -231,7 +266,7 @@ router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) 
     });
 
     resultStatisticsUtil.getStatistics(req);
-
+    //console.log(campaign.getLocationsResults()[1].completedLocation._locations[0]._lat);
 
     //send all the locations results through the socket
     io.on('connection', function (socket) {

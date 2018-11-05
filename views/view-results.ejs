@@ -140,11 +140,17 @@
     var socket = io();
     $(document).ready(function() {
         socket.on('result-details', function(campaignResDet) {
-            console.log(campaignResDet[0].coord.lat);
+            // console.log(campaignResDet[0].coord.lat);
+            // console.log("SPACE");
+            // console.log(campaignResDet[1].coord.lat);
+
             deleteMarkers();
             for(i in campaignResDet) {
+                //campaign.getLocationsResults()    [1].completedLocation._locations[0]._lat
                 //parsedCoord = {lat: campaignResDet[i].coord.lat, lng: campaignResDet[i].coord.lng} ;
-                parsedCoord = campaignResDet[i].coord;
+                parsedCoord = {lat: parseFloat(campaignResDet[i].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[i].completedLocation._locations[0]._long)};
+                console.log(parsedCoord);
+                //parsedCoord = campaignResDet[i].coord;
                 rating = campaignResDet[i].rating;
                 addRatingMarker(parsedCoord, rating);
             }
