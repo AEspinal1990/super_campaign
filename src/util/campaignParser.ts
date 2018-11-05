@@ -51,6 +51,7 @@ export function constructAddress(location){
 
 };
 
+
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
     talkingPoints = talkingPoints.split("\n");
@@ -86,12 +87,13 @@ export const initCampaign = (name, sDate, eDate, avgDuration) => {
 };
 
 
-export function getManagers(managers) {
-    sanitizeUsers(managers);
+export function getManagers(managers) {    
+    return sanitizeUsers(managers);    
 };
 
 
 export function sanitizeUsers(user) {
+    
     /**
      * Splits by \n then removes \r's
      */

@@ -59,7 +59,6 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
     
     // Save this campaigns locations    
     await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
-    // console.log(req.body.campaign.locations)
     campaignLogger.info(`Saved locations for: ${campaign._name}`);
 
     
