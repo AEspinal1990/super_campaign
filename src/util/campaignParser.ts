@@ -31,7 +31,7 @@ export function getState(location) {
 };
 
 export function getZip(location) {
-    let zip = (location.split(',')[5]);
+    let zip = (location.split(',')[5]).trim().replace('\r','');
     parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
     return zip;
 };
@@ -168,20 +168,6 @@ exports.createCampaignInfo = campaignData => {
     // newCampaign.endDate = endDate;
     // newCampaign.avgDuration = averageExpectedDuration;
     return newCampaign;
-};
-//function to build talking points
-exports.createTalkingPoints = campaignData => {
-    let newCampaign = exports.createCampaignInfo(campaignData);
-    let talkingPoints = campaignData.talkingPoints;
-    talkingPoints = talkingPoints.split("\n");
-    let allTalkingPoints = [];
-    for (let i in talkingPoints) {
-        let newTalkingPoint = new TalkPoint();
-        newTalkingPoint.campaign = newCampaign;
-        newTalkingPoint.talk = talkingPoints[i];
-        allTalkingPoints[i] = newTalkingPoint;
-    }
-    return allTalkingPoints;
 };
 //function to build campaign with locations
 exports.createCampaignLocations = campaignData => {
