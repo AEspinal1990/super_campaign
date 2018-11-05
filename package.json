@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha './test/util/campaignCreatorTest.js' './test/util/createUserTest.js' './test/util/managerToolsTest.js' || exit 0", 
+    "test": "mocha './test/util/campaignCreatorTest.js' './test/util/createUserTest.js' './test/util/managerToolsTest.js' || exit 0",
     "watch-ts": "tsc -w",
     "watch-node": "nodemon dist/server.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript, Node\" -c \"yello.bold, cyan.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
@@ -38,6 +38,7 @@
     "express-validator": "^5.3.0",
     "lodash": "^4.17.11",
     "math.js": "^1.1.43",
+    "mathjs": "^5.2.3",
     "method-override": "^3.0.0",
     "moment": "^2.22.2",
     "morgan": "^1.9.1",

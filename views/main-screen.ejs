@@ -1,9 +1,15 @@
 <% include ./partials/header %>
 
 
-<div class = "container" Campaign Manager></div>
-<div class = "container" Canvasser></div>
-<div class = "container" System Administrator></div>
-
-
+<form action = "/campaignManager" method="POST">
+    <div class = "container">Campaign Manager</div>
+</form>
+<form action = "/canvasser" method="POST">
+<div class = "container">Canvasser</div>
+</form>
+<form action = "/system_administrator" method="POST">
+<div class = "container">System Administrator</div>
+</form>
+</body>
+<!-- From .js, you can do document.getElementById('#id') to grab field's id and then grey it out if they don't have the correct privilege-->
 </html>

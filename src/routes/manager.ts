@@ -8,6 +8,8 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import * as managerTools from '../util/managerTools';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
+import { Task } from '../backend/entity/Task';
+import { RemainingLocation } from '../backend/entity/RemainingLocation';
 
 const router: Router = Router();
 const winston = require('winston');
@@ -15,19 +17,12 @@ const logger = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
 const middleware = require('../middleware');
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next()
-    } else {
-        res.redirect('/');
-    }
-}
+
 
 /* FOR OR_TOOLS PYTHON */
 // const {spawn} = require('child_process');
 // const pyORT = spawn('python', ['../util/ortool.py']);
-
-router.post('/new-assignment/:id', async (req: Request, res: Response) => {
+router.post('/new-assignment/:id', middleware.manages, async (req: Request, res: Response) => {
 
     /**
      * Check if id corressponds to a campaign
@@ -54,6 +49,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Locations to canvass
      */
     let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
+    console.log(canvassers);
     let locations = managerTools.getCampaignLocations(campaign);
 
     /**
@@ -73,7 +69,10 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Associate each task with an assignment
      */
-    tasks.forEach(task => task.assignment = assignment);
+    tasks.forEach(async task => {
+        task.assignment = assignment;
+        // await getManager().save(task);   
+    });
 
     /**
      * Create Assignment from the generated Tasks
@@ -89,6 +88,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Remove canvassers with no openings in schedule
      */
+    console.log(canvassers);
     canvassers = managerTools.removeBusy(canvassers);
 
     /**
@@ -119,14 +119,40 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
 });
 
-router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view-task/:id', middleware.manages, async (req: Request, res: Response) => {
     // get campaign id
+    let tempId = 6;
+    let locations = [];
+    var geocodes = [];
+        
+    // Query for task
+    let task = await getManager().findOne(Task, { where: { "_ID": tempId } });
+   
+    // Grab remaining Locations and insert locations into an array
+    let remainingLocation = await getManager().findOne(RemainingLocation, { where: { "_ID": task.ID } });
+    if(remainingLocation !== undefined) {
+        remainingLocation.locations.forEach(location => locations.push(location));
+    }
+    
+    // Grab completed Locations and insert locations into an array
+    let completedLocation = await getManager().findOne(CompletedLocation, { where: { "_ID": task.ID } });
+    if( completedLocation !== undefined) {
+        completedLocation.locations.forEach(location => locations.push(location));
+    }
 
+    // Grab geocodes
+    locations.forEach(location => {
+        geocodes.push({
+            lat: location.lat,
+            long: location.long,
+        })
+    })
 
-    // redirect to '/:id/view-assignment/:id'
+    
+    res.send([task.ID, JSON.stringify(locations), JSON.stringify(geocodes)])
 });
 
-router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view-assignment/:id', middleware.manages, async (req: Request, res: Response) => {
 
     let campaign;
     let tasks = [];
@@ -135,25 +161,74 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     let taskLocations = [];
     let campaignID = req.params.id;
     let numLocations = 0;
+    let canvassers = [];
+
     // Check if id corressponds to a campaign    
     campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
     if (campaign === undefined) {
         return res.status(404).send('Assignment not found')
     }
 
+    // Grab all canvassers that work for this campaign
+    canvassers = await managerTools.getCanvassers(campaignID);
+
     // Grab all task with this campaign id
     tasks = await managerTools.getCampaignTask(campaignID);
-
+    let test = [];
     // Grab all remaining locations for the tasks
     for (let i in tasks) {
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
+        //console.log(i, location)
+        tasks[i].remainingLocations = locations;
+        location.forEach(l => {
+            //console.log(i, l.locations.length)
+            l.locations.forEach(place => {
+                //console.log(place)
+                tasks[i].remainingLocations.push(place);
+            })
+            
+        })
+        //console.log(i, tasks[i].remainingLocations.length)
+        tasks[i].duration = 15
+        tasks[i].numLocations = tasks[i].remainingLocations.length;
         remainingLocations.push(location);
+        test.push(location);
     }
+ 
+
+    // Remove canvassers with no task
+    for(let i = 0; i < canvassers.length; i++) {
+        if(canvassers[i]._task === undefined) {
+            canvassers.splice(i,1);
+        }
+    }
+
+    // Map canvassers to task - Will fix don't judge its 6:25am
+    // For each task
+    tasks.forEach(task => {
+
+        // Look in every canvasser
+        canvassers.forEach(canvasser => {
+
+            // Go through all their task
+            let t = canvasser._task;
+            t.forEach(canvasser_task => {
+                
+                // And find if this task is once of theirs
+                if(Number(canvasser_task._ID) === Number(task._ID)) {
+                    // found match insert this canvasser into task 
+                    task.canvasser = canvasser._ID._username;
+                }
+            })
+        })
+    });
+    
 
     // Get all the locations in remainingLocations
     for (let i in remainingLocations) {
         for (let j in remainingLocations[i]) {
             remainingLocations[i][j].locations.forEach(location => {
+                //console.log(location)
                 locations.push(location)
                 numLocations++;
             });
@@ -164,16 +239,12 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         locations = [];
     }
 
-    console.log(numLocations);
-
-
-    //send to frontend
-    // For each task
-    // canvasser
-    // Locations with its coordinates
-    // number of locations
-    // Duration of task
-
+    // Calculate the duration of each task
+    tasks.forEach(task => {
+        //console.log(task.remainingLocations)
+        task = managerTools.findDuration(task, campaign);
+    })
+    
     let id = 2;
     res.render('view-tasks', { tasks, campaignID, id, numLocations })
 });
@@ -243,7 +314,7 @@ router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
 });
 
 
-router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/results/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id } });
     var question = await getManager().find(Questionaire,

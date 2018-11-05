@@ -1,31 +1,16 @@
-import { Request, Response, Router } from 'express';
-import { getManager, getRepository } from "typeorm";
-import { User } from "../backend/entity/User";
-import { Canvasser } from '../backend/entity/Canvasser';
-import { Availability } from '../backend/entity/Availability';
-import { Results } from '..//backend/entity/Results';
-import { CompletedLocation } from '../backend/entity/CompletedLocation';
-import { managerRouter } from './manager';
-import { io } from '../server';
-import { Task } from '../backend/entity/Task';
-import { RemainingLocation } from '../backend/entity/RemainingLocation';
-import { Locations } from '../backend/entity/Locations';
+import { Request, Response, Router }    from 'express';
+import { getManager, getRepository }    from "typeorm";
+import { Canvasser }                    from '../backend/entity/Canvasser';
+import { Availability }                 from '../backend/entity/Availability';
+import { io }                           from '../server';
 
 const router: Router = Router();
-
+const middleware = require('../middleware');
 const winston = require('winston');
 const logger = require('../util/logger');
-const adminLogger = winston.loggers.get('canvasserLogger');
+const canvasserLogger = winston.loggers.get('canvasserLogger');
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next()
-    } else {
-        res.redirect('/');
-    }
-}
-
-router.get('/calendar', async (req: Request, res: Response) => {
+router.get('/calendar',middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('edit-availability');
 
 });
@@ -33,7 +18,7 @@ router.get('/calendar', async (req: Request, res: Response) => {
 /**
  * GET and POST for Edit Availability
  */
-router.get('/availability/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
     let canvasserID = req.params.id;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -42,7 +27,7 @@ router.get('/availability/:id', isAuthenticated, async (req: Request, res: Respo
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: canvasserID })
         .getOne();
-
+    
     if (canvas == undefined) {
         return res.send("Wrong Link (Canvasser ID)");
     } 
@@ -71,7 +56,7 @@ router.get('/availability/:id', isAuthenticated, async (req: Request, res: Respo
     res.render('edit-availability', {availableOrAssigned, canvasserID});    
 });
 
-router.post('/availability/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
@@ -132,10 +117,12 @@ router.post('/availability/:id', isAuthenticated, async (req: Request, res: Resp
 
     await getManager().save(canv);
     //redirect after finish posting
+    canvasserLogger.info(`Editted availability for canvasser: ${req.params.id}`);
+
     res.send("Done Editing Availability");
 });
 
-router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: Response) => {
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
@@ -143,7 +130,6 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
         .leftJoinAndSelect("canvasser._ID", "user")
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
-
     // check when a canvaseer is in many campaigns. check the list of campaigns
 
     /*
@@ -180,11 +166,11 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
         });
     }
 
-    adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
+    canvasserLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Response) => {
-    console.log(req.body);
+router.post('/view-task-detail', middleware.isCanvasser, async (req: Request, res: Response) => {
+    // console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         // .leftJoinAndSelect("canvasser._ID", "user")
@@ -195,27 +181,28 @@ router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Resp
         .leftJoinAndSelect("rmL._locations", "fmLs")
         .where("campaign._ID = :ID", { ID:  req.body.campaignID})
         .getOne();
-
+        // console.log(canv)
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);
         } else {
             var index;
             var geocodes = [];
-
+            // console.log(req.body.taskID)
             for (let i in canv.task) {
                 if (canv.task[i].ID == req.body.taskID) {
                     index = Number(i);
                 }
             }
+            // console.log(canv.task)
             for (let i in canv.task[index].remainingLocation.locations) {
                 geocodes.push({
                     lat: canv.task[index].remainingLocation.locations[i].lat,
                     lng: canv.task[index].remainingLocation.locations[i].long
                 });
             }
-            console.log(geocodes);
-            console.log(canv.task[index]);
+            // console.log(geocodes);
+            // console.log(canv.task[index]);
             io.on('connection', function (socket) {
                 socket.emit('task-geocodes', geocodes);
             });

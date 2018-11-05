@@ -1,15 +1,11 @@
-import { Campaign } from '../backend/entity/Campaign';
+import { Campaign }     from '../backend/entity/Campaign';
 import { Questionaire } from '../backend/entity/Questionaire';
-import { Locations } from '../backend/entity/Locations';
-import { Canvasser } from '../backend/entity/Canvasser';
-import { TalkPoint } from '../backend/entity/TalkPoint';
-import { User } from '../backend/entity/User';
-import { CampaignManager } from '../backend/entity/CampaignManager';
+import { Locations }    from '../backend/entity/Locations';
+import { TalkPoint }    from '../backend/entity/TalkPoint';
 
 /**
  * Location Specific functions 
  */
-
 export function getStreetNumber(location) {
     return parseInt(location.split(',')[0]);
 };
@@ -35,7 +31,7 @@ export function getState(location) {
 };
 
 export function getZip(location) {
-    let zip = (location.split(',')[5]);
+    let zip = (location.split(',')[5]).trim().replace('\r','');
     parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
     return zip;
 };
@@ -52,6 +48,9 @@ export function constructAddress(location){
 };
 
 
+/**
+ * Returns the talking points from a campaign object
+ */
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
     console.log('From talking points', talkingPoints)
@@ -73,11 +72,31 @@ export const getTalkingPoints = (campaign, talkingPoints) => {
     return points;
 };
 
+/**
+ * Returns the questions from a campaign object
+ */
+export const getQuestionaire = (campaign, questionaire) => {
+    questionaire = questionaire.trim().split("\n");
+    for(let i in questionaire) {
+        questionaire[i] = questionaire[i].replace('\r','');
+    }    
+
+    /**
+     * Create questions and insert into array
+     */
+    let questions = [];
+    for (let i in questionaire) {
+        questions.push(new Questionaire());
+        questions[i].campaign = campaign;
+        questions[i].question = questionaire[i];
+    }
+
+    return questions;
+};
 
 /**
- * Campaign Specific functions
+ * Campaign Specific function
  */
-
 export const initCampaign = (name, sDate, eDate, avgDuration) => {
     const newCampaign: Campaign = new Campaign();
     newCampaign.name = name;
@@ -88,11 +107,11 @@ export const initCampaign = (name, sDate, eDate, avgDuration) => {
 };
 
 
-export function getManagers(managers) {    
-    return sanitizeUsers(managers);    
-};
 
-
+/**
+ * Passed a list of users will remove all non user data
+ * @param user 
+ */
 export function sanitizeUsers(user) {
     
     /**
@@ -110,36 +129,27 @@ export function sanitizeUsers(user) {
     return user;
 }
 
+export function getManagers(managers) {    
+    return sanitizeUsers(managers);    
+};
 
 export function getCanvassers(canvassers) {
     return sanitizeUsers(canvassers);
 }
 
-
-export const getQuestionaire = (campaign, questionaire) => {
-    questionaire = questionaire.trim().split("\n");
-    for(let i in questionaire) {
-        questionaire[i] = questionaire[i].replace('\r','');
-    }
-    
-
-    /**
-     * Create questions and insert into array
-     */
-    let questions = [];
-    for (let i in questionaire) {
-        questions.push(new Questionaire());
-        questions[i].campaign = campaign;
-        questions[i].question = questionaire[i];
-    }
-
-    return questions;
-};
-
+/**
+ * Given a string parse for date and return it.
+ * @param date 
+ */
 export const getDate = date => {
     date = date.split("-");
     return new Date(date[0], date[1]-1, date[2]);
 };
+
+
+
+
+
 // function to build campaign data
 exports.createCampaignInfo = campaignData => {
     let campaignName = campaignData.campaignName;
@@ -158,20 +168,6 @@ exports.createCampaignInfo = campaignData => {
     // newCampaign.endDate = endDate;
     // newCampaign.avgDuration = averageExpectedDuration;
     return newCampaign;
-};
-//function to build talking points
-exports.createTalkingPoints = campaignData => {
-    let newCampaign = exports.createCampaignInfo(campaignData);
-    let talkingPoints = campaignData.talkingPoints;
-    talkingPoints = talkingPoints.split("\n");
-    let allTalkingPoints = [];
-    for (let i in talkingPoints) {
-        let newTalkingPoint = new TalkPoint();
-        newTalkingPoint.campaign = newCampaign;
-        newTalkingPoint.talk = talkingPoints[i];
-        allTalkingPoints[i] = newTalkingPoint;
-    }
-    return allTalkingPoints;
 };
 //function to build campaign with locations
 exports.createCampaignLocations = campaignData => {

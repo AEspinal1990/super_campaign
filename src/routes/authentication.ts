@@ -26,7 +26,8 @@ router.post('/', passport.authenticate(
 
 // TODO: leave a better message on log
 router.get('/logout', (req: Request, res: Response) => {
-    authLogger.info(`/logout - ${req.user}`);
+    console.log(req.user)
+    authLogger.info(`/logout - ${req.user[0]._username}`);
     req.logout();
     // @ts-ignore
     req!.session!.destroy();
@@ -34,7 +35,7 @@ router.get('/logout', (req: Request, res: Response) => {
 });
 
 router.get('/temp',(req: Request, res: Response) => {
-    authLogger.info(`/login -${req.user}`);
+    authLogger.info(`/login -${req.user[0]._username}`);
     res.send('Logged In Successfully!');
 });
  

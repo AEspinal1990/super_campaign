@@ -1,6 +1,6 @@
 import { getManager }           from 'typeorm';
-import { CampaignManager }      from '../backend/entity/CampaignManager';
 import { Request, Response, NextFunction }    from 'express';
+import { Campaign } from '../backend/entity/Campaign';
 
 
 const middlewareObj = <any>{};
@@ -29,14 +29,24 @@ middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
     }    
 }
 
-middlewareObj.manages = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.params);
-    if (req.isAuthenticated() && req.user[0]._permission === 1) {
-        
+middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('id', req.params.id)
+    let thing = await isManagerOf(req.user[0]._employeeID, req.params.id);
+    if (req.isAuthenticated() && thing) {
+        console.log("true1");
+        return next()
+    } else {
+        console.log("false1");
+        res.redirect('/');
+    }  
+}
+
+middlewareObj.isCanvasser = async (req: Request, res: Response, next: NextFunction) => {
+    if (req.isAuthenticated() && (req.user[0]._employeeID == req.params.id)){
         return next()
     } else {
         res.redirect('/');
-    }  
+    }
 }
 
 
@@ -45,8 +55,17 @@ middlewareObj.manages = (req: Request, res: Response, next: NextFunction) => {
  * manages this campaign.
  * @param campaignId 
  */
-function isManagerOf(managerID, campaignId) {
-    // NEED QUERY
+async function isManagerOf(managerID, campaignId) {
+    var campaign = await getManager().findOne(Campaign, {where: {"_ID": campaignId}});
+    console.log(campaign)
+    for (let i in campaign.managers){
+        if (campaign.managers[i].ID.employeeID === managerID){
+            console.log("true2")
+            return true;
+        }
+    }
+    console.log("false2");
+    return false;
 }
 
 /**
@@ -54,9 +73,9 @@ function isManagerOf(managerID, campaignId) {
  * requested calendar.
  * @param canvasserID 
  */
-function isCanvasser(canvasserID){
-    // NEED QUERY
-
+async function isCanvass(canvasserID){
+    // query not needed:
+        // check the requesting canvasserID and the stated canvasserID
 }
 
 module.exports = middlewareObj;

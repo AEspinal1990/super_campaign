@@ -19,11 +19,11 @@ const campaignLogger = winston.loggers.get('campaignLogger');
 /**
  * GET and POST for create Campaign
  */
-router.get('/new', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/new', middleware.isManager, async (req: Request, res: Response) => {
     res.render('create-campaign');
 });
 
-router.post('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/', middleware.isManager, async (req: Request, res: Response) => {
       
     let startDate;
     let endDate;
@@ -67,17 +67,43 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
     res.send('okay');
 });
 
+
+/**
+ * Not in use. Beginning of edit rework.
+ */
+router.get('/edit2/:id', middleware.manages, async (req: Request, res: Response) => {
+    
+    const campaignRepository = getRepository(Campaign);    
+    const campaignID = req.params.id;
+    const campaign = await campaignRepository.find({ where: { "_ID": campaignID } }).catch(e => console.log(e));
+    
+    // @ts-ignore - will return an empty array therefore checking length is valid. 
+    if (campaign.length === 0) {
+        let emptyCampaign = campaignCreator.emptyCampaign(campaignID);
+        return res.status(404).send('Campaign not found');
+    } else {
+        res.send('here')
+    }
+});
+
+
 /**
  * GET and POST for edit Campaign
  */
-router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) => {
+router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response) => {
+    
+
+let startDate;
+    let endDate;
+    let avgDuration;
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     
     const campaign = await campaignRepository.find({ where: { "_ID": campaignID } }).catch(e => console.log(e));
+    
     if (campaign === undefined) {
         console.log('not found')
-        res.status(404).render('edit-campaign', {
+        return res.status(404).render('edit-campaign', {
             missing: campaignID,
             id: "",
             name: "",
@@ -98,24 +124,23 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
         let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
         let campaignEndDate: Date = campaign[0]._endDate;
         let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
-
+      
         //parse questions back to input form
-        let questionaireRepository = getRepository(Questionaire);
-        let questionaire = await questionaireRepository.find({ where: { "Campaign_ID": campaignID } }).catch(e => console.log(e));
-        campaign[0].question = questionaire;
+       
+        const qRepo = getRepository(Questionaire);
+        const questionaire = await qRepo.find({ where: { "_campaign": campaign[0].ID } });campaign[0].question = questionaire;
         let questionsInput = "";
         for (let i in campaign[0].question) {
             questionsInput += campaign[0].question[i].question + "\n";
         }
         //parse talking points back to input form
-        let talkPointRepository = getRepository(TalkPoint);
-        let talkPoint = await talkPointRepository.find({ where: { "Campaign_ID": campaignID } }).catch(e => console.log(e));
+        const tRepo = getRepository(TalkPoint);
+        const talkPoint = await tRepo.find({ where: { "_campaign": req.params.id } });
         campaign[0].talkingPoint = talkPoint;
         let talkPointInput = "";
         for (let i in campaign[0].talkingPoint) {
             talkPointInput += campaign[0].talkingPoint[i].talk + "\n";
         }
-
         //parse locations back to input form
         let locationsInput = "";
         for (let i in campaign[0].locations) {
@@ -162,8 +187,9 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
     }
 });
 
-router.post('/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
     campaignEditor.editCampaign(req.body.campaign, req.params.id);
+    campaignLogger.info(`Updated campaign with id: ${req.params.id}`);
     if (res.status(200))
         res.send("Campaign Edited!");
     else
