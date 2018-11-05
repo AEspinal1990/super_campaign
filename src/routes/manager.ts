@@ -135,6 +135,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     let taskLocations = [];
     let campaignID = req.params.id;
     let numLocations = 0;
+
     // Check if id corressponds to a campaign    
     campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
     if (campaign === undefined) {
@@ -149,10 +150,11 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
         //console.log(i, location)
         tasks[i].remainingLocations = locations;
+        tasks[i].canvasser = `Bob the ${i}st`;
         remainingLocations.push(location);
     }
 
-    
+    // Grab each tasks canvasser
 
     // Get all the locations in remainingLocations
     for (let i in remainingLocations) {
