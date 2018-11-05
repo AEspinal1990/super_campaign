@@ -6,6 +6,8 @@
 - check for location duplicate
 - make view globals
 
+- create campaign: when no canvasser/manager entered, campaign will create, but when you view/edit, the locations is blank
+
 FUTURE PROBLEMS:
 - edit availability: how does it affect campaign/assignments....do we update it where edit availability is?
     - mark assignment as imcomplete...? or recalculate assignemnt or defer until the manager checks it again and shows error and give them option to recalculate   

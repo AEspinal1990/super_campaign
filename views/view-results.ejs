@@ -149,13 +149,12 @@
                 //campaign.getLocationsResults()    [1].completedLocation._locations[0]._lat
                 //parsedCoord = {lat: campaignResDet[i].coord.lat, lng: campaignResDet[i].coord.lng} ;
                 parsedCoord = {lat: parseFloat(campaignResDet[i].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[i].completedLocation._locations[0]._long)};
-                console.log(parsedCoord);
                 //parsedCoord = campaignResDet[i].coord;
                 rating = campaignResDet[i].rating;
                 addRatingMarker(parsedCoord, rating);
             }
             map.setZoom(5);
-            map.setCenter(new google.maps.LatLng(campaignResDet[0].coord));
+            map.setCenter(new google.maps.LatLng({lat: parseFloat(campaignResDet[0].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[0].completedLocation._locations[0]._long)}));
         });
     });
 </script>
