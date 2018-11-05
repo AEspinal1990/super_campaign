@@ -86,6 +86,26 @@ export const getAvailableCanvassers = async campaignID => {
         .getMany();
 };
 
+export const getCanvassers = async campaignID => {
+    return await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._task", "tasks")
+        .where("campaign._ID = :ID", { ID: campaignID })
+        .getMany();
+}
+
+
+
+export const getTaskCanvasser = async (taskID, canvasserID) => {
+    return await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._tasks", "tasks")
+        .where("canvasser._ID = :ID", {ID: canvasserID})
+        .where("tasks._ID = ID", {ID: taskID})
+        .getMany();
+};
 
 /**
  * Returns the tasks for a campaign
@@ -95,6 +115,14 @@ export const getCampaignTask = async (campaignID) => {
     return await getManager()
         .createQueryBuilder(Task, "task")
         .where("campaignID = :ID", { ID: campaignID })
+        .getMany();
+}
+
+
+export const getTask = async (taskId) => {
+    return await getManager()
+        .createQueryBuilder(Task, "task")
+        .where("ID = ID", {ID: taskId})
         .getMany();
 }
 
@@ -362,6 +390,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     canvassers.forEach(canvasser => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
         canvasser.assignedDates = [];
+        canvasser.task = [];
     });
 
     
@@ -394,6 +423,38 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     
     return canvassers;
 };
+
+export const findDuration = async (task, campaign) => {
+    //console.log('****Starts here', task.remainingLocations);
+
+    let locations = task.remainingLocations;    
+    let travelSpeed = this.getAvgSpeed();
+    let avgDuration = campaign._avgDuration;
+    let coords = [];
+    let mode;
+    let tripTime;
+    let i = 0;
+    //console.log('here', locations)
+    // Get all the coordinates
+    locations.forEach(async location => {
+        await coords.push(getCoords(location));
+    });
+
+    // Determine mode of transportation based off 
+    // of travelSpeed in mph - walk, bike, or car
+    mode = determineModeOfTransportation(travelSpeed);    
+    //console.log('Here', coords)
+    // Calculate time itll take to canvass all locations in this task   
+    while(coords.length > 1) {
+        tripTime = await getTripTime(coords[i], coords[i+1], mode, avgDuration);        
+        coords.shift();
+        task.duration += tripTime;
+    }
+    console.log(task.duration);
+
+    return task;
+}
+
 
 function assignTask(canvasser: Canvasser, task: Task) {
 

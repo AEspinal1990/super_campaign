@@ -8,8 +8,7 @@ const router: Router = Router();
 const middleware = require('../middleware');
 const winston = require('winston');
 const logger = require('../util/logger');
-const adminLogger = winston.loggers.get('canvasserLogger');
-
+const canvasserLogger = winston.loggers.get('canvasserLogger');
 
 router.get('/calendar',middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('edit-availability');
@@ -57,7 +56,7 @@ router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res
     res.render('edit-availability', {availableOrAssigned, canvasserID});    
 });
 
-router.post('/availability/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
@@ -118,10 +117,12 @@ router.post('/availability/:id', middleware.isAuthenticated, async (req: Request
 
     await getManager().save(canv);
     //redirect after finish posting
+    canvasserLogger.info(`Editted availability for canvasser: ${req.params.id}`);
+
     res.send("Done Editing Availability");
 });
 
-router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: Response) => {
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
@@ -165,10 +166,10 @@ router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, r
         });
     }
 
-    adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
+    canvasserLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task-detail', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/view-task-detail', middleware.isCanvasser, async (req: Request, res: Response) => {
     // console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")

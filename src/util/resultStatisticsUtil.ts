@@ -26,6 +26,9 @@ export async function getStatistics(req) {
     var allRatings = [];
 
     for (let i in completedResults) {
-        console.log(completedResults[i].rating);
+        allRatings.push(completedResults[i].rating);
     }
+    
+    // console.log("AVERAGE" +math.mean(allRatings));
+    // console.log("SD" + math.sd(allRatings));
 }

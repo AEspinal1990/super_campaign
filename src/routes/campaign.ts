@@ -19,11 +19,11 @@ const campaignLogger = winston.loggers.get('campaignLogger');
 /**
  * GET and POST for create Campaign
  */
-router.get('/new', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/new', middleware.isManager, async (req: Request, res: Response) => {
     res.render('create-campaign');
 });
 
-router.post('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/', middleware.isManager, async (req: Request, res: Response) => {
       
     let startDate;
     let endDate;
@@ -68,6 +68,9 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
 });
 
 
+/**
+ * Not in use. Beginning of edit rework.
+ */
 router.get('/edit2/:id', middleware.manages, async (req: Request, res: Response) => {
     
     const campaignRepository = getRepository(Campaign);    
@@ -186,6 +189,7 @@ let startDate;
 
 router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
     campaignEditor.editCampaign(req.body.campaign, req.params.id);
+    campaignLogger.info(`Updated campaign with id: ${req.params.id}`);
     if (res.status(200))
         res.send("Campaign Edited!");
     else

@@ -24,6 +24,12 @@ export class Task{
     private _status!:boolean;
     @ManyToOne(type => Assignment, as => as.tasks)
     private _assignment!:Assignment;
+    @Column({ name: "duration" })
+    private _duration!: number;
+    @Column({ name: "canvasserName" })
+    private _canvasser!: string;
+    @Column({ name: "numLocations" })
+    private _numLocations!: number;
 
     public get ID():number{
         return this._ID;
@@ -51,6 +57,24 @@ export class Task{
     }
     public get assignment():Assignment{
         return this._assignment;
+    }
+    public get duration(): number {
+        return this._duration;
+    }
+    public get canvasser(): string {
+        return this._canvasser;
+    }
+    public get numLocations(): number {
+        return this._numLocations;
+    }
+    public set numLocations(value: number) {
+        this._numLocations = value;
+    }
+    public set canvasser(value: string) {
+        this._canvasser = value;
+    }
+    public set duration(value: number) {
+        this._duration = value;
     }
     public set ID(ID:number){
         this._ID = ID;
