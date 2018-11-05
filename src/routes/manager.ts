@@ -1,19 +1,19 @@
-import { Request, Response, Router }    from 'express';
-import { getManager }                   from 'typeorm';
-import { Campaign }                     from '../backend/entity/Campaign';
-import { Assignment }                   from '../backend/entity/Assignment';
-import { Results }                      from '../backend/entity/Results';
-import { CompletedLocation }            from '../backend/entity/CompletedLocation';
-import { Questionaire }                 from '../backend/entity/Questionaire';
-import * as managerTools                from '../util/managerTools';
-import * as resultStatisticsUtil        from '../util/resultStatisticsUtil';
+import { Request, Response, Router } from 'express';
+import { getManager } from 'typeorm';
+import { Campaign } from '../backend/entity/Campaign';
+import { Assignment } from '../backend/entity/Assignment';
+import { Results } from '../backend/entity/Results';
+import { CompletedLocation } from '../backend/entity/CompletedLocation';
+import { Questionaire } from '../backend/entity/Questionaire';
+import * as managerTools from '../util/managerTools';
+import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
-import { RemainingLocation }    from '../backend/entity/RemainingLocation';
-import { Task }                 from '../backend/entity/Task';
+import { RemainingLocation } from '../backend/entity/RemainingLocation';
+import { Task } from '../backend/entity/Task';
 
 const router: Router = Router();
-const winston   = require('winston');
-const logger    = require('../util/logger');
+const winston = require('winston');
+const logger = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
 const middleware = require('../middleware');
 
@@ -30,15 +30,15 @@ const isAuthenticated = (req, res, next) => {
 // const pyORT = spawn('python', ['../util/ortool.py']);
 
 router.post('/new-assignment/:id', async (req: Request, res: Response) => {
-    
+
     /**
      * Check if id corressponds to a campaign
      */
-    let campaign = await getManager().findOne(Campaign, { where: { "_ID": req.params.id } });    
+    let campaign = await getManager().findOne(Campaign, { where: { "_ID": req.params.id } });
     if (campaign === undefined) {
         return res.status(404).send('Campaign not found');
-    } 
-        
+    }
+
     /**
      * Create Assignment
      */
@@ -47,8 +47,8 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Grab global parameters from globals.json
      */
-    let AVG_TRAVEL_SPEED = managerTools.getAvgSpeed();    
-    let WORKDAY_LIMIT = managerTools.getWorkdayLimit(); 
+    let AVG_TRAVEL_SPEED = managerTools.getAvgSpeed();
+    let WORKDAY_LIMIT = managerTools.getWorkdayLimit();
 
     /**
      * Grab necessary data to create an assignment.
@@ -69,7 +69,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      */
     let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
     tasks.forEach(task => {
-        task = managerTools.decorateTask(task, campaign);  
+        task = managerTools.decorateTask(task, campaign);
     });
 
     /**
@@ -81,7 +81,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Create Assignment from the generated Tasks
      */
     assignment.tasks = tasks;
-    
+
 
     /**
      * Assign new Assignment to the campaign
@@ -102,7 +102,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Remove canvassers with no openings in schedule
      */
     canvassers = managerTools.removeBusy(canvassers);
-    
+
     /**
      * Assign tasks
      */
@@ -112,20 +112,20 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
             .then(res => console.log('Successfully assigned task'))
             .catch(e => console.log('Task Assigning Error', e))
     });
-    
+
     res.status(200).send('Create Assignment');
 
 });
 
 router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {
     // get campaign id
-    
+
 
     // redirect to '/:id/view-assignment/:id'
 });
 
 router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Response) => {
-    
+
     let campaign;
     let tasks = [];
     let remainingLocations = [];
@@ -134,28 +134,28 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     let campaignID = req.params.id;
     let numLocations = 0;
     // Check if id corressponds to a campaign    
-    campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });    
+    campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
     if (campaign === undefined) {
         return res.status(404).send('Assignment not found')
     }
 
     // Grab all task with this campaign id
     tasks = await managerTools.getCampaignTask(campaignID);
-    
+
     // Grab all remaining locations for the tasks
-    for(let i in tasks){
+    for (let i in tasks) {
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
         remainingLocations.push(location);
     }
 
     // Get all the locations in remainingLocations
-    for(let i in remainingLocations) {
-        for(let j in remainingLocations[i]){
+    for (let i in remainingLocations) {
+        for (let j in remainingLocations[i]) {
             remainingLocations[i][j].locations.forEach(location => {
                 locations.push(location)
                 numLocations++;
-            });            
-        }        
+            });
+        }
         // Each iteration is one task.
         // Limit 1 element to 1 task.
         taskLocations.push(locations);
@@ -163,67 +163,70 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     }
 
     console.log(numLocations);
-    
+
 
     //send to frontend
     // For each task
-        // canvasser
-        // Locations with its coordinates
-        // number of locations
-        // Duration of task
+    // canvasser
+    // Locations with its coordinates
+    // number of locations
+    // Duration of task
 
     let id = 2;
-    res.render('view-tasks', {tasks, campaignID, id, numLocations})
+    res.render('view-tasks', { tasks, campaignID, id, numLocations })
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
-        { where: { "_ID": req.params.id }});
+        { where: { "_ID": req.params.id } });
     var question = await getManager().find(Questionaire,
-        {where: {"_campaign": campaign}});
+        { where: { "_campaign": campaign } });
     /*
         create dummy Results data
     */
-    var results = [];
-    var completed = new CompletedLocation();
-    completed.locations = [];
-    for (var i=0;i<question.length;i++) {
-        var result = new Results();
-        result.campaign = campaign;
-        result.answer = true;
-        result.answerNumber = Number(i);
-        result.rating = 5;
-        result.completedLocation = completed;
-        result.completedLocation.locations.push(campaign.locations[0]);
-        await getManager().save(result.completedLocation);
-        results.push(result);
+    
+    for (let j in campaign.locations) { // delete this loop for only 1 completed location
+        var results = [];
+        var completed = new CompletedLocation();
+        completed.locations = [];
+        for (var i = 0; i < question.length; i++) {
+            var result = new Results();
+            result.campaign = campaign;
+            result.answer = true;
+            result.answerNumber = Number(i);
+            result.rating = 5;
+            result.completedLocation = completed;
+            result.completedLocation.locations.push(campaign.locations[j]);
+            await getManager().save(result.completedLocation);
+            results.push(result);
+        }
+        await getManager().save(results);
     }
-    await getManager().save(results);
     res.send('ITs done');
 });
 
 
 router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
-        { where: { "_ID": req.params.id }});
+        { where: { "_ID": req.params.id } });
     var question = await getManager().find(Questionaire,
-        {where: {"_campaign": campaign}});
+        { where: { "_campaign": campaign } });
 
     var resul = await getManager().find(Results,
-    {
-        where: { "_campaign": campaign },
-        relations: ["_completedLocation", "_completedLocation._locations"]
-    });
+        {
+            where: { "_campaign": campaign },
+            relations: ["_completedLocation", "_completedLocation._locations"]
+        });
     campaign.results = resul;
 
-    function ResultDetails (location_Id, rating, coord) {
+    function ResultDetails(location_Id, rating, coord) {
         this.location_Id = location_Id;
         this.rating = rating;
         this.coord = coord;
     }
 
-    campaign.locations.forEach( location => {
-        new ResultDetails (location.ID, 'results', managerTools.getCoords2(location));
+    campaign.locations.forEach(location => {
+        new ResultDetails(location.ID, 'results', managerTools.getCoords2(location));
         //coords.push(managerTools.getCoords2(location));
     });
 
