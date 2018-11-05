@@ -8,6 +8,8 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import * as managerTools from '../util/managerTools';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
+import { Task } from '../backend/entity/Task';
+import { RemainingLocation } from '../backend/entity/RemainingLocation';
 
 const router: Router = Router();
 const winston = require('winston');
@@ -123,11 +125,37 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
 });
 
-router.get('/view-assignments', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view-task/:id', isAuthenticated, async (req: Request, res: Response) => {
     // get campaign id
+    let tempId = 6;
+    let locations = [];
+    var geocodes = [];
+        
+    // Query for task
+    let task = await getManager().findOne(Task, { where: { "_ID": tempId } });
+   
+    // Grab remaining Locations and insert locations into an array
+    let remainingLocation = await getManager().findOne(RemainingLocation, { where: { "_ID": task.ID } });
+    if(remainingLocation !== undefined) {
+        remainingLocation.locations.forEach(location => locations.push(location));
+    }
+    
+    // Grab completed Locations and insert locations into an array
+    let completedLocation = await getManager().findOne(CompletedLocation, { where: { "_ID": task.ID } });
+    if( completedLocation !== undefined) {
+        completedLocation.locations.forEach(location => locations.push(location));
+    }
 
+    // Grab geocodes
+    locations.forEach(location => {
+        geocodes.push({
+            lat: location.lat,
+            long: location.long,
+        })
+    })
 
-    // redirect to '/:id/view-assignment/:id'
+    
+    res.send([task.ID, JSON.stringify(locations), JSON.stringify(geocodes)])
 });
 
 router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Response) => {

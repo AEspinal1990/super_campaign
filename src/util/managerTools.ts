@@ -118,6 +118,14 @@ export const getCampaignTask = async (campaignID) => {
         .getMany();
 }
 
+
+export const getTask = async (taskId) => {
+    return await getManager()
+        .createQueryBuilder(Task, "task")
+        .where("ID = ID", {ID: taskId})
+        .getMany();
+}
+
 export const getRemainingLocations = async taskID => {
     return await getManager()
         .createQueryBuilder(RemainingLocation, "remainingLocation")
