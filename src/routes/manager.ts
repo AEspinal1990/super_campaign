@@ -150,7 +150,9 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
         //console.log(i, location)
         tasks[i].remainingLocations = locations;
-        tasks[i].canvasser = `Bob the ${i}st`;
+        tasks[i].canvasser = `Bob`;
+        tasks[i].numLocations = 7;
+        tasks[i].duration = 15
         remainingLocations.push(location);
     }
 
