@@ -17,18 +17,12 @@ const logger = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
 const middleware = require('../middleware');
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next()
-    } else {
-        res.redirect('/');
-    }
-}
+
 
 /* FOR OR_TOOLS PYTHON */
 // const {spawn} = require('child_process');
 // const pyORT = spawn('python', ['../util/ortool.py']);
-router.post('/new-assignment/:id', async (req: Request, res: Response) => {
+router.post('/new-assignment/:id', middleware.manages, async (req: Request, res: Response) => {
 
     /**
      * Check if id corressponds to a campaign
@@ -125,7 +119,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
 });
 
-router.get('/view-task/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view-task/:id', middleware.manages, async (req: Request, res: Response) => {
     // get campaign id
     let tempId = 6;
     let locations = [];
@@ -158,7 +152,7 @@ router.get('/view-task/:id', isAuthenticated, async (req: Request, res: Response
     res.send([task.ID, JSON.stringify(locations), JSON.stringify(geocodes)])
 });
 
-router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view-assignment/:id', middleware.manages, async (req: Request, res: Response) => {
 
     let campaign;
     let tasks = [];
@@ -285,7 +279,7 @@ router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
 });
 
 
-router.get('/results/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/results/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id } });
     var question = await getManager().find(Questionaire,

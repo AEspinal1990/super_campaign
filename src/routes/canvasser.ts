@@ -57,7 +57,7 @@ router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res
     res.render('edit-availability', {availableOrAssigned, canvasserID});    
 });
 
-router.post('/availability/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
@@ -121,7 +121,7 @@ router.post('/availability/:id', middleware.isAuthenticated, async (req: Request
     res.send("Done Editing Availability");
 });
 
-router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: Response) => {
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
@@ -168,7 +168,7 @@ router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, r
     adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task-detail', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/view-task-detail', middleware.isCanvasser, async (req: Request, res: Response) => {
     // console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
