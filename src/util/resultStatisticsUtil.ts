@@ -70,4 +70,5 @@ export async function getQuestionStatistics(req) {
         questionaireResults.push(questionStats);
     }
     return questionaireResults;
+    // console.log("SD" + math.sd(allRatings));
 }

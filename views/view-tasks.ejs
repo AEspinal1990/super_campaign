@@ -13,10 +13,10 @@
             <input type="hidden" name="campaignID" value="<%= campaignID %>">
             <input type="hidden" name="canvasserID" value="<%= id %>">
 
-            <% if (tasks[i].canvasser !== "") { %>
+            <% if (tasks[i]._canvasser !== "") { %>
                 <h3>Canvasser</h3>
                 <p>
-                    <%= tasks[i].canvasser %>
+                    <%= tasks[i]._canvasser %>
                 </p>
             <% } %>
 
@@ -34,17 +34,17 @@
                 <% } %>
             </p>
 
-            <% if (tasks[i].numLocations !== "") { %>
+            <% if (tasks[i]._numLocations !== "") { %>
                 <h3>Number of Locations</h3>
                 <p>
-                    <%= tasks[i].numLocations %>
+                    <%= tasks[i]._numLocations %>
                 </p>
             <% } %>
 
-            <% if (tasks[i].duration !== "") { %>
+            <% if (tasks[i]._duration !== "") { %>
                 <h3>Duration</h3>
                 <p>
-                    <%= tasks[i].duration %>
+                    <%= tasks[i]._duration %>
                 </p>
             <% } %>
             <input type="submit" value="Details"> 
