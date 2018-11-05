@@ -8,8 +8,7 @@ const router: Router = Router();
 const middleware = require('../middleware');
 const winston = require('winston');
 const logger = require('../util/logger');
-const adminLogger = winston.loggers.get('canvasserLogger');
-
+const canvasserLogger = winston.loggers.get('canvasserLogger');
 
 router.get('/calendar',middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('edit-availability');
@@ -118,6 +117,8 @@ router.post('/availability/:id', middleware.isCanvasser, async (req: Request, re
 
     await getManager().save(canv);
     //redirect after finish posting
+    canvasserLogger.info(`Editted availability for canvasser: ${req.params.id}`);
+
     res.send("Done Editing Availability");
 });
 
@@ -165,7 +166,7 @@ router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: 
         });
     }
 
-    adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
+    canvasserLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
 router.post('/view-task-detail', middleware.isCanvasser, async (req: Request, res: Response) => {
