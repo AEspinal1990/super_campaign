@@ -386,7 +386,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         }
 
         // Found earliest date remove them from canvassers available list
-        // Insert into datesAssigned        
+        // Insert into datesAssigned    
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
         earliestDate = undefined;        
     });

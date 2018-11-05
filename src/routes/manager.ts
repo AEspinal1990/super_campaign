@@ -147,8 +147,12 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     // Grab all remaining locations for the tasks
     for (let i in tasks) {
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
+        //console.log(i, location)
+        tasks[i].remainingLocations = locations;
         remainingLocations.push(location);
     }
+
+    
 
     // Get all the locations in remainingLocations
     for (let i in remainingLocations) {
@@ -164,8 +168,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         locations = [];
     }
 
-    console.log(numLocations);
-
+    //console.log(taskLocations)
 
     //send to frontend
     // For each task
@@ -174,6 +177,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     // number of locations
     // Duration of task
 
+    console.log(tasks)
     let id = 2;
     res.render('view-tasks', { tasks, campaignID, id, numLocations })
 });
