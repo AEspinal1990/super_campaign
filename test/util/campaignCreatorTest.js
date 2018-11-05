@@ -1,6 +1,6 @@
 const assert = require('chai').assert;
 
-//const getQuestionaireFunct = require('../../dist/util/campaignParser.js').getQuestionaire;
+const getQuestionaireFunct = require('../../dist/util/campaignParser.js').getQuestionaire;
 const getTalkingPointsFunct = require('../../dist/util/campaignParser.js').getTalkingPoints;
 const createCampaignInfoFunct = require('../../dist/util/campaignParser.js').createCampaignInfo;
 // const createQuestionnairesFunct = require('../../dist/util/campaignParser.js').createQuestionnaires;
@@ -71,77 +71,88 @@ describe('GetTalkingPoints Test', function(){
     let talkingPointsArr = getTalkingPointsFunct(campaign,campaignData['talkingPoints']);
     let expectedArr = campaignData['talkingPoints'].trim().split("\n");
     for(let i in expectedArr) {
-        expectedArr[i] = expectedArr[i].replace('\r','');
+        expectedArr[i] = expectedArr[i].trim().replace('\r','');
     }
     let idx = 0;
+
     talkingPointsArr.forEach(function(test){
-        //console.log( test);
+        //console.log("test:",test.talk);
+        //console.log("expected:",expectedArr[idx])
+        //console.log("idx:",idx);
         it('Talking point is a proper talkingPoints object', function(){
             assert.typeOf(test,'object');
             assert.property(test,'_talk');
             assert.property(test,'_campaign');
         });
         it('Talking point has correct talk field', function(){
-            assert.equal(expectedArr[idx],test.talk);
+            assert.equal(test.talk, expectedArr[idx]);
             idx++;
         });
     });
 
 
 });
-// describe('Create Questionnaire Test', function(){
-//     let campaignData = {
-//         campaignName: 'Campaign Name',
-//         startDate: '1990-02-26',
-//         endDate: '2018-10-16',
-//         talkingPoints: 'MY talking points are here \n eishuifhd',
-//         questionaire: ' Do you like cheese?\r\n Questions are separated by new lines, so even if this isn\'t a good question it\'s okay.\r\n '+
-//         'Is this a good question?\r\n',
-//         averageExpectedDuration: '60',
-//         locations:
-//                 '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
-//      canvassers: '1 2 3 1 31 31'
-//      };
-//     let questionnaireArr = createQuestionnairesFunct(campaignData);
-//     //console.log(questionnaireArr);
-//     let expectedArr = campaignData['questionaire'].trim().split("\n");
-//     let idx = 0;
-//     it('Number of questions should be right', function(){
-//         assert.equal(questionnaireArr.length, expectedArr.length);
-//     });
-//     questionnaireArr.forEach(function(test){
-//         it('Questionaire is a proper Questionaire object', function(){
-//             assert.typeOf(test,'object');
-//             assert.property(test,'question');
-//             assert.property(test,'campaignID');
-//         });
-//         it('Questionnaire  has correct question field', function(){
-//             assert.equal(test.question, expectedArr[idx]);
-//             idx++;
-//         });
-//     });
-// });
-// describe('Create Questionnaire Whitespace Test', function(){
-//     let campaignData = {
-//         campaignName: 'Campaign Name',
-//         startDate: '1990-02-26',
-//         endDate: '2018-10-16',
-//         talkingPoints: 'MY talking points are here \n eishuifhd',
-//         questionaire: ' Do you like cheese?\r\n\n\n\n Questions are separated by new lines, so even if this isn\'t a good question it\'s okay.\r\n '+
-//         'Is this a good question?\r\n',
-//         averageExpectedDuration: '60',
-//      };
-//     let questionnaireArr = createQuestionnairesFunct(campaignData);
-//     //console.log(questionnaireArr);
-//     let idx = 0;
-//     it('Number of questions should be right', function(){
-//         assert.equal(questionnaireArr.length, 3);
-//     });
-//     questionnaireArr.forEach(function(test){
-//         it('Questionaire is a proper Questionaire object', function(){
-//             assert.typeOf(test,'object');
-//             assert.property(test,'question');
-//             assert.property(test,'campaignID');
-//         });
-//     });
-// });
+
+describe('GetQuestionnaire Test', function(){
+    let campaignData = {
+        campaignName: 'Campaign Name',
+        startDate: '1990-02-26',
+        endDate: '2018-10-16',
+        talkingPoints: 'MY talking points are here \n eishuifhd',
+        questionaire: ' Do you like cheese?\r\n Questions are separated by new lines, so even if this isn\'t a good question it\'s okay.\r\n '+
+        'Is this a good question?\r\n',
+        averageExpectedDuration: '60',
+        locations:
+                '84, hAMPSHIRE DRIVE, 1, FARMINGDALE, NY, 11735\r\n12, hAMPSHIRE DRIVE, 2,                               FARMINGDALE, NY, 11735\r\n55, hAMPSHIRE DRIVE, 3, FARMINGDALE , NY, 11735',
+     canvassers: '1 2 3 1 31 31'
+     };
+    let campaign = createCampaignInfoFunct(campaignData);
+    let questionnaireArr = getQuestionaireFunct(campaign,campaignData['questionaire']);
+    //console.log(questionnaireArr);
+    let expectedArr = campaignData['questionaire'].trim().split("\n");
+    for(let i in expectedArr) {
+        expectedArr[i] = expectedArr[i].replace('\r','');
+    }  
+    let idx = 0;
+    it('Number of questions should be right', function(){
+        assert.equal(questionnaireArr.length, expectedArr.length);
+    });
+    questionnaireArr.forEach(function(test){
+        it('Questionaire is a proper Questionaire object', function(){
+            assert.typeOf(test,'object');
+            assert.property(test,'_question');
+            assert.property(test,'_campaign');
+        });
+        it('Questionnaire  has correct question field', function(){
+            assert.equal(test.question, expectedArr[idx]);
+            idx++;
+        });
+    });
+});
+
+//Checks for proper number of questionaire objects
+describe('GetQuestionnaire Whitespace Test', function(){
+    let campaignData = {
+        campaignName: 'Campaign Name',
+        startDate: '1990-02-26',
+        endDate: '2018-10-16',
+        talkingPoints: 'MY talking points are here \n eishuifhd',
+        questionaire: ' Do you like cheese?\r\n\n\n\n Questions are separated by new lines, so even if this isn\'t a good question it\'s okay.\r\n '+
+        'Is this a good question?\r\n',
+        averageExpectedDuration: '60',
+     };
+    let campaign = createCampaignInfoFunct(campaignData);
+    let questionnaireArr = getQuestionaireFunct(campaign,campaignData['questionaire']);
+    //console.log(questionnaireArr);
+    let idx = 0;
+    it('Number of questions should be right', function(){
+        assert.equal(questionnaireArr.length, 3);
+    });
+    questionnaireArr.forEach(function(test){
+        it('Questionaire is a proper Questionaire object', function(){
+            assert.typeOf(test,'object');
+            assert.property(test,'_question');
+            assert.property(test,'_campaign');
+        });
+    });
+});
