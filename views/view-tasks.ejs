@@ -26,6 +26,20 @@
                 Active
                 <% } %>
             </p>
+
+            <% if (tasks[i].numLocations !== "") { %>
+                <h3>Number of Locations</h3>
+                <p>
+                    <%= tasks[i].numLocations %>
+                </p>
+            <% } %>
+
+            <% if (tasks[i].duration !== "") { %>
+                <h3>Duration</h3>
+                <p>
+                    <%= tasks[i].duration %>
+                </p>
+            <% } %>
             <input type="submit" value="Details"> 
         </form>
     </div>

@@ -26,7 +26,6 @@ const isAuthenticated = (req, res, next) => {
 /* FOR OR_TOOLS PYTHON */
 // const {spawn} = require('child_process');
 // const pyORT = spawn('python', ['../util/ortool.py']);
-
 router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
     /**
@@ -54,6 +53,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Locations to canvass
      */
     let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
+    console.log(canvassers);
     let locations = managerTools.getCampaignLocations(campaign);
 
     /**
@@ -73,7 +73,10 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Associate each task with an assignment
      */
-    tasks.forEach(task => task.assignment = assignment);
+    tasks.forEach(async task => {
+        task.assignment = assignment;
+        // await getManager().save(task);   
+    });
 
     /**
      * Create Assignment from the generated Tasks
@@ -89,6 +92,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Remove canvassers with no openings in schedule
      */
+    console.log(canvassers);
     canvassers = managerTools.removeBusy(canvassers);
 
     /**
@@ -181,7 +185,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     // number of locations
     // Duration of task
 
-    console.log(tasks)
+    // console.log(tasks)
     let id = 2;
     res.render('view-tasks', { tasks, campaignID, id, numLocations })
 });

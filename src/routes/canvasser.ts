@@ -19,7 +19,7 @@ router.get('/calendar',middleware.isAuthenticated, async (req: Request, res: Res
 /**
  * GET and POST for Edit Availability
  */
-router.get('/availability/:id',  middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
     let canvasserID = req.params.id;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -28,7 +28,7 @@ router.get('/availability/:id',  middleware.isAuthenticated, async (req: Request
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: canvasserID })
         .getOne();
-
+    
     if (canvas == undefined) {
         return res.send("Wrong Link (Canvasser ID)");
     } 
@@ -129,7 +129,6 @@ router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, r
         .leftJoinAndSelect("canvasser._ID", "user")
         .where("campaign._ID = :ID", { ID: req.params.id })
         .getOne();
-
     // check when a canvaseer is in many campaigns. check the list of campaigns
 
     /*
@@ -170,7 +169,7 @@ router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, r
 });
 
 router.post('/view-task-detail', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    console.log(req.body);
+    // console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         // .leftJoinAndSelect("canvasser._ID", "user")
@@ -181,27 +180,28 @@ router.post('/view-task-detail', middleware.isAuthenticated, async (req: Request
         .leftJoinAndSelect("rmL._locations", "fmLs")
         .where("campaign._ID = :ID", { ID:  req.body.campaignID})
         .getOne();
-
+        // console.log(canv)
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);
         } else {
             var index;
             var geocodes = [];
-
+            // console.log(req.body.taskID)
             for (let i in canv.task) {
                 if (canv.task[i].ID == req.body.taskID) {
                     index = Number(i);
                 }
             }
+            // console.log(canv.task)
             for (let i in canv.task[index].remainingLocation.locations) {
                 geocodes.push({
                     lat: canv.task[index].remainingLocation.locations[i].lat,
                     lng: canv.task[index].remainingLocation.locations[i].long
                 });
             }
-            console.log(geocodes);
-            console.log(canv.task[index]);
+            // console.log(geocodes);
+            // console.log(canv.task[index]);
             io.on('connection', function (socket) {
                 socket.emit('task-geocodes', geocodes);
             });
