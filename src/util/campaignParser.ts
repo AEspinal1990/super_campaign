@@ -6,7 +6,6 @@ import { TalkPoint } from '../backend/entity/TalkPoint';
 import { User } from '../backend/entity/User';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 
-
 /**
  * Location Specific functions 
  */
@@ -54,9 +53,9 @@ export function constructAddress(location){
 
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
-    talkingPoints = talkingPoints.trim().split("\n");
+    talkingPoints = talkingPoints.split("\n");
     for(let i in talkingPoints) {
-        talkingPoints[i] = talkingPoints[i].replace('\r','');
+        talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
     }
 
     /**
@@ -137,4 +136,56 @@ export const getQuestionaire = (campaign, questionaire) => {
 export const getDate = date => {
     date = date.split("-");
     return new Date(date[0], date[1]-1, date[2]);
+};
+// function to build campaign data
+exports.createCampaignInfo = campaignData => {
+    let campaignName = campaignData.campaignName;
+    let startDate = campaignData.startDate;
+    let endDate = campaignData.endDate;
+    let averageExpectedDuration = campaignData.averageExpectedDuration;
+    startDate = startDate.split("-");
+    startDate = new Date(startDate[0], startDate[1], startDate[2]);
+    console.log(getDate(campaignData.startDate));
+    console.log(startDate);
+    endDate = endDate.split("-");
+    endDate = new Date(endDate[0], endDate[1], endDate[2]);
+    const newCampaign = initCampaign(campaignName,startDate,endDate,averageExpectedDuration);
+    // newCampaign.name = campaignName;
+    // newCampaign.startDate = startDate;
+    // newCampaign.endDate = endDate;
+    // newCampaign.avgDuration = averageExpectedDuration;
+    return newCampaign;
+};
+//function to build talking points
+exports.createTalkingPoints = campaignData => {
+    let newCampaign = exports.createCampaignInfo(campaignData);
+    let talkingPoints = campaignData.talkingPoints;
+    talkingPoints = talkingPoints.split("\n");
+    let allTalkingPoints = [];
+    for (let i in talkingPoints) {
+        let newTalkingPoint = new TalkPoint();
+        newTalkingPoint.campaign = newCampaign;
+        newTalkingPoint.talk = talkingPoints[i];
+        allTalkingPoints[i] = newTalkingPoint;
+    }
+    return allTalkingPoints;
+};
+//function to build campaign with locations
+exports.createCampaignLocations = campaignData => {
+    let locations = campaignData.locations;
+    locations = locations.trim().split('\n');
+    let allLocations = [];
+    for (let i in locations) {
+        let newLocation = new Locations();
+        newLocation.streetNumber = getStreetNumber(locations[i]);
+        newLocation.street = getStreet(locations[i]);
+        newLocation.unit = getUnit(locations[i]);
+        newLocation.city = getCity(locations[i]);
+        newLocation.state = getState(locations[i]);
+        newLocation.zipcode = getZip(locations[i]);
+        allLocations[i] = newLocation;
+    }
+    let campaign = exports.createCampaignInfo(campaignData);
+    campaign.locations = allLocations;
+    return campaign;
 };

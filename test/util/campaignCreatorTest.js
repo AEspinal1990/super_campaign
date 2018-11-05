@@ -1,12 +1,12 @@
-
-
-
 const assert = require('chai').assert;
 
-const createCampaignInfoFunct = require('../../dist/util/campaignCreator.js').createCampaignInfo;
-const createTalkingPointsFunct = require('../../dist/util/campaignCreator.js').createTalkingPoints;
-const createQuestionnairesFunct = require('../../dist/util/campaignCreator.js').createQuestionnaires;
+//const getQuestionaireFunct = require('../../dist/util/campaignParser.js').getQuestionaire;
+const getTalkingPointsFunct = require('../../dist/util/campaignParser.js').getTalkingPoints;
+const createCampaignInfoFunct = require('../../dist/util/campaignParser.js').createCampaignInfo;
+// const createTalkingPointsFunct = require('../../dist/util/campaignParser.js').createTalkingPoints;
+// const createQuestionnairesFunct = require('../../dist/util/campaignParser.js').createQuestionnaires;
 
+//Create CampaignInfo uses initCampaign and parses information, this checks if the information is parsed properly.
 describe('CreateCampaignInfo Test', function(){
     campaignData = {
         campaignName: 'Campaign Name',
@@ -59,7 +59,7 @@ describe('CreateCampaignInfo Test', function(){
 });
 
 //precondition: createCampignInfo is right
-describe('Create TalkingPoints Test', function(){
+describe('GetTalkingPoints Test', function(){
     let campaignData = {
         campaignName: 'Campaign Name',
         startDate: '1990-02-26',
@@ -67,8 +67,12 @@ describe('Create TalkingPoints Test', function(){
         talkingPoints: 'MY talking points are here \n eishuifhd',
         averageExpectedDuration: '60'
      };
-    let talkingPointsArr = createTalkingPointsFunct(campaignData);
+    let campaign = createCampaignInfoFunct(campaignData);
+    let talkingPointsArr = getTalkingPointsFunct(campaign,campaignData);
     let expectedArr = campaignData['talkingPoints'].split("\n");
+    for(let i in expectedArr) {
+        expectedArr[i] = expectedArr[i].trim().replace('\r','');
+    }
     let idx = 0;
     talkingPointsArr.forEach(function(test){
         console.log( test);
@@ -78,7 +82,7 @@ describe('Create TalkingPoints Test', function(){
             assert.property(test,'_campaign');
         });
         it('Talking point has correct talk field', function(){
-            assert.equal(test.talk, expectedArr[idx]);
+            assert.equal(expectedArr[idx],test.talk);
             idx++;
         });
     });
