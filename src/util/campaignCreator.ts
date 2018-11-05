@@ -1,74 +1,20 @@
-import { Campaign } from '../backend/entity/Campaign';
-import { getManager } from 'typeorm';
-import { Questionaire } from '../backend/entity/Questionaire';
-import { Locations } from '../backend/entity/Locations';
-import { Canvasser } from '../backend/entity/Canvasser';
-import { TalkPoint } from '../backend/entity/TalkPoint';
-import { User } from '../backend/entity/User';
-import { CampaignManager } from '../backend/entity/CampaignManager';
+import { Campaign }             from '../backend/entity/Campaign';
+import { getManager }           from 'typeorm';
+import { Locations }            from '../backend/entity/Locations';
+import { Canvasser }            from '../backend/entity/Canvasser';
+import { User }                 from '../backend/entity/User';
+import { CampaignManager }      from '../backend/entity/CampaignManager';
+import * as campaignParser      from './campaignParser';
+
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
     Promise: Promise
 });
 
-// function to build campaign data
-export const createCampaignInfo = campaignData => {
-    let campaignName = campaignData.campaignName;
-    let startDate = campaignData.startDate;
-    let endDate = campaignData.endDate;
-    let averageExpectedDuration = campaignData.averageExpectedDuration;
-    startDate = startDate.split("-");
-    startDate = new Date(startDate[0], startDate[1], startDate[2]);
-    endDate = endDate.split("-");
-    endDate = new Date(endDate[0], endDate[1], endDate[2]);
-    const newCampaign: Campaign = new Campaign();
-    newCampaign.name = campaignName;
-    newCampaign.startDate = startDate;
-    newCampaign.endDate = endDate;
-    newCampaign.avgDuration = averageExpectedDuration;
-    return newCampaign;
-};
-
-//function to build talking points
-export const createTalkingPoints = campaignData => {
-    let newCampaign = createCampaignInfo(campaignData);
-    let talkingPoints = campaignData.talkingPoints;
-    talkingPoints = talkingPoints.split("\n");
-    let allTalkingPoints = []
-    for (let i in talkingPoints) {
-        let newTalkingPoint: TalkPoint = new TalkPoint();
-        newTalkingPoint.campaign = newCampaign;
-        newTalkingPoint.talk = talkingPoints[i];
-        allTalkingPoints[i] = newTalkingPoint;
-    }
-    return allTalkingPoints;
-};
-
-//function to build campaign with locations
-export const createCampaignLocations = campaignData =>{
-    let locations = campaignData.locations;
-    locations = locations.trim().split('\n');
-    let allLocations = [];
-    for(let i in locations)
-    {
-        let newLocation: Locations = new Locations();
-        newLocation.streetNumber = getStreetNumber(locations[i]);
-        newLocation.street = getStreet(locations[i]);
-        newLocation.unit = getUnit(locations[i]);
-        newLocation.city = getCity(locations[i]);
-        newLocation.state = getState(locations[i]);
-        newLocation.zipcode = getZip(locations[i]);
-        allLocations[i] = newLocation;
-    }
-    let campaign = createCampaignInfo(campaignData);
-    campaign.locations = allLocations;
-    return campaign;
-}
 
 export const getDate = date => {
-    date = date.split("-");
-    return new Date(date[0], date[1]-1, date[2]);
+    return campaignParser.getDate(date);
 };
 
 export const initCampaign = (name, sDate, eDate, avgDuration) => {
@@ -80,30 +26,9 @@ export const initCampaign = (name, sDate, eDate, avgDuration) => {
     return newCampaign;
 };
 
-
-const getTalkingPoints = (campaign, talkingPoints) => {
-    // Split up points by line breaks and remove carriage returns
-    talkingPoints = talkingPoints.trim().split("\n");
-    for (let i in talkingPoints) {
-        talkingPoints[i] = talkingPoints[i].replace('\r', '');
-    }
-
-    /**
-     * Create talking points and insert into array
-     */
-    let points = [];
-    for (let i in talkingPoints) {
-        points.push(new TalkPoint());
-        points[i].campaign = campaign;
-        points[i].talk = talkingPoints[i];
-    }
-
-    return points;
-};
-
 export const saveTalkingPoints = (campaign, talkingPoints) => {
     const Manager = getManager();
-    talkingPoints = getTalkingPoints(campaign, talkingPoints);
+    talkingPoints = campaignParser.getTalkingPoints(campaign, talkingPoints);
 
     /**
      * Save each indivdual talking point to the DB.
@@ -113,28 +38,10 @@ export const saveTalkingPoints = (campaign, talkingPoints) => {
     });
 };
 
-const getQuestionaire = (campaign, questionaire) => {
-    questionaire = questionaire.trim().split("\n");
-    for (let i in questionaire) {
-        questionaire[i] = questionaire[i].replace('\r', '');
-    }
-
-    /**
-     * Create questions and insert into array
-     */
-    let questions = [];
-    for (let i in questionaire) {
-        questions.push(new Questionaire());
-        questions[i].campaign = campaign;
-        questions[i].question = questionaire[i];
-    }
-
-    return questions;
-};
 
 export const saveQuestionaire = (campaign, questionaire) => {
     const Manager = getManager();
-    questionaire = getQuestionaire(campaign, questionaire);
+    questionaire = campaignParser.getQuestionaire(campaign, questionaire);
 
     /**
      * Save each indivdual question to the DB.
@@ -144,83 +51,12 @@ export const saveQuestionaire = (campaign, questionaire) => {
     });
 };
 
-function getStreetNumber(location) {
-    return parseInt(location.split(',')[0]);
-};
-
-function getStreet(location) {
-    return (location.split(',')[1]).trim();
-};
-
-function getUnit(location) {
-    let unit = location.split(',')[2];
-    if (unit === undefined) {
-        return '';
-    }
-    return unit.trim();
-};
-
-function getCity(location) {
-    return (location.split(',')[3]).trim();
-};
-
-function getState(location) {
-    return (location.split(',')[4]).trim();
-};
-
-function getZip(location) {
-    let zip = (location.split(',')[5]);
-    parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
-    return zip.trim();
-};
-
-function constructAddress(location) {
-    var address =
-        location.streetNumber + " " +
-        location.street + ", " +
-        location.city + ", " +
-        location.state + " " +
-        location.zipcode;
-    return address;
-};
-
-
-
-function getManagers(managers) {
-    managers = managers.split("\n");
-    for (let i in managers) {
-        if (managers[i] === '\r' || managers[i] === ' ' || managers[i] === '') {
-            managers.splice(i, 1);
-        }
-    }
-
-    for (let i in managers) {
-        managers[i] = managers[i].replace('\r', '');
-    }
-
-    return managers;
-};
-
-function getCanvassers(canavassers) {
-    canavassers = canavassers.split("\n");
-    for (let i in canavassers) {
-        if (canavassers[i] === '\r' || canavassers[i] === ' ' || canavassers[i] === '') {
-            canavassers.splice(i, 1);
-        }
-    }
-
-    for (let i in canavassers) {
-        canavassers[i] = canavassers[i].replace('\r', '');
-    }
-
-    return canavassers;
-};
 
 export const saveManagers = async (campaign, managers) => {
     let usr;
     let cm;
 
-    managers = getManagers(managers);
+    managers = campaignParser.getManagers(managers);
 
     campaign.managers = [];
     for (let i in managers) {
@@ -259,14 +95,14 @@ export const saveLocations = async (campaign, locations) => {
     campaign.locations = [];
     for (let i in locations) {
         places.push(new Locations());
-        places[i].streetNumber = getStreetNumber(locations[i]);
-        places[i].street = getStreet(locations[i]);
-        places[i].unit = getUnit(locations[i]);
-        places[i].city = getCity(locations[i]);
-        places[i].state = getState(locations[i]);
-        places[i].zipcode = getZip(locations[i]);
+        places[i].streetNumber = campaignParser.getStreetNumber(locations[i]);
+        places[i].street = campaignParser.getStreet(locations[i]);
+        places[i].unit = campaignParser.getUnit(locations[i]);
+        places[i].city = campaignParser.getCity(locations[i]);
+        places[i].state = campaignParser.getState(locations[i]);
+        places[i].zipcode = campaignParser.getZip(locations[i]);
 
-        address = constructAddress(places[i]);
+        address = campaignParser.constructAddress(places[i]);
         await googleMapsClient.geocode({ address: address }, async function (err, response) {
             if (!err) {
                 var coord = response.json.results[0].geometry.location;
@@ -292,7 +128,7 @@ export const saveLocations = async (campaign, locations) => {
 export const saveCanavaser = async (campaign, canvassers) => {
     let usr;
     let canvass;
-    canvassers = getCanvassers(canvassers);
+    canvassers = campaignParser.getCanvassers(canvassers);
 
     campaign.canvassers = [];
     for (let i in canvassers) {
