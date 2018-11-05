@@ -57,6 +57,18 @@
         </table>
     </div>
     <div>
+        <h2>Statistical Summary</h1>
+        <p>Average: <%= ratingStatistics.average %>
+            Standard Deviation: <%= ratingStatistics.std %>
+        </p>
+        <% for (var i = 0; i < resultsSummary.length; i++) { %>
+            <div>Question: <%= resultsSummary[i].question %>
+            </div>
+            <div>True: <%= resultsSummary[i].percentYes %>%  False: <%= resultsSummary[i].percentNo %>%</div>
+            <p></p>
+        <% } %>
+    </div>
+    <div>
         <h2>Results Map View</h1>
         <div id="map"></div>
     </div>

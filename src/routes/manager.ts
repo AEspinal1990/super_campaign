@@ -335,10 +335,10 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
         new ResultDetails(location.ID, 'results', managerTools.getCoords2(location));
         //coords.push(managerTools.getCoords2(location));
     });
-
-    resultStatisticsUtil.getStatistics(req);
+    var ratingResults = await resultStatisticsUtil.getRatingStatistics(req);
+    var questionaireResults = await resultStatisticsUtil.getQuestionStatistics(req);
     //console.log(campaign.getLocationsResults()[1].completedLocation._locations[0]._lat);
-
+    console.log(questionaireResults);
     //send all the locations results through the socket
     io.on('connection', function (socket) {
         socket.emit('result-details', campaign.getLocationsResults());
@@ -349,7 +349,9 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
     } else {
         res.render('view-results', {
             resultsTableView: resul,
-            id: req.params.id
+            id: req.params.id,
+            resultsSummary: questionaireResults,
+            ratingStatistics: ratingResults
         });
     }
 })
