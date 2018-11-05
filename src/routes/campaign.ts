@@ -184,7 +184,7 @@ let startDate;
     }
 });
 
-router.post('/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
     campaignEditor.editCampaign(req.body.campaign, req.params.id);
     if (res.status(200))
         res.send("Campaign Edited!");

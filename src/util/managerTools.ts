@@ -406,6 +406,7 @@ function assignTask(canvasser: Canvasser, task: Task) {
 
     // Remove date that was just assigned from available dates
     canvasser.availableDates.shift();
+    canvasser.task.push(task);
 
     return canvasser;
 }

@@ -1,31 +1,17 @@
-import { Request, Response, Router } from 'express';
-import { getManager, getRepository } from "typeorm";
-import { User } from "../backend/entity/User";
-import { Canvasser } from '../backend/entity/Canvasser';
-import { Availability } from '../backend/entity/Availability';
-import { Results } from '..//backend/entity/Results';
-import { CompletedLocation } from '../backend/entity/CompletedLocation';
-import { managerRouter } from './manager';
-import { io } from '../server';
-import { Task } from '../backend/entity/Task';
-import { RemainingLocation } from '../backend/entity/RemainingLocation';
-import { Locations } from '../backend/entity/Locations';
+import { Request, Response, Router }    from 'express';
+import { getManager, getRepository }    from "typeorm";
+import { Canvasser }                    from '../backend/entity/Canvasser';
+import { Availability }                 from '../backend/entity/Availability';
+import { io }                           from '../server';
 
 const router: Router = Router();
-
+const middleware = require('../middleware');
 const winston = require('winston');
 const logger = require('../util/logger');
 const adminLogger = winston.loggers.get('canvasserLogger');
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next()
-    } else {
-        res.redirect('/');
-    }
-}
 
-router.get('/calendar', async (req: Request, res: Response) => {
+router.get('/calendar',middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('edit-availability');
 
 });
@@ -33,7 +19,7 @@ router.get('/calendar', async (req: Request, res: Response) => {
 /**
  * GET and POST for Edit Availability
  */
-router.get('/availability/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/availability/:id',  middleware.isAuthenticated, async (req: Request, res: Response) => {
     let canvasserID = req.params.id;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -71,7 +57,7 @@ router.get('/availability/:id', isAuthenticated, async (req: Request, res: Respo
     res.render('edit-availability', {availableOrAssigned, canvasserID});    
 });
 
-router.post('/availability/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/availability/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
@@ -135,7 +121,7 @@ router.post('/availability/:id', isAuthenticated, async (req: Request, res: Resp
     res.send("Done Editing Availability");
 });
 
-router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/:id/view-tasks', middleware.isAuthenticated, async (req: Request, res: Response) => {
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
@@ -183,7 +169,7 @@ router.get('/:id/view-tasks', isAuthenticated, async (req: Request, res: Respons
     adminLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task-detail', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/view-task-detail', middleware.isAuthenticated, async (req: Request, res: Response) => {
     console.log(req.body);
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")

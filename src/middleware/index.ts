@@ -1,8 +1,6 @@
 import { getManager }           from 'typeorm';
-import { CampaignManager }      from '../backend/entity/CampaignManager';
 import { Request, Response, NextFunction }    from 'express';
 import { Campaign } from '../backend/entity/Campaign';
-import { Canvasser } from '../backend/entity/Canvasser';
 
 
 const middlewareObj = <any>{};
@@ -31,8 +29,8 @@ middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
     }    
 }
 
-middlewareObj.manages = (req: Request, res: Response, next: NextFunction) => {
-    if (req.isAuthenticated() && isManagerOf(req.user[0]._employeeID, req.params.id)) {
+middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) => {
+    if (req.isAuthenticated() && await isManagerOf(req.user[0]._employeeID, req.params.id)) {
         console.log("true1");
         return next()
     } else {
@@ -41,7 +39,7 @@ middlewareObj.manages = (req: Request, res: Response, next: NextFunction) => {
     }  
 }
 
-middlewareObj.isCanvasser = (req: Request, res: Response, next: NextFunction) => {
+middlewareObj.isCanvasser = async (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated() && (req.user[0]._employeeID === req.params.id)){
         return next()
     }
