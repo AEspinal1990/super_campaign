@@ -32,7 +32,7 @@ middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
 }
 
 middlewareObj.manages = (req: Request, res: Response, next: NextFunction) => {
-    if (req.isAuthenticated() && isManagerOf(req.user[0], req.params.id)) {
+    if (req.isAuthenticated() && isManagerOf(req.user[0]._employeeID, req.params.id)) {
         console.log("true1");
         return next()
     } else {
