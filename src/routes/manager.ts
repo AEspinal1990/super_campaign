@@ -10,6 +10,7 @@ import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
 import { Task } from '../backend/entity/Task';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
+import { Canvasser } from '../backend/entity/Canvasser';
 
 const router: Router = Router();
 const winston = require('winston');
@@ -246,7 +247,54 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
     })
     
     let id = 2;
-    res.render('view-tasks', { tasks, campaignID, id, numLocations })
+    // console.log(tasks)
+    res.render('view-assignments', { tasks, campaignID, id, numLocations })
+});
+
+router.post('/view-assignment-detail', async (req: Request, res: Response) => {
+    // console.log(req.body);
+    const canv = await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        // .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        // .leftJoinAndSelect("canvasser._results", "results")
+        .leftJoinAndSelect("canvasser._task", "task")
+        .leftJoinAndSelect("task._remainingLocation", "rmL")
+        .leftJoinAndSelect("rmL._locations", "fmLs")
+        .where("campaign._ID = :ID", { ID:  req.body.campaignID})
+        .getOne();
+        // console.log(canv)
+    if (res.status(200)) {
+        if (canv === undefined) {
+            res.send('Error retreiving task ' + req.body.taskID);
+        } else {
+            var index;
+            var geocodes = [];
+            console.log("taskID", req.body.taskID)
+            for (let i in canv.task) {
+                if (canv.task[i].ID == req.body.taskID) {
+                    index = Number(i);
+                }
+            }
+            console.log(canv.task)
+            for (let i in canv.task[index].remainingLocation.locations) {
+                geocodes.push({
+                    lat: canv.task[index].remainingLocation.locations[i].lat,
+                    lng: canv.task[index].remainingLocation.locations[i].long
+                });
+            }
+            io.on('connection', function (socket) {
+                socket.emit('assignment-geocodes', geocodes);
+            });
+
+            res.render("view-task-detail", {
+                task: canv.task[index],
+                canvasserID: req.body.canvasserID
+            });
+        }
+    } else {
+        res.status(404).send("Details of Task " + req.body.taskID + " was not found");
+    }
 });
 
 router.get('/createdummyresult/:id', async (req: Request, res: Response) => {

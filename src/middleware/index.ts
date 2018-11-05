@@ -30,13 +30,13 @@ middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
 }
 
 middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('id', req.params.id)
+    // console.log('id', req.params.id)
     let thing = await isManagerOf(req.user[0]._employeeID, req.params.id);
     if (req.isAuthenticated() && thing) {
-        console.log("true1");
+        // console.log("true1");
         return next()
     } else {
-        console.log("false1");
+        // console.log("false1");
         res.redirect('/');
     }  
 }
@@ -57,14 +57,14 @@ middlewareObj.isCanvasser = async (req: Request, res: Response, next: NextFuncti
  */
 async function isManagerOf(managerID, campaignId) {
     var campaign = await getManager().findOne(Campaign, {where: {"_ID": campaignId}});
-    console.log(campaign)
+    // console.log(campaign)
     for (let i in campaign.managers){
         if (campaign.managers[i].ID.employeeID === managerID){
-            console.log("true2")
+            // console.log("true2")
             return true;
         }
     }
-    console.log("false2");
+    // console.log("false2");
     return false;
 }
 

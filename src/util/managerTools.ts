@@ -135,6 +135,7 @@ export const getRemainingLocations = async taskID => {
 }
 
 /**
+ * Code Sniplet has been obtained from https://www.movable-type.co.uk/scripts/latlong.html
  * Calculates the Manhattan Distance between two locations.
  * @param coord1 
  * @param coord2 
