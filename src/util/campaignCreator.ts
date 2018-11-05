@@ -85,6 +85,18 @@ export const saveManagers = async (campaign, managers) => {
 };
 
 
+function createLocation(location) {
+    let places = new Locations();
+    console.log('Location', location)
+    places.streetNumber = campaignParser.getStreetNumber(location);
+    places.street = campaignParser.getStreet(location);
+    places.unit = campaignParser.getUnit(location);
+    places.city = campaignParser.getCity(location);
+    places.state = campaignParser.getState(location);
+    places.zipcode = campaignParser.getZip(location);
+    return places;
+}
+
 export const saveLocations = async (campaign, locations) => {
     const Manager = getManager();
 
@@ -94,13 +106,7 @@ export const saveLocations = async (campaign, locations) => {
     let address;
     campaign.locations = [];
     for (let i in locations) {
-        places.push(new Locations());
-        places[i].streetNumber = campaignParser.getStreetNumber(locations[i]);
-        places[i].street = campaignParser.getStreet(locations[i]);
-        places[i].unit = campaignParser.getUnit(locations[i]);
-        places[i].city = campaignParser.getCity(locations[i]);
-        places[i].state = campaignParser.getState(locations[i]);
-        places[i].zipcode = campaignParser.getZip(locations[i]);
+        places.push(createLocation(locations[i]));
 
         address = campaignParser.constructAddress(places[i]);
         await googleMapsClient.geocode({ address: address }, async function (err, response) {
@@ -115,7 +121,7 @@ export const saveLocations = async (campaign, locations) => {
         async function updateLocation(coord) {
             places[i].lat = Number(coord.lat);
             places[i].long = Number(coord.lng);
-            await getManager().save(places[i]);
+            await Manager.save(places[i]);
             return places;
         }
         campaign.locations.push(places[i]);

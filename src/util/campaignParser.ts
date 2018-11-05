@@ -7,50 +7,6 @@ import { User } from '../backend/entity/User';
 import { CampaignManager } from '../backend/entity/CampaignManager';
 
 
-/**
- * Location Specific functions 
- */
-
-export function getStreetNumber(location) {
-    return parseInt(location.split(',')[0]);
-};
-
-export function getStreet(location){
-    return (location.split(',')[1]).trim();
-};
-
-export function getUnit(location) {
-    let unit = location.split(',')[2];
-    if(unit === undefined){
-        return '';
-    }
-    return unit.trim();
-};
-
-export function getCity(location) {
-    return (location.split(',')[3]).trim();
-};
-
-export function getState(location) {
-    return (location.split(',')[4]).trim();
-};
-
-export function getZip(location) {
-    let zip = (location.split(',')[5]);
-    parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
-    return zip;
-};
-
-export function constructAddress(location){
-    var address =
-        location.streetNumber + " " +
-        location.street + ", " +
-        location.city + ", " +
-        location.state + " " +
-        location.zipcode;
-    return address;
-
-};
 
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
@@ -138,3 +94,54 @@ export const getDate = date => {
     date = date.split("-");
     return new Date(date[0], date[1]-1, date[2]);
 };
+
+
+/**
+ * Location Specific functions 
+ */
+
+export function getStreetNumber(location) {
+    return parseInt(location.split(',')[0]);
+};
+
+export function getStreet(location){
+    return (location.split(',')[1]).trim();
+};
+
+export function getUnit(location) {
+    let unit = location.split(',')[2];
+    if(unit === undefined){
+        return '';
+    }
+    return unit.trim();
+};
+
+export function getCity(location) {
+    return (location.split(',')[3]).trim();
+};
+
+export function getState(location) {
+    return (location.split(',')[4]).trim();
+};
+
+export function getZip(location) {
+    let zip = (location.split(',')[5]);
+    parseInt(zip, 10);  // Necessary to ensure leading 0 is not removed    
+    return zip;
+};
+
+export function constructAddress(location){
+    var address =
+        location.streetNumber + " " +
+        location.street + ", " +
+        location.city + ", " +
+        location.state + " " +
+        location.zipcode;
+    return address;
+
+};
+
+
+export const getPlace = (location) => {
+    
+}
