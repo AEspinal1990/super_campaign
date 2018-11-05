@@ -146,30 +146,40 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     if (campaign === undefined) {
         return res.status(404).send('Assignment not found')
     }
+
+    // Grab all canvassers that work for this campaign
     canvassers = await managerTools.getCanvassers(campaignID);
-    //console.log(canvassers)
 
     // Grab all task with this campaign id
     tasks = await managerTools.getCampaignTask(campaignID);
-
+    let test = [];
     // Grab all remaining locations for the tasks
     for (let i in tasks) {
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
         //console.log(i, location)
         tasks[i].remainingLocations = locations;
+        location.forEach(l => {
+            //console.log(i, l.locations.length)
+            l.locations.forEach(place => {
+                //console.log(place)
+                tasks[i].remainingLocations.push(place);
+            })
+            
+        })
+        //console.log(i, tasks[i].remainingLocations.length)
         tasks[i].duration = 15
-        tasks[i].numLocations = location.length;
+        tasks[i].numLocations = tasks[i].remainingLocations.length;
         remainingLocations.push(location);
+        test.push(location);
     }
+ 
 
     // Remove canvassers with no task
-    
     for(let i = 0; i < canvassers.length; i++) {
         if(canvassers[i]._task === undefined) {
             canvassers.splice(i,1);
         }
     }
-    //console.log(canvassers[0]._ID._username)
 
     // Map canvassers to task - Will fix don't judge its 6:25am
     // For each task
@@ -196,6 +206,7 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
     for (let i in remainingLocations) {
         for (let j in remainingLocations[i]) {
             remainingLocations[i][j].locations.forEach(location => {
+                //console.log(location)
                 locations.push(location)
                 numLocations++;
             });
@@ -206,16 +217,12 @@ router.get('/view-assignment/:id', isAuthenticated, async (req: Request, res: Re
         locations = [];
     }
 
-    //console.log(taskLocations)
-
-    //send to frontend
-    // For each task
-    // canvasser
-    // Locations with its coordinates
-    // number of locations
-    // Duration of task
-
-    // console.log(tasks)
+    // Calculate the duration of each task
+    tasks.forEach(task => {
+        //console.log(task.remainingLocations)
+        task = managerTools.findDuration(task, campaign);
+    })
+    
     let id = 2;
     res.render('view-tasks', { tasks, campaignID, id, numLocations })
 });

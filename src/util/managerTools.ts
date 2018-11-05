@@ -382,6 +382,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     canvassers.forEach(canvasser => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
         canvasser.assignedDates = [];
+        canvasser.task = [];
     });
 
     
@@ -414,6 +415,38 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     
     return canvassers;
 };
+
+export const findDuration = async (task, campaign) => {
+    //console.log('****Starts here', task.remainingLocations);
+
+    let locations = task.remainingLocations;    
+    let travelSpeed = this.getAvgSpeed();
+    let avgDuration = campaign._avgDuration;
+    let coords = [];
+    let mode;
+    let tripTime;
+    let i = 0;
+    //console.log('here', locations)
+    // Get all the coordinates
+    locations.forEach(async location => {
+        await coords.push(getCoords(location));
+    });
+
+    // Determine mode of transportation based off 
+    // of travelSpeed in mph - walk, bike, or car
+    mode = determineModeOfTransportation(travelSpeed);    
+    //console.log('Here', coords)
+    // Calculate time itll take to canvass all locations in this task   
+    while(coords.length > 1) {
+        tripTime = await getTripTime(coords[i], coords[i+1], mode, avgDuration);        
+        coords.shift();
+        task.duration += tripTime;
+    }
+    console.log(task.duration);
+
+    return task;
+}
+
 
 function assignTask(canvasser: Canvasser, task: Task) {
 
