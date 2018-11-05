@@ -173,7 +173,7 @@ router.post('/:id', middleware.isAuthenticated, async (req: Request, res: Respon
 /**
  * GET for view campaign
  */
-router.get('/view/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/view/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().find(Campaign, 
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));

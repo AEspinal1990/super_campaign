@@ -54,7 +54,8 @@ export function constructAddress(location){
 
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
-    talkingPoints = talkingPoints.split("\n");
+    console.log('From talking points', talkingPoints)
+    talkingPoints = talkingPoints.trim().split("\n");
     for(let i in talkingPoints) {
         talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
     }
