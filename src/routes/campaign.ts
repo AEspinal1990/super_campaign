@@ -71,6 +71,11 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
  * GET and POST for edit Campaign
  */
 router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) => {
+    
+
+let startDate;
+    let endDate;
+    let avgDuration;
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     
@@ -78,7 +83,7 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
     
     if (campaign === undefined) {
         console.log('not found')
-        res.status(404).render('edit-campaign', {
+        return res.status(404).render('edit-campaign', {
             missing: campaignID,
             id: "",
             name: "",
@@ -99,7 +104,8 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
         let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
         let campaignEndDate: Date = campaign[0]._endDate;
         let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
-
+        startDate = campaignCreator.getDate(req.body.campaign.startDate);
+        endDate = campaignCreator.getDate(req.body.campaign.endDate);
         //parse questions back to input form
        
         const qRepo = getRepository(Questionaire);
