@@ -302,7 +302,7 @@ export const decorateTask = (task, campaign) =>{
  */
 async function getTripTime(coord1, coord2, mode, avgDuration) {
     let tripTime;
-    
+
     await googleMapsClient.directions({
         origin: coord1, 
         destination: coord2,
@@ -344,12 +344,17 @@ function parseTripDuration(duration) {
 }
 
 export const removeBusy = (canvassers: Canvasser[]) => {
-    for(let i in canvassers) {
-        if (canvassers[i].availableDates.length === 0) {
-            canvassers.splice(Number(i), 1);
+
+    let availableCanvassers = [];
+
+    canvassers.forEach(canvasser => {
+        if(canvasser.availableDates.length !== 0){
+            availableCanvassers.push(canvasser)
         }
-    }
-    return canvassers;
+    });
+
+    console.log('Length after removing', availableCanvassers.length)
+    return availableCanvassers;
 }
 
 export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
@@ -368,9 +373,9 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // Since dates are already sorted earliest date will
         // be at a canvassers first available date.
         for (let i in canvassers) {
-            //console.log(canvassers)
+            //console.log('The canvasser', canvassers[i])
             let date = canvassersEarliestDates(canvassers[i].availableDates);
-            console.log(date);
+            //console.log(date);
             if (earliestDate === undefined || date < earliestDate) {
                 canvasserIndex = i;
                 earliestDate = canvassers[i].availableDates[0].availableDate;
@@ -403,7 +408,7 @@ function assignTask(canvasser: Canvasser, task: Task) {
 }
 
 function canvassersEarliestDates(availbleDates) {    
-    console.log(availbleDates[0].availableDate)
+    //console.log('Dates', availbleDates[0].availableDate)
     return availbleDates[0].availableDate;    
 }
 

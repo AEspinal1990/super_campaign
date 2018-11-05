@@ -55,9 +55,7 @@ export const saveQuestionaire = (campaign, questionaire) => {
 export const saveManagers = async (campaign, managers) => {
     let usr;
     let cm;
-    console.log('before', managers)
     managers = campaignParser.getManagers(managers);
-    console.log('after', managers)
     campaign.managers = [];
     for (let i in managers) {
         if (managers[i] != "") {

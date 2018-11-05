@@ -10,6 +10,7 @@ import { CampaignManager } from '../backend/entity/CampaignManager';
 
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
+    console.log('From talking points', talkingPoints)
     talkingPoints = talkingPoints.trim().split("\n");
     for(let i in talkingPoints) {
         talkingPoints[i] = talkingPoints[i].replace('\r','');

@@ -8,8 +8,6 @@ import { Questionaire }                 from '../backend/entity/Questionaire';
 import * as managerTools                from '../util/managerTools';
 import * as resultStatisticsUtil        from '../util/resultStatisticsUtil';
 import { io } from '../server';
-import { RemainingLocation }    from '../backend/entity/RemainingLocation';
-import { Task }                 from '../backend/entity/Task';
 
 const router: Router = Router();
 const winston   = require('winston');
@@ -87,17 +85,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Assign new Assignment to the campaign
      */
     campaign.assignment = assignment;
-
-    /**
-     * Save new assignment and update campaign
-     */
-    await getManager().save(assignment)
-        .then(res => console.log('Successfully created an assignment'))
-        .catch(e => console.log('Assignment Error: ', e));
-    await getManager().save(campaign)
-        .then(res => console.log('Successfully updated campaign with a new assignment'))
-        .catch(e => console.log('Campaign Update Error: ', e));
-
+    
     /**
      * Remove canvassers with no openings in schedule
      */
@@ -107,10 +95,24 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Assign tasks
      */
     canvassers = managerTools.assignTasks(canvassers, tasks);
+
+    /**
+     * Save new assignment and update campaign
+     */
+    await getManager().save(assignment)
+        .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
+        .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${campaign.name}`));
+    await getManager().save(campaign)
+        .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
+        .catch(e => managerLogger.error(`An error occured while updating ${campaign.name} with its new assignment`));
+
+    /**
+     * Save canvassers with their assigned task
+     */
     canvassers.forEach(async canvasser => {
         await getManager().save(canvasser)
-            .then(res => console.log('Successfully assigned task'))
-            .catch(e => console.log('Task Assigning Error', e))
+            .then(res => managerLogger.info(`Assigned a task to ${canvasser.ID} `))
+            .catch(e => managerLogger.error(`An error occured while assigning a task to  ${canvasser.ID}`))
     });
     
     res.status(200).send('Create Assignment');
