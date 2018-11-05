@@ -67,6 +67,23 @@ router.post('/', middleware.isAuthenticated, async (req: Request, res: Response)
     res.send('okay');
 });
 
+
+router.get('/edit2/:id', middleware.manages, async (req: Request, res: Response) => {
+    
+    const campaignRepository = getRepository(Campaign);    
+    const campaignID = req.params.id;
+    const campaign = await campaignRepository.find({ where: { "_ID": campaignID } }).catch(e => console.log(e));
+    
+    // @ts-ignore - will return an empty array therefore checking length is valid. 
+    if (campaign.length === 0) {
+        let emptyCampaign = campaignCreator.emptyCampaign(campaignID);
+        return res.status(404).send('Campaign not found');
+    } else {
+        res.send('here')
+    }
+});
+
+
 /**
  * GET and POST for edit Campaign
  */
@@ -104,8 +121,7 @@ let startDate;
         let campaignStartDateString = campaignStartDate.getFullYear() + "-" + campaignStartDate.getMonth() + "-" + campaignStartDate.getDay();
         let campaignEndDate: Date = campaign[0]._endDate;
         let campaignEndDateString = campaignEndDate.getFullYear() + "-" + campaignEndDate.getMonth() + "-" + campaignEndDate.getDay();
-        startDate = campaignCreator.getDate(req.body.campaign.startDate);
-        endDate = campaignCreator.getDate(req.body.campaign.endDate);
+      
         //parse questions back to input form
        
         const qRepo = getRepository(Questionaire);

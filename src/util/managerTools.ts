@@ -353,7 +353,6 @@ export const removeBusy = (canvassers: Canvasser[]) => {
         }
     });
 
-    console.log('Length after removing', availableCanvassers.length)
     return availableCanvassers;
 }
 
@@ -373,7 +372,11 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // Since dates are already sorted earliest date will
         // be at a canvassers first available date.
         for (let i in canvassers) {
-            //console.log('The canvasser', canvassers[i])
+            console.log(i , canvassers[i].availableDates)
+            //TODO: HOTFIX - This needs to be reworked.
+            if(canvassers[i].availableDates.length === 0){
+                continue;
+            }
             let date = canvassersEarliestDates(canvassers[i].availableDates);
             //console.log(date);
             if (earliestDate === undefined || date < earliestDate) {
@@ -408,7 +411,7 @@ function assignTask(canvasser: Canvasser, task: Task) {
 }
 
 function canvassersEarliestDates(availbleDates) {    
-    //console.log('Dates', availbleDates[0].availableDate)
+    console.log('Dates', availbleDates[0].availableDate)
     return availbleDates[0].availableDate;    
 }
 
