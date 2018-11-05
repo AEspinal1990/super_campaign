@@ -4,7 +4,7 @@ const assert = require('chai').assert;
 const getAvgSpeedFunct = require('../../dist/util/managerTools.js').getAvgSpeed;
 const getWorkdayLimitFunct = require('../../dist/util/managerTools.js').getWorkdayLimit;
 const createCampaignLocationsFunct = require('../../dist/util/campaignCreator.js').createCampaignLocations;
-import * as fs from fs;
+const fs = require('fs');
 
 //tests CampaignLocation
 describe("Campaign Locations Test", function(){
@@ -25,8 +25,41 @@ describe("Campaign Locations Test", function(){
     it("Expected Number of locations is 3", function(){
         assert.equal(locationRes.length,3);
     });
-    it("Expected Fields for ", function(){
-        assert.equal(locationRes.length,3);
+    let expectedArr = campaignData['locations'].split("\n");
+    console.log(locationRes);
+    let idx = 0;
+    locationRes.forEach(function(test){
+        //console.log(test);
+        let expectedField = expectedArr[idx].split(",")
+        it('Locations is a proper Locations object', function(){
+            assert.typeOf(test,'object');
+            assert.property(test,'_streetNumber');
+            assert.property(test,'_street')
+            assert.property(test,'_unit');
+            assert.property(test,'_city');
+            assert.property(test,'_state');
+            assert.property(test,'_zipcode');
+        
+        });
+         it('Locations has correct streetnum', function(){
+             assert.equal(expectedField[0].trim(),test._streetNumber);
+        });
+        it('Locations has correct street', function(){
+            assert.equal(expectedField[1].trim(),test._street);
+       });
+        it('Locations has correct unit', function(){
+            assert.equal( expectedField[2].trim(),test._unit);
+       });
+       it('Locations has correct city', function(){
+        assert.equal(expectedField[3].trim(),test._city);
+        });
+       it('Locations has correct state', function(){
+            assert.equal(expectedField[4].trim(),test._state);
+        });
+        it('Locations has correct zipcode', function(){
+            assert.equal(expectedField[5].trim(),test._zipcode);
+        });
+        idx++;
     });
 
 })
@@ -42,14 +75,14 @@ describe("Global Parameter [Static] Test", function(){
     });
 });
 //Tests EstimateTask Function
-describe("Estimate Task Test", function(){
-    let avgDuration = 60;
-    let travelSpeed = 20;
-    let workdayDuration = 5;
+// describe("Estimate Task Test", function(){
+//     let avgDuration = 60;
+//     let travelSpeed = 20;
+//     let workdayDuration = 5;
     //let timeTaken = estimateTaskFunct(avgDuration, travelSpeed, workdayDuration);
     //estimateTask = (locations, avgDuration, travelSpeed, workdayDuration) 
     // it("Expected Time for Task is", function(){
 
     //     assert.equal()
     // })
-})
+//})
