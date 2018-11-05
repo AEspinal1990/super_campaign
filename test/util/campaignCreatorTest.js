@@ -68,10 +68,10 @@ describe('GetTalkingPoints Test', function(){
         averageExpectedDuration: '60'
      };
     let campaign = createCampaignInfoFunct(campaignData);
-    let talkingPointsArr = getTalkingPointsFunct(campaign,campaignData);
-    let expectedArr = campaignData['talkingPoints'].split("\n");
+    let talkingPointsArr = getTalkingPointsFunct(campaign,campaignData['talkingPoints']);
+    let expectedArr = campaignData['talkingPoints'].trim().split("\n");
     for(let i in expectedArr) {
-        expectedArr[i] = expectedArr[i].trim().replace('\r','');
+        expectedArr[i] = expectedArr[i].replace('\r','');
     }
     let idx = 0;
     talkingPointsArr.forEach(function(test){
