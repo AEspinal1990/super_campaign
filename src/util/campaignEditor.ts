@@ -40,9 +40,9 @@ export const editCampaign = async (campaignData, campaignID) => {
     //Update Camapaign Object
     //Parse date from format YYYY-MM-DD
     startDate = startDate.split("-");
-    startDate = new Date(startDate[0], startDate[1], startDate[2]);
+    startDate = new Date(startDate[0], startDate[1]-1, startDate[2]);
     endDate = endDate.split("-");
-    endDate = new Date(endDate[0], endDate[1], endDate[2]);
+    endDate = new Date(endDate[0], endDate[1]-1, endDate[2]);
     //Update date to Campaign object
     thisCampaign[0].name = campaignName;
     thisCampaign[0].startDate = startDate;
