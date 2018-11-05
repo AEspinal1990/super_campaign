@@ -108,6 +108,7 @@ export function sanitizeUsers(user) {
     return user;
 }
 
+
 export function getCanvassers(canvassers) {
     return sanitizeUsers(canvassers);
 }
@@ -131,4 +132,9 @@ export const getQuestionaire = (campaign, questionaire) => {
     }
 
     return questions;
+};
+
+export const getDate = date => {
+    date = date.split("-");
+    return new Date(date[0], date[1]-1, date[2]);
 };
