@@ -13,6 +13,23 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 
 
+export const emptyCampaign = (campaignID) => {
+   return {
+    missing: campaignID,
+    id: "",
+    name: "",
+    manager: "",
+    assignment: "",
+    location: "",
+    sDate: "",
+    eDate: "",
+    duration: "",
+    question: "",
+    points: "",
+    canvasser: ""
+   } 
+};
+
 export const getDate = date => {
     return campaignParser.getDate(date);
 };
