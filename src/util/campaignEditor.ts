@@ -59,11 +59,11 @@ export const editCampaign = async (campaignData, campaignID) => {
         .where("_campaign = :ID", { ID: campaignID })
         .execute();
     //Create
-    talkingPoints = talkingPoints.split("\n");
+    talkingPoints = talkingPoints.trim().split("\n");
     for (let i in talkingPoints) {
         let newTalkingPoint: TalkPoint = new TalkPoint();
         newTalkingPoint.campaign = thisCampaign[0];
-        newTalkingPoint.talk = talkingPoints[i];
+        newTalkingPoint.talk = talkingPoints[i].replace('\r','');
         await Manager.save(newTalkingPoint).catch(e => console.log(e));
     }
     //Update Questionaire 
@@ -76,11 +76,11 @@ export const editCampaign = async (campaignData, campaignID) => {
         .execute();
     //For Questionaire Objects
     //Parse Questionaire for Questionaire table
-    questionaire = questionaire.split("\n");
+    questionaire = questionaire.trim().split("\n");
     for (let i in questionaire) {
         let newQuestionaire: Questionaire = new Questionaire();
         newQuestionaire.campaign = thisCampaign[0];
-        newQuestionaire.question = questionaire[i];
+        newQuestionaire.question = questionaire[i].replace('\r','');
         await Manager.save(newQuestionaire).catch(e => console.log(e));
     }
 
