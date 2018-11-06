@@ -11,6 +11,7 @@ import { io } from '../server';
 import { Task } from '../backend/entity/Task';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { Canvasser } from '../backend/entity/Canvasser';
+import { ENGINE_METHOD_NONE } from 'constants';
 
 const router: Router = Router();
 const winston = require('winston');
@@ -364,11 +365,29 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
         socket.emit('result-details', campaign.getLocationsResults());
     });
 
+    var question = await getManager().find(Questionaire,
+        { where: { "_campaign": campaign } });        
+    var resultsTable = [];
+    //loop through resul to convert the IDs to their actual values into resultsTable
+    for (var i = 0; i < resul.length; i++) {
+        var resultRow = {answer: true, question: "", rating: 0, location: ""};
+        resultRow.location = resul[i].completedLocation.locations[0].number + ", " +
+                                resul[i].completedLocation.locations[0].street + ", " +
+                                resul[i].completedLocation.locations[0].unit + ", " +
+                                resul[i].completedLocation.locations[0].city + ", " +
+                                resul[i].completedLocation.locations[0].state + ", " +
+                                resul[i].completedLocation.locations[0].zipcode; 
+        resultRow.question = question[resul[i].answerNumber].question;
+        resultRow.answer = resul[i].answer;
+        resultRow.rating = resul[i].rating;
+        resultsTable.push(resultRow);
+    }
+
     if (resul === undefined) {
         res.status(404).send("No results were found for this campaign.");
     } else {
         res.render('view-results', {
-            resultsTableView: resul,
+            resultsTableView: resultsTable,
             id: req.params.id,
             resultsSummary: questionaireResults,
             ratingStatistics: ratingResults
