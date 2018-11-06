@@ -66,7 +66,7 @@ router.post('/globals', middleware.isAdmin, async(req: Request, res: Response) =
 /**
  * Create/Edit/Delete User 
  */
-router.get('/new', async(req: Request, res: Response) => {
+router.get('/new',middleware.isAdmin, async(req: Request, res: Response) => {
     res.status(200).render('create-user');
 });    
 
@@ -75,7 +75,7 @@ router.post('/', [
     check('username').isLength({min : 5, max: 20}),
     check('password').isLength({min : 5, max: 50})
 ]
-, async(req: Request, res: Response) => {
+, middleware.isAdmin, async(req: Request, res: Response) => {
 
     /** TODO: Finish validation
      * Ensure data from user is valid.
