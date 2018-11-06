@@ -128,7 +128,7 @@ router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: 
         .leftJoinAndSelect("canvasser._task", "task")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
         .leftJoinAndSelect("canvasser._ID", "user")
-        .where("campaign._ID = :ID", { ID: req.params.id })
+        .where("user._employeeID = :ID", { ID: req.params.id })
         .getOne();
     // check when a canvaseer is in many campaigns. check the list of campaigns
 
