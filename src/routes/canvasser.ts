@@ -117,7 +117,7 @@ router.post('/availability/:id', middleware.isCanvasser, async (req: Request, re
 
     await getManager().save(canv);
     //redirect after finish posting
-    canvasserLogger.info(`Editted availability for canvasser: ${req.params.id}`);
+    canvasserLogger.info(`Editted availability for canvasser with id: ${req.params.id}`);
 
     res.send("Done Editing Availability");
 });

@@ -71,9 +71,10 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
      * Associate each task with an assignment
      */
     tasks.forEach(async task => {
-        task.assignment = assignment;
-        // await getManager().save(task);   
+        task.assignment = assignment; 
     });
+
+    
 
     /**
      * Create Assignment from the generated Tasks
@@ -99,21 +100,21 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
     /**
      * Save new assignment and update campaign
      */
-    await getManager().save(assignment)
-        .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
-        .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
-    await getManager().save(campaign)
-        .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
-        .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
+    // await getManager().save(assignment)
+    //     .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
+    //     .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
+    // await getManager().save(campaign)
+    //     .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
+    //     .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
 
-    /**
-     * Save canvassers with their assigned task
-     */
-    canvassers.forEach(async canvasser => {
-        await getManager().save(canvasser)
-            .then(res => managerLogger.info(`Assigned a task to ${canvasser.ID} `))
-            .catch(e => managerLogger.error(`An error occured while assigning a task to  ${e}`))
-    });
+    // /**
+    //  * Save canvassers with their assigned task
+    //  */
+    // canvassers.forEach(async canvasser => {
+    //     await getManager().save(canvasser)
+    //         .then(res => managerLogger.info(`Assigned a task to ${canvasser.ID} `))
+    //         .catch(e => managerLogger.error(`An error occured while assigning a task to  ${e}`))
+    // });
 
     res.status(200).send('Create Assignment');
 

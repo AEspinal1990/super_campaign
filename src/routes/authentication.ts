@@ -26,6 +26,8 @@ router.post('/', passport.authenticate(
 
 // TODO: leave a better message on log
 router.get('/logout', (req: Request, res: Response) => {
+    if(req.user === undefined)
+        return res.redirect('/');
     authLogger.info(`/logout - ${req.user[0]._username}`);
     req.logout();
     // @ts-ignore
