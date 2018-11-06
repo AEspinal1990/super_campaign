@@ -6,6 +6,9 @@ import { User }                 from '../backend/entity/User';
 import { CampaignManager }      from '../backend/entity/CampaignManager';
 import * as campaignParser      from './campaignParser';
 
+const winston = require('winston');
+const logger = require('../util/logger');
+const campaignLogger = winston.loggers.get('campaignLogger');
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
@@ -88,11 +91,12 @@ export const saveManagers = async (campaign, managers) => {
                 if (cm !== undefined) {
                     campaign.managers.push(cm);
                 } else {
-                    console.log(`${usr._username} is not a campaign manager`);
+                    
+                    campaignLogger.warn(`${usr._username} is not a campaign manager, not added`);
                 }
 
             } else {
-                console.log(`${managers[i]} does not exist`);
+                campaignLogger.warn(`${managers[i]} does not exist`);
             }
 
         }
@@ -102,7 +106,7 @@ export const saveManagers = async (campaign, managers) => {
 
 function createLocation(location) {
     let places = new Locations();
-    console.log('Location', location)
+    campaignLogger.info(`Saving ${location}`);
     places.streetNumber = campaignParser.getStreetNumber(location);
     places.street = campaignParser.getStreet(location);
     places.unit = campaignParser.getUnit(location);
@@ -159,11 +163,11 @@ export const saveCanavaser = async (campaign, canvassers) => {
                     campaign.canvassers.push(canvass);
                     canvass.campaigns.push(campaign);
                 } else {
-                    console.log(`${usr._username} is not a canvasser`);
+                    campaignLogger.warn(`${usr._username} is not a canvasser`);
                 }
 
             } else {
-                console.log(`${canvassers[i]} does not exist`);
+                campaignLogger.warn(`${canvassers[i]} does not exist`);
             }
 
         }
