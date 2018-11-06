@@ -29,29 +29,25 @@
         <h2>Results Table View</h1>
         <table>
             <tr>
-                <td>ID</td>
+                <td>Location</td>
+                <td>Question</td>
                 <td>Answer</td>
-                <td>AnswerNumber</td>
                 <td>Rating</td>
-                <td>Completed Location ID</td>
             </tr>
             <% for (var i = 0; i < resultsTableView.length; i++) { %>
                 <tr>
                     <td>
-                        <%= resultsTableView[i]._ID %>
+                        <%= resultsTableView[i].location %>
                     </td>
                     <td>
-                        <%= resultsTableView[i]._answer %>
+                        <%= resultsTableView[i].question %>
                     </td>    
                     <td>
-                        <%= resultsTableView[i]._answerNumber %>
+                        <%= resultsTableView[i].answer %>
                     </td>
                     <td>
-                        <%= resultsTableView[i]._rating %>
-                    </td>
-                    <td>
-                        <%= resultsTableView[i]._completedLocation._ID %>
-                    </td>                
+                        <%= resultsTableView[i].rating %>
+                    </td>          
                 </tr>
             <% } %>
         </table>
