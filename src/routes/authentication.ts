@@ -19,7 +19,7 @@ router.get('/', (req: Request, res: Response) => {
 
 router.post('/', passport.authenticate(
     'local', {
-        successRedirect: '/temp',
+        successRedirect: '/main',
         failureRedirect: '/'
     }
 ));
@@ -35,9 +35,9 @@ router.get('/logout', (req: Request, res: Response) => {
     res.redirect('/');
 });
 
-router.get('/temp',(req: Request, res: Response) => {
+router.get('/main',(req: Request, res: Response) => {
     authLogger.info(`/login -${req.user[0]._username}`);
-    res.send('Logged In Successfully!');
+    res.render('main-screen');
 });
  
 export {router as authRouter}
