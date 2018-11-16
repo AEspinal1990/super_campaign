@@ -217,4 +217,29 @@ router.post('/view-task-detail',  async (req: Request, res: Response) => {
     }
 });
 
+router.get('/canvassing/:id/:campaignid', middleware.isCanvasser, async (req: Request, res: Response) => {
+    var canvasser = await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaigns")
+        .leftJoinAndSelect("canvasser._task", "tasks")
+        .leftJoinAndSelect("tasks._remainingLocation", "rL")
+        .leftJoinAndSelect("rL._locations", "rlocations")
+        .leftJoinAndSelect("tasks._completedLocation", "cL")
+        .leftJoinAndSelect("cL._locations", "cLocations")
+        .leftJoinAndSelect("canvasser._assignedDates", "assignedDates")
+        .leftJoinAndSelect("canvasser._results", "results")
+        .where("user._employeeID = :ID", {ID: req.params.id})
+        .where("campaigns._ID = :ID", {ID: req.params.campaignid})
+        .getOne()
+
+    
+
+    console.log(canvasser);
+
+    // use google directions api in frontend: https://developers.google.com/maps/documentation/javascript/directions
+    // only show route from point a to b where a is current location and b is next destination
+
+});
+
 export { router as canvasserRouter }

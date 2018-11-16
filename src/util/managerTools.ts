@@ -65,7 +65,11 @@ export const getWorkdayLimit = () => {
  */
 export const getCampaignLocations = campaign => {
     let locations = [];
-    campaign.locations.forEach(location => locations.push(location));
+    campaign.locations.forEach(location => {
+        location.lat = Number(location.lat);
+        location.long = Number(location.long);
+        locations.push(location);
+    });
     return locations
 };
 
@@ -114,6 +118,8 @@ export const getTaskCanvasser = async (taskID, canvasserID) => {
 export const getCampaignTask = async (campaignID) => {
     return await getManager()
         .createQueryBuilder(Task, "task")
+        .leftJoinAndSelect("task._remainingLocation", "rL")
+        .leftJoinAndSelect("rL._locations", "locations")
         .where("campaignID = :ID", { ID: campaignID })
         .getMany();
 }
@@ -144,7 +150,7 @@ export const getRemainingLocations = async taskID => {
  */
 export const manhattanDist = (coord1: number, coord2: number, coord3: number, coord4: number): number => {
     // or we can just use google map geometry api... 
-    let R = 3958.755866; // miles
+    let R = 6371e3; // meters
     let t1 = coord1 * Math.PI / 180;
     let t2 = coord3 * Math.PI / 180;
     let t3 = (coord3 - coord1) * Math.PI / 180;
@@ -402,7 +408,7 @@ export const removeBusy = (canvassers: Canvasser[]) => {
 }
 
 export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
-
+    let result;
     // Sort by dates to allow for easier front loading.
     canvassers.forEach(canvasser => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
@@ -435,6 +441,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // Insert into datesAssigned    
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
         earliestDate = undefined;        
+        task.canvasser = canvassers[canvasserIndex].ID.name;
     });
     
     
@@ -497,4 +504,33 @@ function sortDates(availableDates) {
     return _.orderBy(availableDates, (availableDate) => {
         return new moment(availableDate.availableDate);
     });
+};
+
+export const updateTasks = async (tasks, campaignID) => {
+    let dbTasks = await getCampaignTask(campaignID);
+    console.log(dbTasks);
+    // we can assume the campaign will have the tasks at this point
+    // if (dbTasks != undefined) {
+        dbTasks.forEach(dbTasks => {
+            var found = false;
+
+            for (let i in tasks){
+                // if the locationID matches, it is the same task. Update taskID
+                for (let j in tasks[i].remainingLocation.locations){
+                    if (tasks[i].remainingLocation.locations[j].ID == 
+                        dbTasks.remainingLocation.locations[0].ID){
+                            tasks[i].ID = dbTasks.ID;
+                            found = true;
+                            break;
+                    }
+                } 
+
+                if (found){
+                    break;
+                }
+            }
+        });
+    // }
+
+    return tasks;
 };

@@ -199,7 +199,7 @@ router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
 /**
  * GET for view campaign
  */
-router.get('/view/:id', middleware.manages, async (req: Request, res: Response) => {
+router.get('/view/:id',  async (req: Request, res: Response) => {
     var campaign = await getManager().find(Campaign, 
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));

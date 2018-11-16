@@ -1,0 +1,52 @@
+{
+	"locations": [
+		{
+			"_ID": 6,
+			"_streetNumber": 188,
+			"_street": "Merritts Rd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.724216,
+			"_long": -73.459155
+		},
+		{
+			"_ID": 7,
+			"_streetNumber": 234,
+			"_street": "Main St",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.722987,
+			"_long": -73.442116
+		},
+		{
+			"_ID": 8,
+			"_streetNumber": 202,
+			"_street": "Airport Plaza Blvd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.739139,
+			"_long": -73.419253
+		},
+		{
+			"_ID": 9,
+			"_streetNumber": 2245,
+			"_street": "Broadhollow Rd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.725064,
+			"_long": -73.423329
+		}
+	],
+	"num_canvassers": 3,
+	"estimated_visit_time": 10,
+	"workday_limit": 400,
+	"avg_travel_speed": 804.6
+}

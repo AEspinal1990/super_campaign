@@ -18,12 +18,9 @@ const winston = require('winston');
 const logger = require('../util/logger');
 const managerLogger = winston.loggers.get('managerLogger');
 const middleware = require('../middleware');
+const fs = require('fs');
 
 
-
-/* FOR OR_TOOLS PYTHON */
-// const {spawn} = require('child_process');
-// const pyORT = spawn('python', ['../util/ortool.py']);
 router.post('/new-assignment/:id', middleware.manages, async (req: Request, res: Response) => {
 
     /**
@@ -44,6 +41,7 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
      */
     let AVG_TRAVEL_SPEED = managerTools.getAvgSpeed();
     let WORKDAY_LIMIT = managerTools.getWorkdayLimit();
+    let ESTIMATED_VISIT_TIME = campaign.avgDuration;
 
     /**
      * Grab necessary data to create an assignment.
@@ -53,70 +51,95 @@ router.post('/new-assignment/:id', middleware.manages, async (req: Request, res:
     let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
     let locations = managerTools.getCampaignLocations(campaign);
 
+    // Write to json file for OR-Tools
+    var data = {
+        locations: locations,
+        num_canvassers: canvassers.length,
+        estimated_visit_time: ESTIMATED_VISIT_TIME,
+        workday_limit: WORKDAY_LIMIT,
+        avg_travel_speed: AVG_TRAVEL_SPEED
+    }
+    fs.writeFile("src/data/ordata.json", JSON.stringify(data, null, "\t"), function (err) {
+        if (err) throw err;
+        console.log(JSON.stringify(data));
+    });
+
+    // start up OR-Tools from child process
+    const {spawn} = require('child_process');
+    const pyORT = spawn('python', ['../util/ortool.py']);
+    pyORT.stdout.on('data', (data) => {
+        console.log(data);
+    })
+
     /**
      * Generate an estimate of the number of task needed to canvass each location
      * Used for estimate needed by OR-Tools
      */
-    let numTask = managerTools.estimateTask(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
+    // let numTask = managerTools.estimateTask(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
 
     /**
      * Create tasks
      */
-    let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
-    tasks.forEach(task => {
-        task = managerTools.decorateTask(task, campaign);
-    });
+    // let tasks = await managerTools.generateTasks(locations, campaign.avgDuration, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
+    // tasks.forEach(task => {
+    //     task = managerTools.decorateTask(task, campaign);
+    // });
 
     /**
      * Associate each task with an assignment
      */
-    tasks.forEach(async task => {
-        task.assignment = assignment; 
-    });
+    // tasks.forEach(async task => {
+    //     task.assignment = assignment; 
+    // });
 
-    
+    /**
+     * Assign tasks
+     */
+    // canvassers = managerTools.assignTasks(canvassers, tasks);
 
     /**
      * Create Assignment from the generated Tasks
      */
-    assignment.tasks = tasks;
+    // assignment.tasks = tasks;
 
 
     /**
      * Assign new Assignment to the campaign
      */
-    campaign.assignment = assignment;
-    
+    // campaign.assignment = assignment;
+
     /**
      * Remove canvassers with no openings in schedule
      */
-    canvassers = managerTools.removeBusy(canvassers);
-
-    /**
-     * Assign tasks
-     */
-    canvassers = managerTools.assignTasks(canvassers, tasks);
+    // canvassers = managerTools.removeBusy(canvassers);
 
     /**
      * Save new assignment and update campaign
      */
-    await getManager().save(assignment)
-        .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
-        .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
-    await getManager().save(campaign)
-        .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
-        .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
+    // await getManager().save(assignment)
+    //     .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
+    //     .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
+    // await getManager().save(campaign)
+    //     .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
+    //     .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
+
+    /**
+     * Update the tasks with the generated ID from DB
+     *      If this does not prevent duplicate tasks, check the campaign save above
+     */
+    // tasks = await managerTools.updateTasks(tasks, campaign.ID);
 
     /**
      * Save canvassers with their assigned task
      */
-    canvassers.forEach(async canvasser => {
-        await getManager().save(canvasser)
-            .then(res => managerLogger.info(`Assigned a task to ${canvasser.ID.name} `))
-            .catch(e => managerLogger.error(`An error occured while assigning a task to  ${e}`))
-    });
 
-    res.status(200).send('Create Assignment');
+    // canvassers.forEach(async canvasser => {
+    //     await getManager().save(canvasser)
+    //         .then(res => managerLogger.info(`Assigned a task to ${canvasser.ID.name} `))
+    //         .catch(e => managerLogger.error(`An error occured while assigning a task to  ${e}`))
+    // });
+
+    // res.status(200).send('Create Assignment');
 
 });
 
@@ -125,19 +148,19 @@ router.get('/view-task/:id', middleware.manages, async (req: Request, res: Respo
     let tempId = 6;
     let locations = [];
     var geocodes = [];
-        
+
     // Query for task
     let task = await getManager().findOne(Task, { where: { "_ID": tempId } });
-   
+
     // Grab remaining Locations and insert locations into an array
     let remainingLocation = await getManager().findOne(RemainingLocation, { where: { "_ID": task.ID } });
-    if(remainingLocation !== undefined) {
+    if (remainingLocation !== undefined) {
         remainingLocation.locations.forEach(location => locations.push(location));
     }
-    
+
     // Grab completed Locations and insert locations into an array
     let completedLocation = await getManager().findOne(CompletedLocation, { where: { "_ID": task.ID } });
-    if( completedLocation !== undefined) {
+    if (completedLocation !== undefined) {
         completedLocation.locations.forEach(location => locations.push(location));
     }
 
@@ -149,7 +172,7 @@ router.get('/view-task/:id', middleware.manages, async (req: Request, res: Respo
         })
     })
 
-    
+
     res.send([task.ID, JSON.stringify(locations), JSON.stringify(geocodes)])
 });
 
@@ -187,19 +210,19 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
                 //console.log(place)
                 tasks[i].remainingLocations.push(place);
             })
-            
+
         })
         //console.log(i, tasks[i].remainingLocations.length)
         remainingLocations.push(location);
         test.push(location);
     }
-    
- 
+
+
 
     // Remove canvassers with no task
-    for(let i = 0; i < canvassers.length; i++) {
-        if(canvassers[i]._task === undefined) {
-            canvassers.splice(i,1);
+    for (let i = 0; i < canvassers.length; i++) {
+        if (canvassers[i]._task === undefined) {
+            canvassers.splice(i, 1);
         }
     }
 
@@ -217,7 +240,7 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
         taskLocations.push(locations);
         locations = [];
     }
-    
+
     let id = 2;
     // console.log(tasks)
     res.render('view-assignments', { tasks, campaignID, id, numLocations })
@@ -233,9 +256,9 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
         .leftJoinAndSelect("canvasser._task", "task")
         .leftJoinAndSelect("task._remainingLocation", "rmL")
         .leftJoinAndSelect("rmL._locations", "fmLs")
-        .where("campaign._ID = :ID", { ID:  req.body.campaignID})
+        .where("campaign._ID = :ID", { ID: req.body.campaignID })
         .getOne();
-        // console.log(canv)
+    // console.log(canv)
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);
@@ -277,7 +300,7 @@ router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
     /*
         create dummy Results data
     */
-    
+
     for (let j in campaign.locations) { // delete this loop for only 1 completed location
         var results = [];
         var completed = new CompletedLocation();
@@ -305,10 +328,10 @@ router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
     /*
         create dummy Results data
     */
-   function randomIntFromInterval(min,max) // min and max included
-   {
-       return Math.floor(Math.random()*(max-min+1)+min);
-   }
+    function randomIntFromInterval(min, max) // min and max included
+    {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
     for (let j in campaign.locations) { // delete this loop for only 1 completed location
         var results = [];
@@ -317,12 +340,12 @@ router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
         for (var i = 0; i < question.length; i++) {
             var result = new Results();
             result.campaign = campaign;
-            if(randomIntFromInterval(1,2) == 1) {
+            if (randomIntFromInterval(1, 2) == 1) {
                 result.answer = false;
             } else {
                 result.answer = true;
-            }            result.answerNumber = Number(i);
-            result.rating = randomIntFromInterval(1,5);
+            } result.answerNumber = Number(i);
+            result.rating = randomIntFromInterval(1, 5);
             result.completedLocation = completed;
             result.completedLocation.locations.push(campaign.locations[j]);
             await getManager().save(result.completedLocation);
@@ -367,17 +390,17 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
     });
 
     var question = await getManager().find(Questionaire,
-        { where: { "_campaign": campaign } });        
+        { where: { "_campaign": campaign } });
     var resultsTable = [];
     //loop through resul to convert the IDs to their actual values into resultsTable
     for (var i = 0; i < resul.length; i++) {
-        var resultRow = {answer: true, question: "", rating: 0, location: ""};
+        var resultRow = { answer: true, question: "", rating: 0, location: "" };
         resultRow.location = resul[i].completedLocation.locations[0].number + ", " +
-                                resul[i].completedLocation.locations[0].street + ", " +
-                                resul[i].completedLocation.locations[0].unit + ", " +
-                                resul[i].completedLocation.locations[0].city + ", " +
-                                resul[i].completedLocation.locations[0].state + ", " +
-                                resul[i].completedLocation.locations[0].zipcode; 
+            resul[i].completedLocation.locations[0].street + ", " +
+            resul[i].completedLocation.locations[0].unit + ", " +
+            resul[i].completedLocation.locations[0].city + ", " +
+            resul[i].completedLocation.locations[0].state + ", " +
+            resul[i].completedLocation.locations[0].zipcode;
         resultRow.question = question[resul[i].answerNumber].question;
         resultRow.answer = resul[i].answer;
         resultRow.rating = resul[i].rating;
