@@ -163,10 +163,6 @@ exports.createCampaignInfo = campaignData => {
     endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
     const newCampaign = initCampaign(campaignName,startDate,endDate,averageExpectedDuration);
-    // newCampaign.name = campaignName;
-    // newCampaign.startDate = startDate;
-    // newCampaign.endDate = endDate;
-    // newCampaign.avgDuration = averageExpectedDuration;
     return newCampaign;
 };
 //function to build campaign with locations

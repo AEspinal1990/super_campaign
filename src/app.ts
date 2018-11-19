@@ -12,7 +12,6 @@ var session     = require('express-session');
 var MySQLStore  = require('express-mysql-session')(session);
 var passport    = require('passport');
 const winston   = require('winston');
-const logger    = require('./util/logger');
 const appLogger = winston.loggers.get('appLogger');
 
 
