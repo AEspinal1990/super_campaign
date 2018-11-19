@@ -90,31 +90,33 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
         .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
 
-    await getManager()
-        .createQueryBuilder()
-        .update(Campaign)
-        .set({ _assignment: assignment })
-        .where("ID = :id", { id: campaign.ID })
-        .execute()
-        .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
-        .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
+    // await getManager()
+    //     .createQueryBuilder()
+    //     .update(Campaign)
+    //     .set({ _assignment: assignment })
+    //     .where("ID = :id", { id: campaign.ID })
+    //     .execute()
+    //     .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
+    //     .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
 
     console.log("after campaign save")
     /**
      * Save canvassers with their assigned task
      */
     for (let l in canvassers) {
+        console.log("before a canvasser save")
         await getManager()
             .createQueryBuilder()
-            .update(Canvasser)
-            .set({ task: canvassers[l].task })
-            .where("ID = :id", { id: canvassers[l].ID })
-            .execute()
+            .relation(Canvasser, "_ID")
+            .of(canvassers[l].ID)
+            .set(canvassers[l].task)
+            .then(res => console.log("Canvasser saved"))
             .catch(e => console.error(e));
+        // await getManager().save(canvassers[l]);
+        console.log("after a canvasser save")
     }
     // works on local server
     // await getManager().save(canvassers);
-    console.log("after canvasser save")
     res.status(200).send('Create Assignment');
 
 });
