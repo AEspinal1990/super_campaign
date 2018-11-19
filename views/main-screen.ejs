@@ -1,15 +1,60 @@
 <% include ./partials/header %>
 
+<!-- this is navigation header bar-->
+<div class = "container-fluid" id = "windowsBarTop" style="border:1px solid black; position:relative">
+    <div class = "row"">
+        <span class= "col-sm-2"></span>
+        <h3 class = "col-sm-4">Super Canvasser</h3>
+        <span class = "col-sm-2"></span>
+        <h4 class = "col-sm-4" id = "windowsBarName"> Hello </h4>
+    </div>
+    <div class = "row"">
+            <span class = "col-sm-4"></span> <!-- If not main page, put back button here-->
+            <span class = "col-sm-4"></span>
+            <span class = "col-sm-4" id = "windowsBarName">
+                 <form action="/logout" method="GET">
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+            </span>
+    </div>
 
-<form action = "/campaignManager" method="POST">
-    <div class = "container">Campaign Manager</div>
-</form>
-<form action = "/canvasser" method="POST">
-<div class = "container">Canvasser</div>
-</form>
-<form action = "/system_administrator" method="POST">
-<div class = "container">System Administrator</div>
-</form>
+
+</div>
+
+<!-- .inline-headers h3, .inline-headers h4 {
+  display: inline-block;
+  vertical-align: baseline;
+}-->
+
+</div>
+<div class = "row">
+
+    <div class = "col-sm-4" style="border:1px solid black">
+        
+            <div class = "container" >Campaign Manager
+                    <form action = "/campaignManager" method="POST">
+                    </form>
+
+            </div>
+    </div>
+    <div class = "col-sm-4" style="border:1px solid black">
+        <div class = "container" >Canvasser
+                <form action = "/canvasser" method="POST">
+                </form>
+        </div>
+        
+    </div>
+    <div class = "col-sm-4" style="border:1px solid black">    
+        <div class = "container">System Administrator
+                <form action = "/system_administrator" method="POST">
+                </form>
+        </div>
+        
+    </div>
+
+
+</div>
+
 </body>
 <!-- From .js, you can do document.getElementById('#id') to grab field's id and then grey it out if they don't have the correct privilege-->
 </html>
