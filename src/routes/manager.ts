@@ -79,20 +79,42 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save new assignment and update campaign
      */
-    await getManager().save(assignment)
+    // await getManager().save(assignment);
+    // await getManager().save(campaign)
+    await getManager()
+        .createQueryBuilder()
+        .insert()
+        .into(Assignment)
+        .values(assignment)
+        .execute()
         .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
         .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
-    await getManager().save(campaign)
+
+    await getManager()
+        .createQueryBuilder()
+        .update(Campaign)
+        .set({ _assignment: assignment })
+        .where("ID = :id", { id: campaign.ID })
+        .execute()
         .then(res => managerLogger.info(`Successfully updated ${campaign.name} with its new assignment`))
         .catch(e => managerLogger.error(`An error occured while updating ${e} with its new assignment`));
 
+    console.log("after campaign save")
     /**
      * Save canvassers with their assigned task
      */
-        await getManager().save(canvassers)
-            .catch(e => managerLogger.error(`An error occured while assigning a task to  ${e}`))
-
-
+    for (let l in canvassers) {
+        await getManager()
+            .createQueryBuilder()
+            .update(Canvasser)
+            .set({ task: canvassers[l].task })
+            .where("ID = :id", { id: canvassers[l].ID })
+            .execute()
+            .catch(e => console.error(e));
+    }
+    // works on local server
+    // await getManager().save(canvassers);
+    console.log("after canvasser save")
     res.status(200).send('Create Assignment');
 
 });
@@ -206,7 +228,7 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
         .leftJoinAndSelect("rmL._locations", "fmLs")
         .where("campaign._ID = :ID", { ID: req.body.campaignID })
         .getMany();
-    
+
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);
@@ -214,7 +236,7 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
             var cindex, index;
             var geocodes = [];
             console.log("taskID", req.body.taskID)
-            for (let j in canv){
+            for (let j in canv) {
                 for (let i in canv[j].task) {
                     if (canv[j].task[i].ID == req.body.taskID) {
                         cindex = j;
