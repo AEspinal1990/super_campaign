@@ -18,6 +18,7 @@ def fillData():
     locations = file["locations"]
 
     data = {}
+    data["locations"] = locations
     data["geocodes"] = [(l["_lat"], l["_long"]) for l in locations]
     data["num_locations"] = len(data["geocodes"])
     data["num_canvassers"] = file["num_canvassers"]
@@ -127,6 +128,30 @@ search_parameters.first_solution_strategy = (
     routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC) # pylint: disable=no-member
 assignment = routing.SolveWithParameters(search_parameters)
 # print(assignment)
+
+tasks = {}
+tasks["routes"] = []
+for vehicle_id in range(data["num_canvassers"]):
+    index = routing.Start(vehicle_id)
+
+    # check if there is no locations for this task
+    if routing.IndexToNode(assignment.Value(routing.NextVar(index))) == 0:
+        continue
+    else:
+        route = {}
+        route["locations"] = []
+        # create the route for this task
+        while not routing.IsEnd(index):
+            index = assignment.Value(routing.NextVar(index))
+            location_index = routing.IndexToNode(index)
+            route["locations"].append(data["locations"][location_index])
+        # add route to tasks
+        tasks["routes"].append(route)
+
+# open new json file - if problems occur in different enviornments use with io and encode as utf 8
+with open('../data/result_tasks.json', 'w') as outfile:
+    # write lists of tasks into json file
+    json.dump(tasks, outfile, indent=4, ensure_ascii=False)
 
 '''print solution - for testing'''
 total_distance = 0
