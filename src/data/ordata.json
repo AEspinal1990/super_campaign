@@ -1,7 +1,7 @@
 {
 	"locations": [
 		{
-			"_ID": 1,
+			"_ID": 11,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -12,7 +12,7 @@
 			"_long": -73.113434
 		},
 		{
-			"_ID": 2,
+			"_ID": 12,
 			"_streetNumber": 1,
 			"_street": "Education Dr",
 			"_unit": "0",
@@ -23,7 +23,7 @@
 			"_long": -73.591287
 		},
 		{
-			"_ID": 3,
+			"_ID": 13,
 			"_streetNumber": 1000,
 			"_street": "Hempstead Turnpike",
 			"_unit": "0",
@@ -34,29 +34,29 @@
 			"_long": -73.599404
 		},
 		{
-			"_ID": 4,
+			"_ID": 14,
 			"_streetNumber": 77,
 			"_street": "Massachusetts Ave",
 			"_unit": "0",
 			"_city": "Cambridge",
 			"_state": "MA",
 			"_zipcode": 2139,
-			"_lat": 42.363672,
-			"_long": -71.101502
+			"_lat": 42.360091,
+			"_long": -71.09416
 		},
 		{
-			"_ID": 5,
+			"_ID": 15,
 			"_streetNumber": 1,
 			"_street": "South Ave",
 			"_unit": "0",
 			"_city": "Garden City",
 			"_state": "NY",
 			"_zipcode": 11530,
-			"_lat": 40.720213,
-			"_long": -73.652265
+			"_lat": 40.722221,
+			"_long": -73.651099
 		},
 		{
-			"_ID": 6,
+			"_ID": 16,
 			"_streetNumber": 188,
 			"_street": "Merritts Rd",
 			"_unit": "0",
@@ -67,7 +67,7 @@
 			"_long": -73.459155
 		},
 		{
-			"_ID": 7,
+			"_ID": 17,
 			"_streetNumber": 234,
 			"_street": "Main St",
 			"_unit": "0",
@@ -78,7 +78,7 @@
 			"_long": -73.442116
 		},
 		{
-			"_ID": 8,
+			"_ID": 18,
 			"_streetNumber": 202,
 			"_street": "Airport Plaza Blvd",
 			"_unit": "0",
@@ -89,7 +89,7 @@
 			"_long": -73.419253
 		},
 		{
-			"_ID": 9,
+			"_ID": 19,
 			"_streetNumber": 2245,
 			"_street": "Broadhollow Rd",
 			"_unit": "0",
@@ -100,7 +100,7 @@
 			"_long": -73.423329
 		},
 		{
-			"_ID": 10,
+			"_ID": 20,
 			"_streetNumber": 5316,
 			"_street": "Nesconset highway",
 			"_unit": "0",

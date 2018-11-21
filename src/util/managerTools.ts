@@ -31,8 +31,6 @@ export const emptyCampaign = {
     canvasser: ""
 };
 
-
-
 /**
  * Retrieves the global parameters set by admin
  */
@@ -100,8 +98,6 @@ export const getCanvassers = async campaignID => {
         .where("campaign._ID = :ID", { ID: campaignID })
         .getMany();
 }
-
-
 
 export const getTaskCanvasser = async (taskID, canvasserID) => {
     return await getManager()
@@ -201,136 +197,13 @@ export const estimateTask = (locations, avgDuration, travelSpeed, workdayDuratio
  * Returns the coordinates of a location
  * @param location 
  */
-function getCoords(location) {
-    return [Number(location.lat), Number(location.long)];
-};
-
 export function getCoords2(location) {
     return { lat: Number(location.lat), lng: Number(location.long) };
 };
 
-/**
- * Based of the travel speed set by an admin
- * the mode of transportation of a canvasser is
- * determined.
- * @param travelSpeed 
- */
-function determineModeOfTransportation(travelSpeed) {
-    if (travelSpeed <= 3) {
-        return 'walking'
-    } else if (travelSpeed <= 15) {
-        return 'bicycling'
-    } else {
-        return 'driving'
-    }
-}
 
 /**
- * Generates the tasks that compose a campaign assignment.
- * @param locations 
- * @param avgDuration 
- * @param travelSpeed 
- * @param workdayDuration 
- */
-export const generateTasks = async (locations, avgDuration, travelSpeed, workday) => {
-
-    let remainingLocations = [];
-    let t = [];
-    let coords = []
-    let tripTime;
-    let mode;
-    let durOfTask = 0;
-    let i = 0;
-
-    // Get all the coordinates
-    locations.forEach(location => {
-        coords.push(getCoords(location));
-    });
-
-    // Determine mode of transportation based off 
-    // of travelSpeed in mph - walk, bike, or car
-    mode = determineModeOfTransportation(travelSpeed);
-
-    // Create arrays of remainingLocations that are properties of
-    // a task.  
-    let times = [];
-    let taskTime = 0;
-    while (coords.length > 1) {
-        tripTime = await getTripTime(coords[i], coords[i + 1], mode, avgDuration);
-
-        // A to B fits in workday
-        if (tripTime + durOfTask <= workday) {
-            remainingLocations.push(locations[i]);
-            durOfTask += tripTime;
-            locations.shift();
-            coords.shift();
-            taskTime += tripTime;
-        }
-        // Getting to B takes longer than workday.
-        // Make a single Task into a business trip
-        else if (tripTime > workday) {
-            remainingLocations.push(locations[i]);
-
-            t.push(remainingLocations);
-            remainingLocations = [];
-            taskTime = 0;
-            times.push(taskTime);
-            t.push([locations[i + 1]]);
-            times.push(tripTime);
-            locations.shift();
-            coords.shift();
-        }
-        // Adding A to B would exceed workday
-        // Stop at A make B part of the next task
-        else {
-            remainingLocations.push(locations[i]);
-            times.push(taskTime);
-            t.push(remainingLocations);
-            remainingLocations = [];
-            durOfTask = 0;
-            locations.shift();
-            coords.shift();
-
-            taskTime = 0;
-        }
-        //console.log('Time', taskTime)
-
-    }
-
-    // Enter the remaining locations into a task.
-    if (remainingLocations.length > 0) {
-        t.push(remainingLocations);
-        times.push(taskTime);
-        remainingLocations = [];
-    }
-
-    // Create tasks
-    let tasks = [];
-    t.forEach(task => tasks.push(createTask(task, times.pop())));
-
-    return tasks;
-
-};
-
-/**
- * Returns a Task object with only the remainingLocations, status,
- * and scheduledOn properties assigned.
- * @param remainingLocations 
- */
-function createTask(remainingLocations, time) {
-    //console.log(time)
-    let task = new Task();
-    task.remainingLocation = new RemainingLocation();
-    task.remainingLocation.locations = remainingLocations;
-    task.numLocations = task.remainingLocation.locations.length;
-    task.status = false;
-    task.scheduledOn = new Date();
-    task.duration = time;
-    return task;
-}
-
-/**
- * Override createTask
+ * Return a list of created Tasks 
  * @param task 
  * @param campaign 
  */
@@ -378,63 +251,8 @@ export const decorateTask = (task, campaign) => {
     return task;
 }
 
-
-/**
- * Gets the total trip time from location A to location B
- * @name getTripTime
- * @function
- * @param coord1 
- * @param coord2 
- * @param mode 
- * @param avgDuration 
- */
-async function getTripTime(coord1, coord2, mode, avgDuration) {
-    let tripTime;
-
-    await googleMapsClient.directions({
-        origin: coord1,
-        destination: coord2,
-        mode
-    })
-        .asPromise()
-        .then(res => tripTime = res)
-        .catch(e => console.log(e));
-
-    tripTime = parseTripDuration(tripTime.json.routes[0].legs[0].duration.text);
-    tripTime += (avgDuration * 2);
-    return tripTime;
-}
-
-
-// TODO: BREAK THIS UP
-/**
- * Given a results string from the Google API
- * returns the expected time it takes to travel from
- * location A to location B.
- * @param duration 
- */
-function parseTripDuration(duration) {
-    //console.log('Dur: ', duration)
-    let time = duration.split(" ");
-    if (time.length === 2) {
-        time = Number(time[0]);
-    } else if (time.length === 4) {
-        if (time[1] === 'days') {
-            time = Number(time[0]) * (24 * 60) + Number(time[2]) * 2;
-        } else {
-            time = Number(time[0]) * 60 + Number(time[2]);
-        }
-
-    } else {
-        console.log(`NOTICE: time.length of ${time.length} detected`);
-    }
-    return time;
-}
-
 export const removeBusy = (canvassers: Canvasser[]) => {
-
     let availableCanvassers = [];
-
     canvassers.forEach(canvasser => {
         if (canvasser.availableDates.length !== 0) {
             availableCanvassers.push(canvasser)
@@ -446,13 +264,28 @@ export const removeBusy = (canvassers: Canvasser[]) => {
 
 export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     let result;
+    let availableDates = [];
     // Sort by dates to allow for easier front loading.
     canvassers.forEach(canvasser => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
-        canvasser.assignedDates = [];
-        canvasser.task = [];
+        if (canvasser.assignedDates.length === 0){
+            canvasser.assignedDates = [];
+            canvasser.task = [];
+        } else {
+            var date = [];
+            canvasser.availableDates.forEach(vdate => {
+                for (let l in canvasser.assignedDates) {
+                    if (vdate.availableDate == canvasser.assignedDates[l].assignedDate){
+                        break;
+                    }
+                    if (Number(l) == canvasser.assignedDates.length-1) {
+                        date.push(vdate);
+                    }
+                }
+            });
+            availableDates.push(date);
+        }
     });
-
 
     // From all canvassers find the earliest date and insert task
     let earliestDate;
@@ -461,60 +294,29 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // Since dates are already sorted earliest date will
         // be at a canvassers first available date.
         for (let i in canvassers) {
-            //console.log(i , canvassers[i].availableDates)
-            //TODO: HOTFIX - This needs to be reworked.
-            if (canvassers[i].availableDates.length === 0) {
+            if (availableDates[i] === undefined) {
+                continue;
+            } else if (availableDates[i].length === 0){
                 continue;
             }
-            let date = canvassersEarliestDates(canvassers[i].availableDates);
-            //console.log(date);
+            let date = canvassersEarliestDates(availableDates[i]);
             if (earliestDate === undefined || date < earliestDate) {
                 canvasserIndex = i;
-                earliestDate = canvassers[i].availableDates[0].availableDate;
+                earliestDate = availableDates[i][0].availableDate;
             }
         }
 
         // Found earliest date remove them from canvassers available list
         // Insert into datesAssigned    
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
-        earliestDate = undefined;
         task.canvasser = canvassers[canvasserIndex].ID.name;
+        task.scheduledOn = earliestDate;
+        earliestDate = undefined;
     });
 
 
     return canvassers;
 };
-
-export const findDuration = async (task, campaign) => {
-    //console.log('****Starts here', task.remainingLocations);
-
-    let locations = task.remainingLocations;
-    let travelSpeed = this.getAvgSpeed();
-    let avgDuration = campaign._avgDuration;
-    let coords = [];
-    let mode;
-    let tripTime;
-    let i = 0;
-    //console.log('here', locations)
-    // Get all the coordinates
-    locations.forEach(async location => {
-        await coords.push(getCoords(location));
-    });
-
-    // Determine mode of transportation based off 
-    // of travelSpeed in mph - walk, bike, or car
-    mode = determineModeOfTransportation(travelSpeed);
-
-    // Calculate time itll take to canvass all locations in this task   
-    while (coords.length > 1) {
-        tripTime = await getTripTime(coords[i], coords[i + 1], mode, avgDuration);
-        coords.shift();
-        task.duration += tripTime;
-    }
-
-    return task;
-}
-
 
 function assignTask(canvasser: Canvasser, task: Task) {
 
@@ -565,7 +367,7 @@ export const updateTasks = async (tasks, campaignID, canvassers) => {
             }
         }
     });
-    
+
     return tasks;
 };
 
