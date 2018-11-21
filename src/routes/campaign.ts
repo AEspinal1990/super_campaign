@@ -49,6 +49,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     
     // Parse the questionaire then save it.     
     await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
+    console.log(req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
     
@@ -91,11 +92,6 @@ router.get('/edit2/:id', middleware.manages, async (req: Request, res: Response)
  * GET and POST for edit Campaign
  */
 router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response) => {
-    
-
-let startDate;
-    let endDate;
-    let avgDuration;
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     

@@ -1,12 +1,7 @@
-import { Request, Response, Router }    from 'express';
 import { getManager }                   from 'typeorm';
 import { Campaign }                     from '../backend/entity/Campaign';
-import { Assignment }                   from '../backend/entity/Assignment';
 import { Results }                      from '../backend/entity/Results';
-import { CompletedLocation }            from '../backend/entity/CompletedLocation';
 import { Questionaire }                 from '../backend/entity/Questionaire';
-import { RemainingLocation }            from '../backend/entity/RemainingLocation';
-import { Task }                         from '../backend/entity/Task';
 
 
 export async function getRatingStatistics(req) {
@@ -30,9 +25,6 @@ export async function getRatingStatistics(req) {
     for (let i in completedResults) {
         allRatings.push(completedResults[i].rating);
     }
-    
-    // console.log("AVERAGE" +math.mean(allRatings));
-    // console.log("SD" + math.std(allRatings));
 
     return {average: math.mean(allRatings), std: math.std(allRatings)};
 }
@@ -70,5 +62,4 @@ export async function getQuestionStatistics(req) {
         questionaireResults.push(questionStats);
     }
     return questionaireResults;
-    // console.log("SD" + math.sd(allRatings));
 }

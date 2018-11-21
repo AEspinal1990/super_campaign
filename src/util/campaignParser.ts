@@ -54,21 +54,16 @@ export function constructAddress(location){
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
     console.log('From talking points', talkingPoints)
-    talkingPoints = talkingPoints.trim().split("\n");
-    for(let i in talkingPoints) {
-        talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
-    }
-
     /**
      * Create talking points and insert into array
      */
     let points = [];
     for (let i in talkingPoints) {
+        talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
         points.push(new TalkPoint());
         points[i].campaign = campaign;
-        points[i].talk = talkingPoints[i];       
+        points[i].talk = talkingPoints[i];
     }
-
     return points;
 };
 
@@ -76,21 +71,16 @@ export const getTalkingPoints = (campaign, talkingPoints) => {
  * Returns the questions from a campaign object
  */
 export const getQuestionaire = (campaign, questionaire) => {
-    questionaire = questionaire.trim().split("\n");
-    for(let i in questionaire) {
-        questionaire[i] = questionaire[i].replace('\r','');
-    }    
-
     /**
      * Create questions and insert into array
      */
     let questions = [];
     for (let i in questionaire) {
+        questionaire[i] = questionaire[i].replace('\r','');
         questions.push(new Questionaire());
         questions[i].campaign = campaign;
         questions[i].question = questionaire[i];
     }
-
     return questions;
 };
 
@@ -163,10 +153,6 @@ exports.createCampaignInfo = campaignData => {
     endDate = endDate.split("-");
     endDate = new Date(endDate[0], endDate[1], endDate[2]);
     const newCampaign = initCampaign(campaignName,startDate,endDate,averageExpectedDuration);
-    // newCampaign.name = campaignName;
-    // newCampaign.startDate = startDate;
-    // newCampaign.endDate = endDate;
-    // newCampaign.avgDuration = averageExpectedDuration;
     return newCampaign;
 };
 //function to build campaign with locations

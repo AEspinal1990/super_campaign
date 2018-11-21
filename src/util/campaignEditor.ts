@@ -5,7 +5,6 @@ import { Questionaire } from "../backend/entity/Questionaire";
 import { Locations } from "../backend/entity/Locations";
 import { CampaignManager } from "../backend/entity/CampaignManager";
 import { User } from "../backend/entity/User";
-import { getRepo } from "./userManagementSystem";
 import { Canvasser } from "../backend/entity/Canvasser";
 
 const googleMapsClient = require('@google/maps').createClient({
@@ -174,7 +173,7 @@ export const editCampaign = async (campaignData, campaignID) => {
         }
     }
     for (let i in locationCopy) {
-        // YOU HAVE TO CHECK FOR DIFFERENCES IN LOCATIONS...
+        //check to see if the location already exists on database
         for (let j in thisCampaign[0].locations){
             if (locationCopy[i].streetNumber == thisCampaign[0].locations[j].streetNumber &&
                 locationCopy[i].street == thisCampaign[0].locations[j].street &&
