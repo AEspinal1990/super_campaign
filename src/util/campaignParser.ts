@@ -71,21 +71,16 @@ export const getTalkingPoints = (campaign, talkingPoints) => {
  * Returns the questions from a campaign object
  */
 export const getQuestionaire = (campaign, questionaire) => {
-    questionaire = questionaire.trim().split("\n");
-    for(let i in questionaire) {
-        questionaire[i] = questionaire[i].replace('\r','');
-    }    
-
     /**
      * Create questions and insert into array
      */
     let questions = [];
     for (let i in questionaire) {
+        questionaire[i] = questionaire[i].replace('\r','');
         questions.push(new Questionaire());
         questions[i].campaign = campaign;
         questions[i].question = questionaire[i];
     }
-
     return questions;
 };
 

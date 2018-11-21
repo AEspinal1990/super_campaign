@@ -44,12 +44,12 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     
     // Parse the talking points then save them.    
     await campaignCreator.saveTalkingPoints(campaign, req.body.campaign.talkingPoints);
-    console.log(req.body.campaign.talkingPoints);
     campaignLogger.info(`Saved talking points for: ${campaign._name}`);
 
     
     // Parse the questionaire then save it.     
     await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
+    console.log(req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
     
