@@ -54,21 +54,16 @@ export function constructAddress(location){
 export const getTalkingPoints = (campaign, talkingPoints) => {
     // Split up points by line breaks and remove carriage returns
     console.log('From talking points', talkingPoints)
-    talkingPoints = talkingPoints.trim().split("\n");
-    for(let i in talkingPoints) {
-        talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
-    }
-
     /**
      * Create talking points and insert into array
      */
     let points = [];
     for (let i in talkingPoints) {
+        talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
         points.push(new TalkPoint());
         points[i].campaign = campaign;
-        points[i].talk = talkingPoints[i];       
+        points[i].talk = talkingPoints[i];
     }
-
     return points;
 };
 
