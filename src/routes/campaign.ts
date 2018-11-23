@@ -24,67 +24,47 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
-      
     let startDate;
     let endDate;
     let avgDuration;
     let campaign;
-    
+
     // Grab dates needed to create campaign object 
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);
     avgDuration = Number(req.body.campaign.averageExpectedDuration);
 
-    
+
     // Create Campaign then save it.   
     campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
     await campaignCreator.saveCampaign(campaign);
     campaignLogger.info(`Saved campaign: ${campaign._name}`);
 
-    
+
     // Parse the talking points then save them.    
     await campaignCreator.saveTalkingPoints(campaign, req.body.campaign.talkingPoints);
     campaignLogger.info(`Saved talking points for: ${campaign._name}`);
 
-    
+
     // Parse the questionaire then save it.     
     await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
     console.log(req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
-    
+
     // Save campaign managers    
     await campaignCreator.saveManagers(campaign, req.body.campaign.managers);
     campaignLogger.info(`Saved managers for: ${campaign._name}`);
 
-    
+
     // Save this campaigns locations    
     await campaignCreator.saveLocations(campaign, req.body.campaign.locations);
     campaignLogger.info(`Saved locations for: ${campaign._name}`);
 
-    
+
     //Save canavassers    
     await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
     res.send('Campaign Created Succesfully');
-});
-
-
-/**
- * Not in use. Beginning of edit rework.
- */
-router.get('/edit2/:id', middleware.manages, async (req: Request, res: Response) => {
-    
-    const campaignRepository = getRepository(Campaign);    
-    const campaignID = req.params.id;
-    const campaign = await campaignRepository.find({ where: { "_ID": campaignID } }).catch(e => console.log(e));
-    
-    // @ts-ignore - will return an empty array therefore checking length is valid. 
-    if (campaign.length === 0) {
-        let emptyCampaign = campaignCreator.emptyCampaign(campaignID);
-        return res.status(404).send('Campaign not found');
-    } else {
-        res.send('here')
-    }
 });
 
 
@@ -94,9 +74,10 @@ router.get('/edit2/:id', middleware.manages, async (req: Request, res: Response)
 router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
-    
-    const campaign = await campaignRepository.find({ where: { "_ID": campaignID } }).catch(e => console.log(e));
-    
+    const campaign = await campaignRepository
+        .find({ where: { "_ID": campaignID } })
+        .catch(e => console.log(e));
+
     if (campaign === undefined) {
         console.log('not found')
         return res.status(404).render('edit-campaign', {
@@ -117,14 +98,20 @@ router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response)
     else {
         //parse Date
         let campaignStartDate: Date = campaign[0]._startDate;
+        var today = new Date();
+
+        // check if the campaign has already started
+        if (+campaignStartDate <= +today) {
+            res.send("This campaign has already begun and cannot be edited!");
+        }
+
         let campaignStartDateString = campaignStartDate.getFullYear() + "-" + (campaignStartDate.getMonth() + 1) + "-" + campaignStartDate.getDate();
         let campaignEndDate: Date = campaign[0]._endDate;
         let campaignEndDateString = campaignEndDate.getFullYear() + "-" + (campaignEndDate.getMonth() + 1) + "-" + campaignEndDate.getDate();
-      
+
         //parse questions back to input form
-       
         const qRepo = getRepository(Questionaire);
-        const questionaire = await qRepo.find({ where: { "_campaign": campaign[0].ID } });campaign[0].question = questionaire;
+        const questionaire = await qRepo.find({ where: { "_campaign": campaign[0].ID } }); campaign[0].question = questionaire;
         let questionsInput = "";
         for (let i in campaign[0].question) {
             questionsInput += campaign[0].question[i].question + "\n";
@@ -140,7 +127,6 @@ router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response)
         //parse locations back to input form
         let locationsInput = "";
         for (let i in campaign[0].locations) {
-            
             locationsInput += campaign[0].locations[i]._streetNumber + ", " +
                 campaign[0].locations[i]._street + ", " +
                 campaign[0].locations[i].unit + ", " +
@@ -195,15 +181,15 @@ router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
 /**
  * GET for view campaign
  */
-router.get('/view/:id',  async (req: Request, res: Response) => {
-    var campaign = await getManager().find(Campaign, 
+router.get('/view/:id', async (req: Request, res: Response) => {
+    var campaign = await getManager().find(Campaign,
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
     // console.log(campaign[0]);
 
     if (campaign[0] === undefined) {
         console.log("NOT FOUND");
-        res.status(404).send('Campaign with ID: '+req.params.id+' was not found!');
+        res.status(404).send('Campaign with ID: ' + req.params.id + ' was not found!');
     } else {
         // MANUAL LOAD FROM DB - Questoinaire AND TALKING POINTS
         const qRepo = getRepository(Questionaire);
@@ -230,7 +216,7 @@ router.get('/view/:id',  async (req: Request, res: Response) => {
             });
         }
         // lets make a new connection socket for the view url and change the path from client
-        io.on('connection', function(socket) {
+        io.on('connection', function (socket) {
             socket.emit('geocodes', geocodes);
             console.log('someone CONNECTED:');
             // console.log(geocodes);            
