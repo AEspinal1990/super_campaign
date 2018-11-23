@@ -6,9 +6,8 @@ import { User }                 from '../backend/entity/User';
 import { CampaignManager }      from '../backend/entity/CampaignManager';
 import * as campaignParser      from './campaignParser';
 
-const winston = require('winston');
 const logger = require('../util/logger');
-const campaignLogger = winston.loggers.get('campaignLogger');
+const campaignLogger = logger.getLogger('campaignLogger');
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
@@ -125,21 +124,23 @@ export const saveLocations = async (campaign, locations) => {
     let address;
     let coord;
     campaign.locations = [];
+    console.log('ABout to save locations entering geocode block\n')
     for (let i in locations) {
         places.push(createLocation(locations[i]));
         address = campaignParser.constructAddress(places[i]);
 
         await googleMapsClient.geocode({address})
-            .asPromise()
-            .then(res => {
-                coord = res.json.results[0].geometry.location;
-                places[i].lat = Number(coord.lat);
-                places[i].long = Number(coord.lng);
-            })
-            .catch(e => console.log('Locations error', e));
+        .asPromise()
+        .then(res => {
+            coord = res.json.results[0].geometry.location;
+            places[i].lat = Number(coord.lat);
+            places[i].long = Number(coord.lng);
+        })
+        .catch(e => console.log('Locations error', e));
 
         campaign.locations.push(places[i]);
     }
+    console.log('Finished geocode block\n');
     await Manager.save(campaign.locations);
 };
 

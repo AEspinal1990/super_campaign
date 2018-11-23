@@ -52,18 +52,24 @@ export function constructAddress(location){
  * Returns the talking points from a campaign object
  */
 export const getTalkingPoints = (campaign, talkingPoints) => {
+
     // Split up points by line breaks and remove carriage returns
     console.log('From talking points', talkingPoints)
+    talkingPoints = talkingPoints.trim().split('\n');
+    for(let i in talkingPoints) {
+        talkingPoints[i] = talkingPoints[i].trim().replace('r','');
+    }
+
     /**
      * Create talking points and insert into array
      */
     let points = [];
     for (let i in talkingPoints) {
-        talkingPoints[i] = talkingPoints[i].trim().replace('\r','');
         points.push(new TalkPoint());
         points[i].campaign = campaign;
         points[i].talk = talkingPoints[i];
     }
+
     return points;
 };
 
@@ -71,16 +77,21 @@ export const getTalkingPoints = (campaign, talkingPoints) => {
  * Returns the questions from a campaign object
  */
 export const getQuestionaire = (campaign, questionaire) => {
+    questionaire = questionaire.trim().split("\n");
+    for(let i in questionaire) {
+        questionaire[i] = questionaire[i].replace('\r','');
+    }
+    
     /**
      * Create questions and insert into array
      */
     let questions = [];
     for (let i in questionaire) {
-        questionaire[i] = questionaire[i].replace('\r','');
         questions.push(new Questionaire());
         questions[i].campaign = campaign;
         questions[i].question = questionaire[i];
     }
+    
     return questions;
 };
 
