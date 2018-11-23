@@ -11,9 +11,8 @@ import server, { io } from '../server';
 const middleware = require('../middleware');
 const router: Router = Router();
 
-const winston = require('winston');
 const logger = require('../util/logger');
-const campaignLogger = winston.loggers.get('campaignLogger');
+const campaignLogger = logger.getLogger('campaignLogger');
 
 
 /**

@@ -6,9 +6,8 @@ import { io } from '../server';
 
 const router: Router = Router();
 const middleware = require('../middleware');
-const winston = require('winston');
 const logger = require('../util/logger');
-const canvasserLogger = winston.loggers.get('canvasserLogger');
+const canvasserLogger = logger.getLogger('canvasserLogger');
 
 router.get('/calendar', middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('edit-availability');

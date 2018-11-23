@@ -11,8 +11,8 @@ import * as expressValidator from 'express-validator';
 var session     = require('express-session');
 var MySQLStore  = require('express-mysql-session')(session);
 var passport    = require('passport');
-const winston   = require('winston');
-const appLogger = winston.loggers.get('appLogger');
+const logger    = require('./util/logger');       
+const appLogger = logger.getLogger('appLogger');
 
 
 /**

@@ -14,9 +14,8 @@ import { Canvasser } from '../backend/entity/Canvasser';
 import { ENGINE_METHOD_NONE } from 'constants';
 
 const router: Router = Router();
-const winston = require('winston');
 const logger = require('../util/logger');
-const managerLogger = winston.loggers.get('managerLogger');
+const managerLogger = logger.getLogger('managerLogger');
 const middleware = require('../middleware');
 const fs = require('fs');
 

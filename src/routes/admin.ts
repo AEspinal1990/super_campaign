@@ -1,24 +1,22 @@
-import { Request, Response, Router } from 'express';
-import { getManager, getRepository } from "typeorm";
-import { check, validationResult } from 'express-validator/check';
-import * as fs from 'fs';
-
-import { CampaignManager } from '../backend/entity/CampaignManager';
-import { Canvasser } from '../backend/entity/Canvasser';
-import { SystemAdmin } from '../backend/entity/SystemAdmin';
-import { User } from '../backend/entity/User';
-
-const winston = require('winston');
-const logger = require('../util/logger');
-const adminLogger = winston.loggers.get('adminLogger');
+import { Request, Response, Router }    from 'express';
+import { getManager, getRepository }    from "typeorm";
+import { check, validationResult }      from 'express-validator/check';
+import { CampaignManager }              from '../backend/entity/CampaignManager';
+import { Canvasser }                    from '../backend/entity/Canvasser';
+import { SystemAdmin }                  from '../backend/entity/SystemAdmin';
+import { User }                         from '../backend/entity/User';
+import * as fs                          from 'fs';
 
 import * as userManager from '../util/userManagementSystem';
-import * as authSystem from '../config/auth';
+import * as authSystem  from '../config/auth';
 
-var passwordValidator = require('password-validator');
+const logger            = require('../util/logger');
+const middleware        = require('../middleware');
+let passwordValidator   = require('password-validator');
+
 const router: Router = Router();
+const adminLogger = logger.getLogger('adminLogger');
 
-const middleware = require('../middleware');
 
 const passwordSchema: any = new passwordValidator();
 passwordSchema

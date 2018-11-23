@@ -2,10 +2,8 @@ import { Request, Response, Router } from 'express';
 const passport  = require('passport');
 const router: Router = Router();
 
-
-const winston = require('winston');
 const logger = require('../util/logger');
-const authLogger = winston.loggers.get('authLogger');
+const authLogger = logger.getLogger('authLogger');
 
 
 /**
@@ -14,7 +12,6 @@ const authLogger = winston.loggers.get('authLogger');
 router.get('/', (req: Request, res: Response) => {
     res.render('login');
 });
-
 
 
 router.post('/', passport.authenticate(
