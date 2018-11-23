@@ -67,12 +67,4 @@ export class Canvasser{
     public set results(value: Results[]) {
         this._results = value;
     }
-
-    public editAvailability(date:Date){
-
-    }
-
-    // public isAvailable(sDate:Date, eDate:Date):Date[]{
-
-    // }
 }

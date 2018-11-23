@@ -14,9 +14,8 @@ import { Canvasser } from '../backend/entity/Canvasser';
 import { ENGINE_METHOD_NONE } from 'constants';
 
 const router: Router = Router();
-const winston = require('winston');
 const logger = require('../util/logger');
-const managerLogger = winston.loggers.get('managerLogger');
+const managerLogger = logger.getLogger('managerLogger');
 const middleware = require('../middleware');
 const fs = require('fs');
 
@@ -79,16 +78,18 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save new assignment and update campaign
      */
-    // await getManager().save(assignment);
+    await getManager().save(assignment);
     // await getManager().save(campaign)
-    await getManager()
-        .createQueryBuilder()
-        .insert()
-        .into(Assignment)
-        .values(assignment)
-        .execute()
-        .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
-        .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
+
+
+    // await getManager()
+    //     .createQueryBuilder()
+    //     .insert()
+    //     .into(Assignment)
+    //     .values(assignment)
+    //     .execute()
+    //     .then(res => managerLogger.info(`Successfully created an assignment for campaign: ${campaign.name}`))
+    //     .catch(e => managerLogger.error(`An error occured while saving the assignment for campaign: ${e}`));
 
     // await getManager()
     //     .createQueryBuilder()
@@ -103,55 +104,22 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save canvassers with their assigned task
      */
-    for (let l in canvassers) {
-        console.log("before a canvasser save")
-        await getManager()
-            .createQueryBuilder()
-            .relation(Canvasser, "_ID")
-            .of(canvassers[l].ID)
-            .set(canvassers[l].task)
-            .then(res => console.log("Canvasser saved"))
-            .catch(e => console.error(e));
-        // await getManager().save(canvassers[l]);
-        console.log("after a canvasser save")
-    }
+    // for (let l in canvassers) {
+    //     console.log("before a canvasser save")
+    //     await getManager()
+    //         .createQueryBuilder()
+    //         .relation(Canvasser, "_ID")
+    //         .of(canvassers[l].ID)
+    //         .set(canvassers[l].task)
+    //         .then(res => console.log("Canvasser saved"))
+    //         .catch(e => console.error(e));
+    //     // await getManager().save(canvassers[l]);
+    //     console.log("after a canvasser save")
+    // }
     // works on local server
-    // await getManager().save(canvassers);
+    await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
     res.status(200).send('Create Assignment');
 
-});
-
-router.get('/view-task/:id', middleware.manages, async (req: Request, res: Response) => {
-    // get campaign id
-    let tempId = 6;
-    let locations = [];
-    var geocodes = [];
-
-    // Query for task
-    let task = await getManager().findOne(Task, { where: { "_ID": tempId } });
-
-    // Grab remaining Locations and insert locations into an array
-    let remainingLocation = await getManager().findOne(RemainingLocation, { where: { "_ID": task.ID } });
-    if (remainingLocation !== undefined) {
-        remainingLocation.locations.forEach(location => locations.push(location));
-    }
-
-    // Grab completed Locations and insert locations into an array
-    let completedLocation = await getManager().findOne(CompletedLocation, { where: { "_ID": task.ID } });
-    if (completedLocation !== undefined) {
-        completedLocation.locations.forEach(location => locations.push(location));
-    }
-
-    // Grab geocodes
-    locations.forEach(location => {
-        geocodes.push({
-            lat: location.lat,
-            long: location.long,
-        })
-    })
-
-
-    res.send([task.ID, JSON.stringify(locations), JSON.stringify(geocodes)])
 });
 
 router.get('/view-assignment/:id', middleware.manages, async (req: Request, res: Response) => {
@@ -180,17 +148,13 @@ router.get('/view-assignment/:id', middleware.manages, async (req: Request, res:
     // Grab all remaining locations for the tasks
     for (let i in tasks) {
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
-        //console.log(i, location)
         tasks[i].remainingLocations = locations;
         location.forEach(l => {
-            //console.log(i, l.locations.length)
             l.locations.forEach(place => {
-                //console.log(place)
                 tasks[i].remainingLocations.push(place);
             })
 
         })
-        //console.log(i, tasks[i].remainingLocations.length)
         remainingLocations.push(location);
         test.push(location);
     }
@@ -237,14 +201,12 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
         } else {
             var cindex, index;
             var geocodes = [];
-            console.log("taskID", req.body.taskID)
             for (let j in canv) {
                 for (let i in canv[j].task) {
                     if (canv[j].task[i].ID == req.body.taskID) {
                         cindex = j;
                         index = i;
                         for (let h in canv[j].task[i].remainingLocation.locations) {
-                            console.log(i)
                             geocodes.push({
                                 lat: canv[j].task[i].remainingLocation.locations[h].lat,
                                 lng: canv[j].task[i].remainingLocation.locations[h].long
@@ -268,42 +230,11 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/createdummyresult/:id', async (req: Request, res: Response) => {
-    var campaign = await getManager().findOne(Campaign,
-        { where: { "_ID": req.params.id } });
-    var question = await getManager().find(Questionaire,
-        { where: { "_campaign": campaign } });
-    /*
-        create dummy Results data
-    */
-
-    for (let j in campaign.locations) { // delete this loop for only 1 completed location
-        var results = [];
-        var completed = new CompletedLocation();
-        completed.locations = [];
-        for (var i = 0; i < question.length; i++) {
-            var result = new Results();
-            result.campaign = campaign;
-            result.answer = true;
-            result.answerNumber = Number(i);
-            result.rating = 5;
-            result.completedLocation = completed;
-            result.completedLocation.locations.push(campaign.locations[j]);
-            await getManager().save(result.completedLocation);
-            results.push(result);
-        }
-        await getManager().save(results);
-    }
-    res.send('ITs done');
-});
 router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id } });
     var question = await getManager().find(Questionaire,
         { where: { "_campaign": campaign } });
-    /*
-        create dummy Results data
-    */
     function randomIntFromInterval(min, max) // min and max included
     {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -354,12 +285,10 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
 
     campaign.locations.forEach(location => {
         new ResultDetails(location.ID, 'results', managerTools.getCoords2(location));
-        //coords.push(managerTools.getCoords2(location));
     });
     var ratingResults = await resultStatisticsUtil.getRatingStatistics(req);
     var questionaireResults = await resultStatisticsUtil.getQuestionStatistics(req);
-    //console.log(campaign.getLocationsResults()[1].completedLocation._locations[0]._lat);
-    console.log(questionaireResults);
+
     //send all the locations results through the socket
     io.on('connection', function (socket) {
         socket.emit('result-details', campaign.getLocationsResults());
