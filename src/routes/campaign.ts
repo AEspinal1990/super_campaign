@@ -20,7 +20,10 @@ const campaignLogger = winston.loggers.get('campaignLogger');
  * GET and POST for create Campaign
  */
 router.get('/new', middleware.isManager, async (req: Request, res: Response) => {
-    res.render('create-campaign');
+    //retrieve canvassers that can be chosen for the new campaign
+    const canvasserRepository = getRepository(Canvasser);
+    const canvasser = await canvasserRepository.find().catch(e => console.log(e));
+    res.render('create-campaign', {canvassers: canvasser});
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
