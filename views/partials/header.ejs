@@ -32,28 +32,28 @@
                         <span class = "col-sm-2"></span>
                         <h4 class = "col-sm-4" id = "windowsBarName"> Hello </h4>
                     </div>
-                    <div class = "d-flex flex-row justify-content-start align-items-stretch">
+                    <div class = "d-flex flex-row justify-content-start align-items-stretch justify-content:center;">
                             <!-- <span class = "col-sm-4"></span> 
                             <span class = "col-sm-4"></span>  **If not main page, put back button here** -->
                             
-                                <div class = "col-sm-3 text-center rounded" style="border:1px solid black;"id="campaignIdNavContainer">
+                                <div class = "col-lg-3 col-sm-3 text-center rounded" style="border:1px solid black;"id="campaignIdNavContainer">
                                     
-                                        <div class = "container-fluid" id="campaignIdNavName">Campaign Manager
-                                                <form action = "/campaignManager" method="POST">
+                                        <div class = "container-fluid mt-3" id="campaignIdNavName" onclick="document.getElementById('campaignNavForm').submit()">Campaign Manager
+                                                <form action = "/campaignManager" id="campaignNavForm" method="GET">
                                                 </form>
                             
                                         </div>
                                 </div>
-                                <div class = "col-sm-3 text-center to-bottom rounded" style="border:1px solid black">
-                                    <div class = "container-fluid" id="canvasIdNavName">Canvasser
-                                            <form action = "/canvasser" method="POST">
+                                <div class = "col-lg-3 col-sm-3 text-center rounded" style="border:1px solid black">
+                                    <div class = "container-fluid mt-3" id="canvasIdNavName" onclick="document.getElementById('canvasserNavForm').submit()">Canvasser
+                                            <form action = "/canvasser" id="canvasserNavForm" method="GET">
                                             </form>
                                     </div>
                                     
                                 </div>
-                                <div class = "col-sm-3 text-center rounded" style="border:1px solid black" id="adminIdNavContainer">    
-                                    <div class = "container-fluid" id="adminIdNavName" >System Administrator
-                                            <form action = "/system_administrator" method="POST">
+                                <div class = "col-lg-3 col-sm-3 text-center rounded" style="border:1px solid black" id="adminIdNavContainer">    
+                                    <div class = "container-fluid mt-3" id="adminIdNavName"  onclick="document.getElementById('adminNavForm').submit()">System Administrator
+                                            <form action = "/system_administrator" id="adminNavForm" method="GET">
                                             </form>
                                     </div>
                                     
@@ -61,7 +61,7 @@
                             
                             
                 
-                            <span class = "col-sm-3" id = "windowsBarName">
+                            <span class = "col-lg-3 col-sm-3" id = "windowsBarName">
                                  <form action="/logout" method="GET">
                                     <button type="submit" class="btn btn-primary">Logout</button>
                                 </form>
