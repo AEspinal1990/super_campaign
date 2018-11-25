@@ -1,51 +1,5 @@
 <% include ./partials/header %>
 
-<!-- this is navigation header bar-->
-<div class = "container-fluid rounded" id = "windowsBarTop" style="border:2px solid black; position:relative">
-    <div class = "row">
-        <span class= "col-sm-2"></span>
-        <h3 class = "col-sm-4">Super Canvasser</h3>
-        <span class = "col-sm-2"></span>
-        <h4 class = "col-sm-4" id = "windowsBarName"> Hello </h4>
-    </div>
-    <div class = "row row-comformity align-bottom">
-            <!-- <span class = "col-sm-4"></span> 
-            <span class = "col-sm-4"></span>  **If not main page, put back button here** -->
-            
-                <div class = "col-sm-3 text-center" id="campaignIdNavContainer">
-                    
-                        <div class = "container-fluid rounded "id="campaignIdNavName"  style="border:1px solid black;">Campaign Manager
-                                <form action = "/campaignManager" method="POST">
-                                </form>
-            
-                        </div>
-                </div>
-                <div class = "col-sm-3 text-center to-bottom" id="canvasIdNavContainer">
-                    <div class = "container-fluid rounded" id="canvasIdNavName" style="border:1px solid black">Canvasser
-                            <form action = "/canvasser" method="POST">
-                            </form>
-                    </div>
-                    
-                </div>
-                <div class = "col-sm-3 text-center">    
-                    <div class = "container-fluid rounded" style="border:1px solid black">System Administrator
-                            <form action = "/system_administrator" method="POST">
-                            </form>
-                    </div>
-                    
-                </div>
-            
-            
-
-            <span class = "col-sm-3" id = "windowsBarName">
-                 <form action="/logout" method="GET">
-                    <button type="submit" class="btn btn-primary">Logout</button>
-                </form>
-            </span>
-    </div>
-
-
-</div>
 
 <!-- .inline-headers h3, .inline-headers h4 {
   display: inline-block;
