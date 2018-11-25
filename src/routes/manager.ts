@@ -20,6 +20,11 @@ const middleware = require('../middleware');
 const fs = require('fs');
 
 
+router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
+    res.render('campaignScreen');
+
+});
+
 router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
     /**

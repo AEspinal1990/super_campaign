@@ -68,6 +68,11 @@ router.get('/new', async (req: Request, res: Response) => {
     res.status(200).render('create-user');
 });
 
+router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
+    res.render('SysAdminScreen');
+
+});
+
 router.post('/', [
     // Validation
     check('username').isLength({ min: 5, max: 20 }),

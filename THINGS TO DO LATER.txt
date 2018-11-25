@@ -29,7 +29,7 @@ Milestone 2 - Need 66 points
     - 3 points for creating task
     - 4 points for assigning tasks to canvassers and days
       including 2 for packing them at the beginning
-    * 1 point for update/discard Assignment
+    * 1 point for update/discard Assignment    
 
 - View Canvassing Assignment - 12 Points
     - 4 pts table
