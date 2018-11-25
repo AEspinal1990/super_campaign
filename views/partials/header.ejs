@@ -25,34 +25,34 @@
     <body>
         <!-- this is navigation header bar-->
 
-            <div class = "container-fluid rounded" id = "windowsBarTop" style="border:2px solid black; position:relative">
+            <div class = "rounded" id = "windowsBarTop" style="border:3px solid black; position:relative">
                     <div class = "row mt-2 mb-3">
                         <span class= "col-sm-2"></span>
                         <h3 class = "col-sm-4">Super Canvasser</h3>
                         <span class = "col-sm-2"></span>
                         <h4 class = "col-sm-4" id = "windowsBarName"> Hello </h4>
                     </div>
-                    <div class = "row row-comformity align-bottom">
+                    <div class = "d-flex flex-row justify-content-start align-items-stretch">
                             <!-- <span class = "col-sm-4"></span> 
                             <span class = "col-sm-4"></span>  **If not main page, put back button here** -->
                             
-                                <div class = "col-sm-3 text-center" id="campaignIdNavContainer">
+                                <div class = "col-sm-3 text-center rounded" style="border:1px solid black;"id="campaignIdNavContainer">
                                     
-                                        <div class = "container-fluid rounded "id="campaignIdNavName"  style="border:1px solid black;">Campaign Manager
+                                        <div class = "container-fluid" id="campaignIdNavName">Campaign Manager
                                                 <form action = "/campaignManager" method="POST">
                                                 </form>
                             
                                         </div>
                                 </div>
-                                <div class = "col-sm-3 text-center to-bottom" id="canvasIdNavContainer">
-                                    <div class = "container-fluid rounded" id="canvasIdNavName" style="border:1px solid black">Canvasser
+                                <div class = "col-sm-3 text-center to-bottom rounded" style="border:1px solid black">
+                                    <div class = "container-fluid" id="canvasIdNavName">Canvasser
                                             <form action = "/canvasser" method="POST">
                                             </form>
                                     </div>
                                     
                                 </div>
-                                <div class = "col-sm-3 text-center">    
-                                    <div class = "container-fluid rounded" style="border:1px solid black">System Administrator
+                                <div class = "col-sm-3 text-center rounded" style="border:1px solid black" id="adminIdNavContainer">    
+                                    <div class = "container-fluid" id="adminIdNavName" >System Administrator
                                             <form action = "/system_administrator" method="POST">
                                             </form>
                                     </div>
