@@ -19,6 +19,60 @@
             td {
                 border: 1px solid black;
             }
+            .row-conformity .to-bottom {position:absolute; bottom:0; left:0; right:0}
         </style>
     </head>
     <body>
+        <!-- this is navigation header bar-->
+
+            <div class = "rounded" id = "windowsBarTop" style="border:3px solid black; position:relative">
+                    <div class = "row mt-2 mb-3">
+                        <span class= "col-sm-2"></span>
+                        <h3 class = "col-sm-4" style="color:orange" onclick="document.getElementById('navMainForm').submit()">Super Canvasser
+                            <form action = "/main" id="navMainForm" method="GET">
+                            </form>
+                        </h3>
+                        
+                        <span class = "col-sm-2"></span>
+                        <h4 class = "col-sm-4" id = "windowsBarName"> Hello <!--name here-->
+                            <nav class="navbar" role="navigation"></nav>
+                        </h4>
+                    </div>
+                    <div class = "d-flex flex-row justify-content-start align-items-stretch justify-content:center;">
+                            <!-- <span class = "col-sm-4"></span> 
+                            <span class = "col-sm-4"></span>  **If not main page, put back button here** -->
+                            
+                                <div class = "col-lg-3 col-sm-3 text-center rounded" style="border:1px solid black;"id="campaignIdNavContainer">
+                                    
+                                        <div class = "container-fluid mt-3" id="campaignIdNavName" onclick="document.getElementById('campaignNavForm').submit()">Campaign Manager
+                                                <form action = "/campaignManager" id="campaignNavForm" method="GET">
+                                                </form>
+                            
+                                        </div>
+                                </div>
+                                <div class = "col-lg-3 col-sm-3 text-center rounded" style="border:1px solid black">
+                                    <div class = "container-fluid mt-3" id="canvasIdNavName" onclick="document.getElementById('canvasserNavForm').submit()">Canvasser
+                                            <form action = "/canvasser" id="canvasserNavForm" method="GET">
+                                            </form>
+                                    </div>
+                                    
+                                </div>
+                                <div class = "col-lg-3 col-sm-3 text-center rounded" style="border:1px solid black" id="adminIdNavContainer">    
+                                    <div class = "container-fluid mt-3" id="adminIdNavName"  onclick="document.getElementById('adminNavForm').submit()">System Administrator
+                                            <form action = "/system_administrator" id="adminNavForm" method="GET">
+                                            </form>
+                                    </div>
+                                    
+                                </div>
+                            
+                            
+                
+                            <span class = "col-lg-3 col-sm-3" id = "windowsBarName">
+                                 <form action="/logout" method="GET">
+                                    <button type="submit" class="btn btn-primary">Logout</button>
+                                </form>
+                            </span>
+                    </div>
+                
+                
+                </div>

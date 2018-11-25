@@ -1,9 +1,12 @@
+import { User }             from "../backend/entity/User";
+import { getRepository }    from "typeorm";
 const bcrypt            = require('bcryptjs');
 const passport          = require('passport');
 const LocalStrategy     = require('passport-local').Strategy
-import { User }             from "../backend/entity/User";
-import { getRepository }    from "typeorm";
-//import {authLogger}         from '../util/logger';
+
+
+const logger = require('../util/logger');
+const authLogger = logger.getLogger('authLogger');
 
 passport.serializeUser(function(user_id, done) {
     done(null, user_id);
@@ -19,6 +22,7 @@ export const hashPassword = async password => {
         return await bcrypt.hash(password, salt);
 
     } catch(error) {
+        authLogger.error(`An error occurred while hashing the password!`);
         throw new Error('Hashing failed: ' + error);
     }   
 }
@@ -27,6 +31,7 @@ export const comparePasswords = async (inputPassword, hashedPassword) => {
     try {
         return await bcrypt.compare(inputPassword, hashedPassword);
     } catch (error) {
+        authLogger.error(`An error occurred while comparing the passwords!`);
         throw new Error('Comparing failed: ' + error);
     }
 };
@@ -52,20 +57,29 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
         const user = await userRepository.find({
           where: {"_username": username}
         })
-        .catch(e => {});
-        // .catch(e => authLogger.error(`Login error occured ${username} not found, ${e}`));
+        .catch(e =>{
+            authLogger.error(`An error occured while searching for ${username}, ${e}`);
+            
+        });
         
-      // Check if password is correct for this account
-      const isValid = await comparePasswords(password, user[0]._password);
-      
-      if (isValid) {          
+        // Does the user exist?
+        if(user[0] === undefined ){
+            authLogger.warn(`${username} was not found.`)
+            return done(null, false, {message: 'User does not exist.'})
+        }
+
+        // Check if password is correct for this account
+        const isValid = await comparePasswords(password, user[0]._password);      
+        if (!isValid) {          
+            authLogger.warn(`Login error incorrect password for ${username}.`)
+            return done(null, false, {message: 'Incorrect Password'})
+        }
+
+        // Valid user and password
         return done(null, user)
-      } else {
-        //authLogger.error(`Login error incorrect password for ${username}.`)
-        return done(null, false, {message: 'Incorrect Password'})
-      }
     } catch (error) {
-      return done(error, false)
+        
+        return done(error, false)
     }
   } 
 ));
