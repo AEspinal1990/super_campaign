@@ -9,6 +9,8 @@ import { TalkPoint } from '../backend/entity/TalkPoint';
 import { Assignment } from '../backend/entity/Assignment';
 import { Task } from '../backend/entity/Task';
 import { Results } from '../backend/entity/Results';
+import { CompletedLocation } from '../backend/entity/CompletedLocation';
+import { Locations } from '../backend/entity/Locations';
 
 const router: Router = Router();
 const middleware = require('../middleware');
@@ -268,28 +270,48 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
 /**
  * For saving the results
  */
-// router.post('/canvassing/results', async (req: Request, res: Response) => {
-router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
+router.post('/canvassing/results', async (req: Request, res: Response) => {
+// router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
     var results = req.body.results;
     var rating = req.body.rating;
+    var completedLocation = new CompletedLocation();
+    completedLocation.locations = [req.body.completedLocation];
+    
     var campaign = await getManager()
-        // .findOne(Campaign, {where: {"_ID": req.params.campaignID}});
         .createQueryBuilder(Campaign, "campaign")
-        .leftJoinAndSelect("campaign._assignment", "assignment")
-        .leftJoinAndSelect("campaign._question", "questions")
-        .leftJoinAndSelect("campaign._talkingPoint", "talkingPoints")
-        // .leftJoinAndSelect("campaign._results", )
         .where("campaign._ID = :id", {id: req.params.campaignID})
         .getOne();
 
+    campaign.results = await getManager().find(Results, {where: { "_campaign": campaign }});
+
+    completedLocation.results = [];
     for (let l in results){
         var result = new Results();
         result.answerNumber = Number(l);
         result.answer = results[l];
         result.rating = rating;
-        result.campaign = req.body.campaignID;
-        result
+        result.campaign = campaign;
+        completedLocation.results.push(result);
     }
+
+    await getManager().save(completedLocation)
+        .then(res => console.log("saved completedLocation"))
+        .catch(e => console.log(e));
+    
+    // add campaign reference to results
+    completedLocation.results.forEach(re => {
+        re.completedLocation = completedLocation;
+    });
+    await getManager().save(completedLocation.results)
+        .then(res => console.log("saved results"))
+        .catch(e => console.log(e));
+
+    // remove the circular references - NOT NECESSARY
+    completedLocation.results.forEach(re => {
+        re.completedLocation = undefined;
+    });
+
+    // go to success message and redirect to '/canvassing/map'
     res.send(campaign);
 });
 
