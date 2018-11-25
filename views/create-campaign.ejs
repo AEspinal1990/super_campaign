@@ -1,102 +1,49 @@
 <% include ./partials/header %>
-<html>
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
-
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <link rel="stylesheet" href="/stylesheets/create-campaign.css">
-    
-</head>
-<body>
 	<div class="container">
+
         <h1>Create a Campaign</h1>
-
-        <form action="/campaign" autocomplete="off" method="POST">
-	  		<div class="form-group single-line">
+        
+		<form action="/campaign" method="POST">
+	  		<div class="form-group">
 			    <label>Campaign Name</label>
-			    <input type="text" name="campaign[campaignName]" class="form-control single-line" placeholder="Campaign Name">
-            </div>
-
-            <div class="form-group single-line">
+			    <input type="text" name="campaign[campaignName]" class="form-control" placeholder="Campaign Name">
+              </div>
+            <div class="form-group">
                 <label>Start Date</label>
-                <input type="text" name="campaign[startDate]" class="form-control single-line" placeholder="YYYY-MM-DD">
+                <input type="text" name="campaign[startDate]" class="form-control" placeholder="YYYY-MM-DD">
             </div>
-
-            <div class="form-group single-line">
+            <div class="form-group">
                 <label>End Date</label>
-                <input type="text" name="campaign[endDate]" class="form-control single-line" placeholder="YYYY-MM-DD">
+                <input type="text" name="campaign[endDate]" class="form-control" placeholder="YYYY-MM-DD">
+            </div>           
+            <div class="form-group">
+                <label for="talkingPoints">Talking Points</label>
+                <textarea class="form-control" id="talkingPoints" name="campaign[talkingPoints]" rows="3"></textarea>
             </div>
-
-            <div class="form-group single-line">
+            <div class="form-group">
+                <label for="questionaire">Questionaire</label>
+                <textarea class="form-control" placeholder="One question per line." id="questionaire" name="campaign[questionaire]" rows="3"></textarea>
+            </div>		
+            <div class="form-group">
                 <label>Expected Visit Duration</label>
                 <input type="text" name="campaign[averageExpectedDuration]" class="form-control" placeholder="Number of Minutes">
-            </div>   
-
-            <div>
-                <label>Talking Points</label>
-                    <div data-role="dynamic-fields">
-                        <div class="form-inline">
-                            <button class="btn btn-danger" data-role="remove">
-                                <span class="fas fa-minus"></span>&nbsp
-                            </button>
-                            <button class="btn btn-primary" data-role="add">
-                                <span class="fas fa-plus"></span>&nbsp
-                            </button>
-                            <span>&nbsp</span>
-                            <input type="text" class="form-control flex" name="campaign[talkingPoints]" data-role="text"> 
-                        </div><!--div.form-inline-->
-                    </div> <!--div[data-role="dynamic-fields"-->
-            </div>
-
-            <div class="form-group">
-                <label>Questionaire</label>
-                <div data-role="dynamic-fields">
-                    <div class="form-inline">
-                        <button class="btn btn-danger" data-role="remove">
-                            <span class="fas fa-minus"></span>&nbsp
-                        </button>
-                        <button class="btn btn-primary" data-role="add">
-                            <span class="fas fa-plus"></span>&nbsp
-                        </button>
-                        <span>&nbsp</span>
-                        <input type="text" class="form-control flex" name="campaign[questionaire]" data-role="text"> 
-                    </div><!--div.form-inline-->
-                </div> <!--div[data-role="dynamic-fields"-->
-            </div> 
-            
-                <!-- <label for="canvassers">Canvassers</label>
-                <br>
-                    <select class="selectpicker" multiple data-live-search="true" name="campaign[tests]">
-                        <option>Mustard</option>
-                        <option>Ketchup</option>
-                        <option>Relish</option>
-                    </select> -->
-
+            </div>      		 
             <div class="form-group">
                 <label for="locations">Locations</label>
                 <textarea class="form-control" id="locations" name="campaign[locations]" rows="3"></textarea>
             </div>
-            
             <div class="form-group">
-                <label for="managers">Manager</label>
-                <textarea class="form-control" placeholder="Manager ID" id="managers" name="campaign[managers]" rows="3"></textarea>
-            </div>
-
+                    <label for="locations">Manager</label>
+                    <textarea class="form-control" placeholder="Manager ID" id="managers" name="campaign[managers]" rows="3"></textarea>
+                </div>  
             <div class="form-group">
                 <label for="locations">Canvassers</label>
                 <textarea class="form-control" placeholder="One ID of each Canvasser per line" id="canvassers" name="campaign[canvassers]" rows="3"></textarea>
-            </div>     
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-default">Submit</button>
-            </div>    
+            </div>      
+  	
+		  <button type="submit" class="btn btn-default">Submit</button>
 		</form>
 
-    </div><!-- /div.container-->
-</body>
-
-<script type="text/javascript" src="/scripts/create-campaign.js"></script>
-</html>
+	</div>
 <% include ./partials/footer %>
