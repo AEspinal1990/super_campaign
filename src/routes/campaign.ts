@@ -31,6 +31,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     let avgDuration;
     let campaign;
 
+    console.log(req.body.campaign);
     // Grab dates needed to create campaign object 
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);
