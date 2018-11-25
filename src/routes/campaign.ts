@@ -10,7 +10,6 @@ import server, { io } from '../server';
 
 const middleware = require('../middleware');
 const router: Router = Router();
-
 const logger = require('../util/logger');
 const campaignLogger = logger.getLogger('campaignLogger');
 
@@ -41,7 +40,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     // Create Campaign then save it.   
     campaign = campaignCreator.initCampaign(req.body.campaign.campaignName, startDate, endDate, avgDuration);
     await campaignCreator.saveCampaign(campaign);
-    campaignLogger.info(`Saved campaign: ${campaign._name}`);
+    campaignLogger.info(`Saved campaign: ${campaign._name}` + ` with ID: ${campaign.ID}`);
 
 
     // Parse the talking points then save them.    
