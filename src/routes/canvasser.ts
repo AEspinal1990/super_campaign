@@ -3,6 +3,12 @@ import { getManager, getRepository } from "typeorm";
 import { Canvasser } from '../backend/entity/Canvasser';
 import { Availability } from '../backend/entity/Availability';
 import { io } from '../server';
+import { Campaign } from '../backend/entity/Campaign';
+import { Questionaire } from '../backend/entity/Questionaire';
+import { TalkPoint } from '../backend/entity/TalkPoint';
+import { Assignment } from '../backend/entity/Assignment';
+import { Task } from '../backend/entity/Task';
+import { Results } from '../backend/entity/Results';
 
 const router: Router = Router();
 const middleware = require('../middleware');
@@ -185,29 +191,106 @@ router.post('/view-task-detail', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/canvassing/:id/:campaignid', middleware.isCanvasser, async (req: Request, res: Response) => {
+/**
+ * Start of canvassing where user selects a campaign -> task -> real time canvassing
+ */
+router.get('/canvassing', async (req: Request, res: Response) => {
     var canvasser = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._campaigns", "campaigns")
-        .leftJoinAndSelect("canvasser._task", "tasks")
-        .leftJoinAndSelect("tasks._remainingLocation", "rL")
-        .leftJoinAndSelect("rL._locations", "rlocations")
-        .leftJoinAndSelect("tasks._completedLocation", "cL")
-        .leftJoinAndSelect("cL._locations", "cLocations")
-        .leftJoinAndSelect("canvasser._assignedDates", "assignedDates")
-        .leftJoinAndSelect("canvasser._results", "results")
-        .where("user._employeeID = :ID", { ID: req.params.id })
-        .where("campaigns._ID = :ID", { ID: req.params.campaignid })
-        .getOne()
+        .where("user._employeeID = :id", {id: req.user[0]._employeeID})
+        .getOne();
 
+    var tasks = [];
+    for (let l in canvasser.campaigns){
+        var task =  await getManager()
+            .find(Task, {where: {"campaignID": canvasser.campaigns[l].ID}});
+        tasks.push(task);
+    }
 
+    // All campaigns this canvasser is participating. Let user select a campaign
+        // drop down a list of tasks for user to select and start canvassing
+    res.send({
+        campaigns: canvasser.campaigns,
+        tasks: tasks
+    });
+});
 
-    console.log(canvasser);
+/**
+ * Real time canvassing where route is shown on map, 
+ * along with talking points, questionaire, and option for entering results
+ */
+router.post('/canvassing/map', async (req: Request, res: Response) => {
+    // router.get('/canvassing/:campaignID/:taskID', async (req: Request, res: Response) => {
+    var task = await getManager()
+        .createQueryBuilder(Task, "task")
+        .leftJoinAndSelect("task._remainingLocation", "RL")
+        .leftJoinAndSelect("RL._locations", "RLocations")
+        .leftJoinAndSelect("task._completedLocation", "CL")
+        .leftJoinAndSelect("CL._locations", "CLocations")
+        .where("task._ID = :id", {id: req.body.taskID})
+        .getMany();
 
+    // create a list of talking points withou the campaign object
+    var talkingPoints = await getManager().find(TalkPoint, {where: {"_campaign": req.body.campaignID}});
+    var points = [];
+    talkingPoints.forEach(tp => {
+        points.push(tp.talk);
+    });
+   
+    
+    res.send({
+        task: task,
+        talkiingPoints: points 
+     });
     // use google directions api in frontend: https://developers.google.com/maps/documentation/javascript/directions
     // only show route from point a to b where a is current location and b is next destination
+});
 
+/**
+ * For entering results of a location
+ * THIS CAN BE PART OF THE ROUTE 'canvassing/map' IT IS UP TO FRONTEND
+ */
+router.post('/canvassing/enter-results', async (req: Request, res: Response) => {
+    // create a list of questions without the campaign object
+    var questionaire = await getManager().find(Questionaire, {where: {"_campaign": req.body.campaignID}});
+    var questions = [];
+    questionaire.forEach(q => {
+        questions.push(q.question);
+    });
+
+    res.send({
+        questions: questions,
+    })
+});
+
+/**
+ * For saving the results
+ */
+// router.post('/canvassing/results', async (req: Request, res: Response) => {
+router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
+    var results = req.body.results;
+    var rating = req.body.rating;
+    var campaign = await getManager()
+        // .findOne(Campaign, {where: {"_ID": req.params.campaignID}});
+        .createQueryBuilder(Campaign, "campaign")
+        .leftJoinAndSelect("campaign._assignment", "assignment")
+        .leftJoinAndSelect("campaign._question", "questions")
+        .leftJoinAndSelect("campaign._talkingPoint", "talkingPoints")
+        // .leftJoinAndSelect("campaign._results", )
+        .where("campaign._ID = :id", {id: req.params.campaignID})
+        .getOne();
+
+    for (let l in results){
+        var result = new Results();
+        result.answerNumber = Number(l);
+        result.answer = results[l];
+        result.rating = rating;
+        result.campaign = req.body.campaignID;
+        result
+    }
+    res.send(campaign);
 });
 
 export { router as canvasserRouter }
