@@ -147,10 +147,6 @@ export const getDate = date => {
     return new Date(date[0], date[1]-1, date[2]);
 };
 
-
-
-
-
 // function to build campaign data
 exports.createCampaignInfo = campaignData => {
     let campaignName = campaignData.campaignName;

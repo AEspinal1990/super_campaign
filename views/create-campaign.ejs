@@ -1,8 +1,13 @@
 <% include ./partials/header %>
 <html>
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <link rel="stylesheet" href="/stylesheets/create-campaign.css">
+    
 </head>
 <body>
 	<div class="container">
@@ -59,24 +64,34 @@
                         <input type="text" class="form-control flex" name="campaign[questionaire]" data-role="text"> 
                     </div><!--div.form-inline-->
                 </div> <!--div[data-role="dynamic-fields"-->
-            </div>   	
+            </div> 
+            
+                <!-- <label for="canvassers">Canvassers</label>
+                <br>
+                    <select class="selectpicker" multiple data-live-search="true" name="campaign[tests]">
+                        <option>Mustard</option>
+                        <option>Ketchup</option>
+                        <option>Relish</option>
+                    </select> -->
 
             <div class="form-group">
                 <label for="locations">Locations</label>
                 <textarea class="form-control" id="locations" name="campaign[locations]" rows="3"></textarea>
             </div>
-
+            
             <div class="form-group">
-                <label for="locations">Manager</label>
+                <label for="managers">Manager</label>
                 <textarea class="form-control" placeholder="Manager ID" id="managers" name="campaign[managers]" rows="3"></textarea>
             </div>
 
             <div class="form-group">
                 <label for="locations">Canvassers</label>
                 <textarea class="form-control" placeholder="One ID of each Canvasser per line" id="canvassers" name="campaign[canvassers]" rows="3"></textarea>
-            </div>      
-  	
-	        <button type="submit" class="btn btn-default">Submit</button>
+            </div>     
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>    
 		</form>
 
     </div><!-- /div.container-->
