@@ -1,20 +1,24 @@
 <% include ./partials/header %>
-
-	<div class="container">
-
-        <h1>Login</h1>
+	<div class="text-center" style="position:relative">
+		<h1 class="row"></h1>
+		<h1 class="row"></h1>
+	<h1>Super Canvasser</h1></div>
+	<div class="container-fluid col-sm-4 rounded" style="border:2px solid black;">
+		<h1 class="row"></h1>
+        <h2 class="text-center">Member Login</h2>
         
 		<form action="/" method="POST">
-	  		<div class="form-group">
+	  		<div class="form-group" style="max-width:100%">
 			    <label>Username</label>
 			    <input type="text" name="username" class="form-control" placeholder="Username">
               </div>
-		    <div class="form-group">
+		    <div class="form-group" style="max-width:100%">
 			    <label>Password</label>
 			    <input type="password" name="password" class="form-control" placeholder="Password">
               </div>
-		  	
-		  <button type="submit" class="btn btn-default">Login</button>
+		  <div class="text-center" style="max-width:100%"> 
+		  <button class ="btn btn-primary" type="submit" class="btn btn-default">Login</button>
+		</div>	
 		</form>
 
 	</div><!-- Close container -->
