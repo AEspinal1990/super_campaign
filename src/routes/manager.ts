@@ -54,6 +54,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Estimated number of tasks
      */
     let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
+    // TODO: Add error handling in the case that there are no available canvassers.
     let locations = managerTools.getCampaignLocations(campaign);
     let estimatedTasks = managerTools.estimateTask(locations, ESTIMATED_VISIT_TIME, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
 
@@ -66,6 +67,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         avg_travel_speed: AVG_TRAVEL_SPEED
     };
 
+    // This is causing app to restart
     let newTasks = await managerTools.launchORT(data);
     /**
      * Create tasks and assign campaignID & assignment
@@ -75,7 +77,9 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Remove canvassers with no openings in schedule
      */
+    console.log('Before remove busy', canvassers)
     canvassers = managerTools.removeBusy(canvassers);
+
     canvassers = managerTools.assignTasks(canvassers, tasks);
     assignment.tasks = tasks;
     campaign.assignment = assignment;
@@ -83,7 +87,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save new assignment and update campaign
      */
-    await getManager().save(assignment);
+    // await getManager().save(assignment);
     // await getManager().save(campaign)
 
 
@@ -122,8 +126,8 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     //     console.log("after a canvasser save")
     // }
     // works on local server
-    await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
-    res.status(200).send('Create Assignment');
+    //await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
+    //res.status(200).send('Create Assignment');
 
 });
 

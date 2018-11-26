@@ -265,8 +265,10 @@ export const removeBusy = (canvassers: Canvasser[]) => {
 export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     let result;
     let availableDates = [];
+    console.log('Canvassers at start', canvassers)
     // Sort by dates to allow for easier front loading.
     canvassers.forEach(canvasser => {
+        console.log(canvasser);
         canvasser.availableDates = sortDates(canvasser.availableDates);
         if (canvasser.assignedDates.length === 0){
             canvasser.assignedDates = [];
@@ -308,6 +310,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
 
         // Found earliest date remove them from canvassers available list
         // Insert into datesAssigned    
+        console.log('Canvassers array',canvassers)
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
         task.canvasser = canvassers[canvasserIndex].ID.name;
         task.scheduledOn = earliestDate;
@@ -321,6 +324,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
 function assignTask(canvasser: Canvasser, task: Task) {
 
     // Create AssignedDate object and insert into canvasser    
+    console.log('The canvasser', canvasser)
     let assignedDate = new AssignedDate();
     assignedDate.canvasserID = canvasser;
     assignedDate.assignedDate = canvasser.availableDates[0].availableDate
