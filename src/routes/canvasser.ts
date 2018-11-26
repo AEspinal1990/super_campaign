@@ -210,19 +210,25 @@ router.get('/canvassing', async (req: Request, res: Response) => {
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._campaigns", "campaigns")
+        .leftJoinAndSelect("canvasser._task", "task")
         .where("user._employeeID = :id", {id: req.user[0]._employeeID})
         .getOne();
-
+console.log(canvasser)
     var tasks = [];
     for (let l in canvasser.campaigns){
-        var task =  await getManager()
-            .find(Task, {where: {"campaignID": canvasser.campaigns[l].ID}});
+        var task = [];
+        for (let m in canvasser.task){
+            if (canvasser.campaigns[l].ID === canvasser.task[m].campaignID){
+                task.push(canvasser.task[m]);
+            }
+        }
         tasks.push(task);
     }
-
+    console.log(tasks)
     // All campaigns this canvasser is participating. Let user select a campaign
         // drop down a list of tasks for user to select and start canvassing
-    res.send({
+    // res.render("canvassing", {
+        res.send({
         campaigns: canvasser.campaigns,
         tasks: tasks
     });

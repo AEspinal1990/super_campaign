@@ -1,0 +1,39 @@
+<% include ./partials/header %>
+
+<div>
+    
+        <h2>Campaigns</h2>
+        <% for (var i=0; i < campaigns.length; i++ ) { %>
+            <form action='/canvasser/canvassing/map' method='POST'></form>
+        <!-- <div class="btn-group">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                <%= campaigns[i]._name %>
+            </button>
+            <div class="dropdown-menu">                
+                <% for (var j=0; j < tasks.length; j++ ) { %>
+                    <%= tasks[i][j]._ID %>
+                    <% if (tasks[i][j]._campaignID == campaigns[i].ID) { %>
+                        <a class="dropdown-item" href="#">
+                            <%= tasks[i][j]._ID %>
+                        </a>
+                    <% } %>
+                <% } %>
+            </div>
+        </div> -->
+        <%= campaigns[i]._name %>
+        <p></p>
+        <select name="taskID">
+            <% for (var j=0; j < tasks.length; j++ ) { %>
+                <%= tasks[i] %>
+                <% if (tasks[i][j]._campaignID == campaigns[i].ID) { %>
+                <option value="<%= tasks[i][j]._ID %>">
+                    <%= tasks[i][j]._ID %>
+                </option>
+                <% } %>
+            <% } %>
+        </select>
+    </form>
+        <% } %>
+</div>
+
+<% include ./partials/footer %>

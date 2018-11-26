@@ -8,10 +8,7 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import * as managerTools from '../util/managerTools';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
-import { Task } from '../backend/entity/Task';
-import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { Canvasser } from '../backend/entity/Canvasser';
-import { ENGINE_METHOD_NONE } from 'constants';
 
 const router: Router = Router();
 const logger = require('../util/logger');
@@ -114,7 +111,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Save canvassers with their assigned task
      */
     // for (let l in canvassers) {
-    //     console.log("before a canvasser save")
     //     await getManager()
     //         .createQueryBuilder()
     //         .relation(Canvasser, "_ID")
@@ -122,12 +118,14 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     //         .set(canvassers[l].task)
     //         .then(res => console.log("Canvasser saved"))
     //         .catch(e => console.error(e));
-    //     // await getManager().save(canvassers[l]);
-    //     console.log("after a canvasser save")
+    //     await getManager().save(canvassers[l]);
+    //     console.log(canvassers[l])
     // }
     // works on local server
-    //await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
-    //res.status(200).send('Create Assignment');
+    canvassers = await managerTools.loadCanvasserCampaigns(canvassers);
+    // console.log(canvassers)
+    await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
+    res.status(200).send('Create Assignment');
 
 });
 

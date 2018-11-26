@@ -85,6 +85,12 @@ export const getAvailableCanvassers = async campaignID => {
         .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._availableDates", "avaDate")
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
+        .leftJoinAndSelect("canvasser._task", "task")
+        .leftJoinAndSelect("task._remainingLocation", "RL")
+        .leftJoinAndSelect("RL._locations", "RLocation")
+        .leftJoinAndSelect("task._completedLocation", "CL")
+        .leftJoinAndSelect("CL._locations", "CLocation")
+        .leftJoinAndSelect("task._assignment", "assignment")
         .where("campaign._ID = :ID", { ID: campaignID })
         .getMany();
 };
@@ -273,6 +279,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         if (canvasser.assignedDates.length === 0){
             canvasser.assignedDates = [];
             canvasser.task = [];
+            availableDates.push(canvasser.availableDates);
         } else {
             var date = [];
             canvasser.availableDates.forEach(vdate => {
@@ -288,7 +295,6 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
             availableDates.push(date);
         }
     });
-
     // From all canvassers find the earliest date and insert task
     let earliestDate;
     let canvasserIndex;
@@ -303,14 +309,14 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
             }
             let date = canvassersEarliestDates(availableDates[i]);
             if (earliestDate === undefined || date < earliestDate) {
-                canvasserIndex = i;
-                earliestDate = availableDates[i][0].availableDate;
+                canvasserIndex = Number(i);
+                earliestDate = date;
             }
         }
 
         // Found earliest date remove them from canvassers available list
         // Insert into datesAssigned    
-        console.log('Canvassers array',canvassers)
+        // console.log(canvassers[canvasserIndex])
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
         task.canvasser = canvassers[canvasserIndex].ID.name;
         task.scheduledOn = earliestDate;
@@ -322,7 +328,6 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
 };
 
 function assignTask(canvasser: Canvasser, task: Task) {
-
     // Create AssignedDate object and insert into canvasser    
     console.log('The canvasser', canvasser)
     let assignedDate = new AssignedDate();
@@ -389,4 +394,24 @@ export const launchORT = (data) => {
     let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
 
     return newTasks;
+};
+
+export const loadCanvasserCampaigns = async (canvassers) => {
+    for (let l in canvassers){
+        var canvass = await getManager()
+            .createQueryBuilder(Canvasser, "canvasser")
+            .leftJoinAndSelect("canvasser._ID", "user")
+            .leftJoinAndSelect("canvasser._campaigns", "campaigns")
+            .where("user._employeeID = :id", {id: canvassers[l].ID.employeeID})
+            .getOne();
+        console.log(canvass)
+        if (canvass != undefined){
+            for (let m in canvass.campaigns){
+                if (canvass.campaigns[m].ID == canvassers[l].campaigns[0].ID)
+                    continue;
+                canvassers[l].campaigns.push(canvass.campaigns[m]);
+            }
+        }
+    }
+    return canvassers;
 };
