@@ -22,6 +22,11 @@ router.get('/calendar', middleware.isAuthenticated, async (req: Request, res: Re
 
 });
 
+router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
+    res.render('canvasserScreen');
+
+});
+
 /**
  * GET and POST for Edit Availability
  */

@@ -116,7 +116,7 @@ function createLocation(location) {
 }
 
 export const saveLocations = async (campaign, locations) => {
-    const Manager = getManager();
+    const Manager = getManager(); 
 
     locations = locations.trim().split('\n');
 

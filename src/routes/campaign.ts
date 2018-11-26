@@ -24,6 +24,8 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
     res.render('create-campaign', {canvassers: canvasser});
 });
 
+
+
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     let startDate;
     let endDate;

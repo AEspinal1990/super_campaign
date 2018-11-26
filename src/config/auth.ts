@@ -39,13 +39,9 @@ export const comparePasswords = async (inputPassword, hashedPassword) => {
 export function authenticationMiddleware() {
     console.log('Before auth')
     return (req, res, next) => {
-        console.log('Starting auth check');
-        console.log(`req.session.user: 
-            ${JSON.stringify(req.session.passport)}`);
-
         if(req.isAuthenticated()) 
             return next();
-        console.log('Finshing auth check')
+            
         res.send('BAd')//('/auth/', {errorMessage: 'You need to log in first.'});
     }
 }
@@ -58,8 +54,8 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
           where: {"_username": username}
         })
         .catch(e =>{
-            authLogger.error(`An error occured while searching for ${username}, ${e}`);
-            
+            authLogger.error(`An error occured while searching for ${username}, ${e}`);  
+            return done(null, false)          
         });
         
         // Does the user exist?
