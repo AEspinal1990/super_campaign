@@ -26,18 +26,41 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
 });
 
 router.get('/home', middleware.isManager, async (req: Request, res: Response) => {
-    // let manager = await getManager()
-    //         .createQueryBuilder(CampaignManager, "campaignManager")
-    //         .leftJoinAndSelect("campaignManager._ID", "manager")
-    //         .leftJoinAndSelect("campaignManager._currentCampaigns", "campaigns")
-    //         .where("campaignManager._ID = :ID", {ID: req.user._ID})
-    //         .getOne();
-                
 
-    //console.log('manager',manager);
-    //res.send(req.user);
-    var campaign = await getManager().findOne(Campaign, { where: { "_ID": 5 } });
-    res.send(campaign);
+    let campaigns = await getManager()
+            .createQueryBuilder(Campaign, "campaigns")
+            .leftJoinAndSelect("campaigns._managers", "managers")
+            .leftJoinAndSelect("managers._ID", "ids")
+            .getMany();
+  
+    
+
+    let c = [];
+    // campaigns.forEach(campaign => {
+    //     campaign.managers.forEach(manager => {
+    //         // if(manager !== undefined) {
+                
+    //         // }
+    //         for(let manager in campaign.managers) {
+    //             if(manager.ID.employeeID === req.user[0]._employeeID)
+    //                 console.log("FOund");
+    //                 break;
+    //         }
+    //     });
+    // });
+    
+    for (let i = 0; i < campaigns.length; i++) {
+         
+        for (let j = 0; j < campaigns[i].managers.length; j++) {
+            //console.log(campaigns[i].managers[j].ID.employeeID)
+            // console.log(req.user[0]._employeeID)
+            if (req.user[0]._employeeID === campaigns[i].managers[j].ID.employeeID) {
+                //console.log('Found')
+                c.push(campaigns[i]);
+            }
+        }
+    }
+    res.render('manager-campaign-home',{campaigns:c});
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
