@@ -1,11 +1,7 @@
 {
 	"locations": [
 		{
-<<<<<<< HEAD
-			"_ID": 38,
-=======
 			"_ID": 41,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -16,11 +12,7 @@
 			"_long": -73.113434
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 39,
-=======
 			"_ID": 42,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 1,
 			"_street": "Education Dr",
 			"_unit": "0",
@@ -31,11 +23,7 @@
 			"_long": -73.591287
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 40,
-=======
 			"_ID": 43,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 1000,
 			"_street": "Hempstead Turnpike",
 			"_unit": "0",
@@ -46,11 +34,7 @@
 			"_long": -73.599404
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 41,
-=======
 			"_ID": 44,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 77,
 			"_street": "Massachusetts Ave",
 			"_unit": "0",
@@ -61,11 +45,7 @@
 			"_long": -71.09416
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 42,
-=======
 			"_ID": 45,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 1,
 			"_street": "South Ave",
 			"_unit": "0",
@@ -76,11 +56,7 @@
 			"_long": -73.651099
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 43,
-=======
 			"_ID": 46,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 188,
 			"_street": "Merritts Rd",
 			"_unit": "0",
@@ -91,11 +67,7 @@
 			"_long": -73.459155
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 44,
-=======
 			"_ID": 47,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 234,
 			"_street": "Main St",
 			"_unit": "0",
@@ -106,11 +78,7 @@
 			"_long": -73.442116
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 45,
-=======
 			"_ID": 48,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 202,
 			"_street": "Airport Plaza Blvd",
 			"_unit": "0",
@@ -121,11 +89,7 @@
 			"_long": -73.419253
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 46,
-=======
 			"_ID": 49,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 2245,
 			"_street": "Broadhollow Rd",
 			"_unit": "0",
@@ -136,11 +100,7 @@
 			"_long": -73.423329
 		},
 		{
-<<<<<<< HEAD
-			"_ID": 47,
-=======
 			"_ID": 50,
->>>>>>> 984416cf47601b4f0b95b97770de68db220125d7
 			"_streetNumber": 5316,
 			"_street": "Nesconset highway",
 			"_unit": "0",

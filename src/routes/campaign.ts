@@ -7,6 +7,7 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
 import { Canvasser } from '../backend/entity/Canvasser';
 import server, { io } from '../server';
+import { CampaignManager }      from '../backend/entity/CampaignManager';
 
 const middleware = require('../middleware');
 const router: Router = Router();
@@ -24,7 +25,20 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
     res.render('create-campaign', {canvassers: canvasser});
 });
 
+router.get('/home', middleware.isManager, async (req: Request, res: Response) => {
+    // let manager = await getManager()
+    //         .createQueryBuilder(CampaignManager, "campaignManager")
+    //         .leftJoinAndSelect("campaignManager._ID", "manager")
+    //         .leftJoinAndSelect("campaignManager._currentCampaigns", "campaigns")
+    //         .where("campaignManager._ID = :ID", {ID: req.user._ID})
+    //         .getOne();
+                
 
+    //console.log('manager',manager);
+    //res.send(req.user);
+    var campaign = await getManager().findOne(Campaign, { where: { "_ID": 5 } });
+    res.send(campaign);
+});
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     let startDate;
