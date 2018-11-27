@@ -37,7 +37,10 @@ router.get('/home', middleware.isManager, async (req: Request, res: Response) =>
     //console.log('manager',manager);
     //res.send(req.user);
     var campaign = await getManager().findOne(Campaign, { where: { "_ID": 5 } });
-    res.send(campaign);
+    var arr = [];
+    arr.push(campaign);
+    console.log(campaign);
+    res.render('manager-campaign-home', {campaigns: arr});
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
