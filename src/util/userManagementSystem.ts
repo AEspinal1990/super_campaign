@@ -9,21 +9,17 @@ export const createBaseUser = userData => {
     newUser.name = userData.name;
     newUser.username = userData.username;
     newUser.password = userData.password;
-    var roles = 0;
-    userData.role.forEach(role => {
-        roles += parseInt(role);
-    });
-    newUser.permission = roles;
+    newUser.permission = parseInt(userData.role);
     return newUser;
 };
 
 export const createRoledUser = (roleNumber,user): CampaignManager | Canvasser | SystemAdmin => {
     let roledUser: CampaignManager | Canvasser | SystemAdmin;
     
-    if(roleNumber == 10){
+    if(roleNumber == 1){
         roledUser = new CampaignManager();
     } 
-    else if (roleNumber == 1) {
+    else if (roleNumber == 2) {
         roledUser = new Canvasser();
     } 
     else {
