@@ -18,12 +18,6 @@ export class User {
     @Column({ name: "passwd" })
     private _password!: string;
 
-    // constructor (username:string, name:string, permission:number){
-    //     this._username = username;
-    //     this._name = name;
-    //     this._permission = permission;
-    // }
-
     public get username(): string {
         return this._username;
     }

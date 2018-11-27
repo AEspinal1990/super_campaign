@@ -262,13 +262,17 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
         });
     }
     io.on('connection', function (socket) {
-        socket.emit('route', route);
+        socket.emit('route', {
+            route: route,
+            campaignID: req.body.campaignID,
+            locations: task.remainingLocation.locations
+        });
     });
     
     res.render("canvassing-map", {
     // res.send({
         task: task,
-        talkingPoints: points 
+        talkingPoints: points,
      });
     // use google directions api in frontend: https://developers.google.com/maps/documentation/javascript/directions
     // only show route from point a to b where a is current location and b is next destination
@@ -289,6 +293,8 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
     res.render("canvassing-enter-results", {
     // res.send({
         questions: questions,
+        campaignID: req.body.campaignID,
+        location: req.body.location
     })
 });
 
@@ -297,24 +303,24 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
  */
 router.post('/canvassing/results', async (req: Request, res: Response) => {
 // router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
-    var results = req.body.results;
+    var results = results;
     var rating = req.body.rating;
     var completedLocation = new CompletedLocation();
     completedLocation.locations = [req.body.completedLocation];
-    
+    console.log(req.body.completedLocation)
     var campaign = await getManager()
         .createQueryBuilder(Campaign, "campaign")
-        .where("campaign._ID = :id", {id: req.params.campaignID})
+        .where("campaign._ID = :id", {id: req.body.campaignID})
         .getOne();
-
-    campaign.results = await getManager().find(Results, {where: { "_campaign": campaign }});
+    // console.log(campaign)
+    campaign.results = await getManager().find(Results, {where: { "_campaign": campaign.ID }});
 
     completedLocation.results = [];
     for (let l in results){
         var result = new Results();
         result.answerNumber = Number(l);
-        result.answer = results[l];
-        result.rating = rating;
+        result.answer = (results[l] == 'true');
+        result.rating = Number(rating);
         result.campaign = campaign;
         completedLocation.results.push(result);
     }
