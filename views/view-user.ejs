@@ -22,16 +22,16 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="inputGroupSelect01">Role</label>
             </div>
-            <select name="user[role]" class="custom-select" id="inputGroupSelect01">
-                <option value="1" <% if (role===1){ %>
+            <select name="user[role]" class="custom-select" id="inputGroupSelect01" multiple>
+                <option value="1" <% if (role&10){ %>
                     selected="selected"
                     <% } else {} %>
                     >Campaign Manager</option>
-                <option value="2" <% if (role===2){ %>
+                <option value="2" <% if (role&1){ %>
                     selected ="selected"
                     <% } else {} %>
                     >Canvasser</option>
-                <option value="3" <% if (role===3){ %>
+                <option value="3" <% if (role&100){ %>
                     selected ="selected"
                     <% } else {} %>
                     >System Administrator</option>

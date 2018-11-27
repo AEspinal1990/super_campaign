@@ -8,6 +8,11 @@ export class User {
     private _username!: string;
     @Column({name: "fullName"})
     private _name!: string;
+    /**
+     * 1xx is a admin
+     * x1x is a manager
+     * xx1 is a canvasser
+     */
     @Column({name: "permission"})
     private _permission!: number;
     @Column({ name: "passwd" })
