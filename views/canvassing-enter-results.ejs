@@ -1,0 +1,15 @@
+<% include ./partials/header %>
+
+<div id="enter-forms">
+    <form id="results-form" action="/canvasser/canvassing/enter-results" method="POST">
+        <% for (var i = 0; i < questions.length; i++) { %>
+            <h3>
+                <%= questions[i] %>
+            </h3>
+            <input type="text" name="results" class="form-control">
+        <% } %>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
+
+<% include ./partials/footer %>
