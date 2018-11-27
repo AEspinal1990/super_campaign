@@ -3,8 +3,13 @@
 
 	<div class="container">
 
-        <h1>Add a User</h1>
-        
+        <% if (message !== "") { %>
+            <div class="alert alert-warning">
+                <strong>Warning!</strong> <%= message %>
+            </div>
+        <% } %>
+
+        <h1>Add a User</h1>        
         
 		<form action="/user" method="POST">
 	  		<div class="form-group">
