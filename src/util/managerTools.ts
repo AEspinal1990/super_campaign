@@ -131,7 +131,7 @@ export const getCampaignTask = async (campaignID) => {
 export const getTask = async (taskId) => {
     return await getManager()
         .createQueryBuilder(Task, "task")
-        .where("ID = ID", { ID: taskId })
+        .where("_ID = ID", { ID: taskId })
         .getMany();
 }
 
@@ -399,9 +399,10 @@ export const loadCanvasserCampaigns = async (canvassers) => {
             .createQueryBuilder(Canvasser, "canvasser")
             .leftJoinAndSelect("canvasser._ID", "user")
             .leftJoinAndSelect("canvasser._campaigns", "campaigns")
+            .leftJoinAndSelect("campaigns._assignment", "assignment")
             .where("user._employeeID = :id", {id: canvassers[l].ID.employeeID})
             .getOne();
-        console.log(canvass)
+        // console.log(canvass)
         if (canvass != undefined){
             for (let m in canvass.campaigns){
                 if (canvass.campaigns[m].ID == canvassers[l].campaigns[0].ID)
