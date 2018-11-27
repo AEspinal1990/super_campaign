@@ -1,26 +1,13 @@
 <% include ./partials/header %>
 
 <div id="enter-forms">
-    <form id="results-form" action="/canvasser/canvassing/results" method="POST">
+    <form id="results-form" action="/canvasser/canvassing/enter-results" method="POST">
         <% for (var i = 0; i < questions.length; i++) { %>
             <h3>
                 <%= questions[i] %>
             </h3>
-            <input type="radio" name="results[<%= i %>]" value="true" multiple> True<br>
-            <input type="radio" name="results[<%= i %>]" value="false"> False<br>
+            <input type="text" name="results" class="form-control">
         <% } %>
-        <input type="hidden" name="campaignID" value="<%= campaignID %>">
-        <input type="hidden" name="questions" value="<%= questions %>">
-        <input type="hidden" name="completedLocation" value="<%= location %>">
-        <br>
-
-        <h3>Rating</h3>
-        <input type="radio" name="rating" value="1" required> 1<br>
-        <input type="radio" name="rating" value="2"> 2<br>
-        <input type="radio" name="rating" value="3"> 3<br>
-        <input type="radio" name="rating" value="4"> 4<br>
-        <input type="radio" name="rating" value="5"> 5<br>
-        
         <button type="submit" class="btn btn-default">Submit</button>
     </form>
 </div>

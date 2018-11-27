@@ -26,7 +26,6 @@
 <script>
     var map;
     var markers = [];
-    var infoWindow;
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -56,7 +55,7 @@
         markers = [];
     }
 
-    function addRouteNum(loc, location, num, campaignID) {
+    function addRouteNum(location, num) {
         var markerId = getMarkerUniqueId(location.lat, location.lng);
         var marker = new google.maps.Marker({
             position: location,
@@ -64,20 +63,6 @@
             animation: google.maps.Animation.DROP,
             id: markerId,
             icon: "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red" + num + ".png"
-        
-        });
-        var infoContent = '<div id="content">'+
-            '<form action="/canvasser/canvassing/enter-results" method="POST">'+
-                '<input type="hidden" name="campaignID" value="'+campaignID+'">'+
-                '<input type="hidden" name="location" value="'+loc+'">'+
-                '<input type="submit" value="Enter Results">'+
-            '</form>'+
-            '</div>';
-        infoWindow = new google.maps.InfoWindow({
-            content: infoContent
-        })
-        marker.addListener('click', function() {
-            infoWindow.open(map, marker);
         });
         markers[markerId] = marker;
     };
@@ -86,12 +71,12 @@
     $(document).ready(function () {
         socket.on('route', function (route) {
             deleteMarkers();
-            for (i in route.route) {
-                parsedGeocode = { lat: parseFloat(route.route[i].lat), lng: parseFloat(route.route[i].lng) };
-                addRouteNum(route.locations[i], parsedGeocode, Number(i)+1, route.campaignID);
+            for (i in route) {
+                parsedGeocode = { lat: parseFloat(route[i].lat), lng: parseFloat(route[i].lng) };
+                addRouteNum(parsedGeocode, Number(i)+1);
             }
             map.setZoom(5);
-            map.setCenter(new google.maps.LatLng(parseFloat(route.route[0].lat), parseFloat(route.route[0].lng)));
+            map.setCenter(new google.maps.LatLng(parseFloat(route[0].lat), parseFloat(route[0].lng)));
         });
     });
 </script>
