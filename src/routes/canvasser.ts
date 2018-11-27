@@ -68,11 +68,15 @@ router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res
     res.render('edit-availability', { availableOrAssigned, canvasserID, assigned });
 });
 
+// { dates:
+//     [ Node]       '11/04/2018,11/05/2018,11/06/2018,11/07/2018,11/08/2018,11/09/2018,11/15/2018,11/22/2018,11/29/2018,11/28/2018,11/30/2018,11/21/2018,11/24/2018,11/23/2018,11/16/2018,11/14/2018' } }
+
 router.post('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
     }
+    console.log('Dates', req.body)
     var newDates = req.body.editAvailability.dates.split(",");
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
