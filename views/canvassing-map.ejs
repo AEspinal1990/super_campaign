@@ -1,0 +1,85 @@
+<% include ./partials/header %>
+<head>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>     
+</head>
+<style>
+    /* Set the size of the div element that contains the map */
+    #map {
+    height: 400px;  /* The height is 400 pixels */
+    width: 100%;  /* The width is the width of the web page */
+    background-color: grey;
+    }
+</style>
+<div id="map"></div>
+
+<div id="talking-points">
+    <h1>Talking Points</h1>
+    
+    <% for (var i=0; i < talkingPoints.length; i++) { %>
+        <h3>
+            <%= talkingPoints[i] %>
+        </h3>
+    <% } %>
+</div>
+
+<script>
+    var map;
+    var markers = [];
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 10,
+            center: { lat: 40.771, lng: -73.974 }
+        });
+    }
+
+    var getMarkerUniqueId = function (lat, lng) {
+        return lat + '_' + lng;
+    }
+
+    //** sets the map on all markers in the array
+    function setMapOnAll(map) {
+        for (marker in markers) {
+            markers[marker].setMap(map);
+        }
+    }
+
+    // Removes the markers from the map, but keeps them in the array.
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+    // Deletes all markers in the array by removing references to them.
+    function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+    }
+
+    function addRouteNum(location, num) {
+        var markerId = getMarkerUniqueId(location.lat, location.lng);
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            id: markerId,
+            icon: "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red" + num + ".png"
+        });
+        markers[markerId] = marker;
+    };
+
+    var socket = io();
+    $(document).ready(function () {
+        socket.on('route', function (route) {
+            deleteMarkers();
+            for (i in route) {
+                parsedGeocode = { lat: parseFloat(route[i].lat), lng: parseFloat(route[i].lng) };
+                addRouteNum(parsedGeocode, Number(i)+1);
+            }
+            map.setZoom(5);
+            map.setCenter(new google.maps.LatLng(parseFloat(route[0].lat), parseFloat(route[0].lng)));
+        });
+    });
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
+
+<% include ./partials/footer %>

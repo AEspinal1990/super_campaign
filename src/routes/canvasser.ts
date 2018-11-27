@@ -137,13 +137,13 @@ router.post('/availability/:id', middleware.isCanvasser, async (req: Request, re
     res.send("Done Editing Availability");
 });
 
-router.get('/:id/view-tasks', middleware.isCanvasser, async (req: Request, res: Response) => {
+router.get('/:id/view-tasks', async (req: Request, res: Response) => {
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
         .leftJoinAndSelect("canvasser._ID", "user")
-        .where("user._employeeID = :ID", { ID: req.params.id })
+        .where("user._employeeID = :ID", { ID: req.user[0]._employeeID })
         .getOne();
     // check when a canvaseer is in many campaigns. check the list of campaigns
 
@@ -213,7 +213,7 @@ router.get('/canvassing', async (req: Request, res: Response) => {
         .leftJoinAndSelect("canvasser._task", "task")
         .where("user._employeeID = :id", {id: req.user[0]._employeeID})
         .getOne();
-console.log(canvasser)
+// console.log(canvasser)
     var tasks = [];
     for (let l in canvasser.campaigns){
         var task = [];
@@ -224,11 +224,9 @@ console.log(canvasser)
         }
         tasks.push(task);
     }
-    console.log(tasks)
-    // All campaigns this canvasser is participating. Let user select a campaign
-        // drop down a list of tasks for user to select and start canvassing
-    // res.render("canvassing", {
-        res.send({
+    // console.log(tasks)
+    res.render("canvassing", {
+        // res.send({
         campaigns: canvasser.campaigns,
         tasks: tasks
     });
@@ -247,7 +245,7 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
         .leftJoinAndSelect("task._completedLocation", "CL")
         .leftJoinAndSelect("CL._locations", "CLocations")
         .where("task._ID = :id", {id: req.body.taskID})
-        .getMany();
+        .getOne();
 
     // create a list of talking points withou the campaign object
     var talkingPoints = await getManager().find(TalkPoint, {where: {"_campaign": req.body.campaignID}});
@@ -256,10 +254,21 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
         points.push(tp.talk);
     });
    
+    var route = [];
+    for (let l in task.remainingLocation.locations){
+        route.push({
+            lat: task.remainingLocation.locations[l].lat,
+            lng: task.remainingLocation.locations[l].long
+        });
+    }
+    io.on('connection', function (socket) {
+        socket.emit('route', route);
+    });
     
-    res.send({
+    res.render("canvassing-map", {
+    // res.send({
         task: task,
-        talkiingPoints: points 
+        talkingPoints: points 
      });
     // use google directions api in frontend: https://developers.google.com/maps/documentation/javascript/directions
     // only show route from point a to b where a is current location and b is next destination
@@ -277,7 +286,8 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
         questions.push(q.question);
     });
 
-    res.send({
+    res.render("canvassing-enter-results", {
+    // res.send({
         questions: questions,
     })
 });
