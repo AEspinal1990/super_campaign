@@ -24,8 +24,8 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
     const canvasser = await canvasserRepository.find().catch(e => console.log(e));
     res.render('create-campaign', {canvassers: canvasser});
 });
-
-router.get('/home', middleware.isManager, async (req: Request, res: Response) => {
+//Removed authentication for now
+router.get('/home', async (req: Request, res: Response) => {
 
     let campaigns = await getManager()
             .createQueryBuilder(Campaign, "campaigns")
