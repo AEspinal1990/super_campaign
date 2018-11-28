@@ -243,9 +243,9 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
         points.push(tp.talk);
     });
 
-    var task = await getTaskByID(req.body.taskID).then(async res =>
-    await sendToMap(task, req.body.campaignID));
-    // sendToMap(task, req.body.campaignID);
+    var task = await getTaskByID(req.body.taskID)
+    // ISSUE IS HERE
+    sendToMap(task, req.body.campaignID);
 
     res.render("canvassing-map", {
         // res.send({

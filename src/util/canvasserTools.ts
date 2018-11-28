@@ -102,7 +102,7 @@ export const removeLocation = (locations, locationID) => {
     return locations;
 };
 
-export const sendToMap = async (task, campaignID) => {
+export const sendToMap = (task, campaignID) => {
     // console.log(task)
     var route = [];
     var rlocations;
