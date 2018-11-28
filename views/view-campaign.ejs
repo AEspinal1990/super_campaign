@@ -1,255 +1,277 @@
-<html>
+<% include ./partials/header %>
 
 <head>
     <title>Super Campaign</title>
     <style>
-        .content {
-                max-width: 500px;
-                margin: auto;
-                background: white;
-                padding: 10px;
-            }
-            table,
-            th,
-            td {
-                border: 1px solid black;
-            }
-        
         /* Set the size of the div element that contains the map */
         #map {
             height: 400px;  /* The height is 400 pixels */
             width: 100%;  /* The width is the width of the web page */
             background-color: grey;
         }
-        </style>
-  
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    
+    </style>
 
-    <!--
-    <script type="application/json" src="locations/view-campaign-location.JSON"></script>
-    <script type="text/javascript" src="/scripts/map-view.js"></script>
-    -->
+    <link rel="stylesheet" type="text/css" href="/stylesheets/view-campaign.css">
     <script src="/socket.io/socket.io.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 </head>
 
 <body>
-    <div class="container">
-        <% if (id === ""){ %>
-        <h2>Campaign was not found.</h2>
+<div class="container">
+    <div class="accordion-option">
+        <h3 class="title">View Campaign</h3>
+        <!-- <a href="javascript:void(0)" style="text-decoration:none" class="toggle-accordion" accordion-id="#accordion"></a> -->
+        <a href="javascript:void(0)" class="openAll" style="text-decoration:none">&nbspExpand All</a>
+        <a href="javascript:void(0)" class="closeAll" style="text-decoration:none">Collapse All&nbsp</a>
+
+    </div><!-- div.accordion-option -->
+    <div class="clearfix"></div>
+    <div class="panel-group" id="accordion" aria-multiselectable="true">
+        <!--Campaign ID-->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Campaign ID
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseOne" class="panel-collapse show">
+                <div class="panel-body">
+                    <%= id %>
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.panel-->
+
+        <!--SECOND ONE-->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" style="text-decoration:none" aria-expanded="true" aria-controls="collapseTwo">
+                        Campaign ID
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse show">
+                <div class="panel-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
+                    on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table,
+                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.panel-->
+    </div><!--div.panel-group-->
+
+
+    <br><br><br>
+    <% if (id === ""){ %>
+    <h2>Campaign was not found.</h2>
+    <% } %>
+
+    <h1>View a Campaign</h1>
+
+    <h3>Campaign ID</h3>
+    <p>
+        <%= id %>
+    </p>
+
+    <h3>Campaign Name</h3>
+    <p>
+        <%= name %>
+    </p>
+
+    <h3>Start Date</h3>
+    <p>
+        <%= sDate %>
+    </p>
+
+    <h3>End Date</h3>
+    <p>
+        <%= endDate %>
+    </p>
+
+    <h3>Estimated Visit Duration</h3>
+    <p>
+        <%= duration %>
+    </p>
+
+    <h3>Assignment</h3>
+    <p>
+        <%= assignment %>
+    </p>
+
+    <h3>Campaign Managers</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        <% for (var i = 0; i < manager.length; i++){ %>
+        <tr>
+            <td>
+                <%= manager[i].ID.employeeID %>
+            </td>
+            <td>
+                <%= manager[i].ID.name %>
+            </td>
+        </tr>
         <% } %>
+    </table>
+    <br>
 
-        <h1>View a Campaign</h1>
+    <h3>Canvassers</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        <% for (var i = 0; i < canv.length; i++){ %>
+        <tr>
+            <td>
+                <%= canv[i].ID.employeeID %>
+            </td>
+            <td>
+                <%= canv[i].ID.name %>
+            </td>
+        </tr>
+        <% } %>
+    </table>
+    <br>
 
-        <h3>Campaign ID</h3>
-        <p>
-            <%= id %>
-        </p>
+    <h3>Questionaire</h3>
+    <table>
+        <% for(var i=0; i < question.length; i++){ %>
+        <tr>
+            <td>
+                <%= question[i].question %>
+            </td>
+        </tr>
+        <% } %>
+    </table>
+    <br>
 
-        <h3>Campaign Name</h3>
-        <p>
-            <%= name %>
-        </p>
+    <h3>Talking Points</h3>
+    <table>
+        <% for(var i=0; i < points.length; i++){ %>
+        <tr>
+            <td>
+                <%= points[i].talk %>
+            </td>
+        </tr>
+        <% } %>
+    </table>
+    <br>
 
-        <h3>Start Date</h3>
-        <p>
-            <%= sDate %>
-        </p>
+    <h3>Locations</h3>
+    <table>
+        <tr>
+            <th>Street Number</th>
+            <th>Street</th>
+            <th>Unit</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip Code</th>
+        </tr>
+        <% for(var i=0; i < locationz.length; i++){ %>
+        <tr>
+            <td>
+                <%= locationz[i]._streetNumber %>
+            </td>
+            <td>
+                <%= locationz[i]._street %>
+            </td>
+            <td>
+                <%= locationz[i]._unit %>
+            </td>
+            <td>
+                <%= locationz[i]._city %>
+            </td>
+            <td>
+                <%= locationz[i]._state %>
+            </td>
+            <td>
+                <%= locationz[i]._zipcode %>
+            </td>
+        </tr>
+        <% } %>
+    </table>
 
-        <h3>End Date</h3>
-        <p>
-            <%= endDate %>
-        </p>
+    <!--Map part of the page-->
+    <div id="map"></div>
+    <script>
+        var map;
+        var usa = {lat: 37.09024, lng: -95.7129};
+        var markers = [];
 
-        <h3>Estimated Visit Duration</h3>
-        <p>
-            <%= duration %>
-        </p>
-
-        <h3>Assignment</h3>
-        <p>
-            <%= assignment %>
-        </p>
-
-        <h3>Campaign Managers</h3>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-            </tr>
-            <% for (var i = 0; i < manager.length; i++){ %>
-            <tr>
-                <td>
-                    <%= manager[i].ID.employeeID %>
-                </td>
-                <td>
-                    <%= manager[i].ID.name %>
-                </td>
-            </tr>
-            <% } %>
-        </table>
-        <br>
-
-        <h3>Canvassers</h3>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-            </tr>
-            <% for (var i = 0; i < canv.length; i++){ %>
-            <tr>
-                <td>
-                    <%= canv[i].ID.employeeID %>
-                </td>
-                <td>
-                    <%= canv[i].ID.name %>
-                </td>
-            </tr>
-            <% } %>
-        </table>
-        <br>
-
-        <h3>Questionaire</h3>
-        <table>
-            <% for(var i=0; i < question.length; i++){ %>
-            <tr>
-                <td>
-                    <%= question[i].question %>
-                </td>
-            </tr>
-            <% } %>
-        </table>
-        <br>
-
-        <h3>Talking Points</h3>
-        <table>
-            <% for(var i=0; i < points.length; i++){ %>
-            <tr>
-                <td>
-                    <%= points[i].talk %>
-                </td>
-            </tr>
-            <% } %>
-        </table>
-        <br>
-
-        <h3>Locations</h3>
-        <table>
-            <tr>
-                <th>Street Number</th>
-                <th>Street</th>
-                <th>Unit</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Zip Code</th>
-            </tr>
-            <% for(var i=0; i < locationz.length; i++){ %>
-            <tr>
-                <td>
-                    <%= locationz[i]._streetNumber %>
-                </td>
-                <td>
-                    <%= locationz[i]._street %>
-                </td>
-                <td>
-                    <%= locationz[i]._unit %>
-                </td>
-                <td>
-                    <%= locationz[i]._city %>
-                </td>
-                <td>
-                    <%= locationz[i]._state %>
-                </td>
-                <td>
-                    <%= locationz[i]._zipcode %>
-                </td>
-            </tr>
-            <% } %>
-        </table>
-
-        <div id="map"></div>
-
-        <script>
-            var map;
-            var usa = {lat: 37.09024, lng: -95.7129};
-            var markers = [];
-
-            function initMap() {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: usa,
-                    zoom: 2
-                });
-            }
-
-
-            var markers = [];
-            var getMarkerUniqueId = function(lat, lng) {
-                return lat + '_' + lng;
-            }
-            //Adds marker to map and push to the array
-            function addMarker(location) {
-                var markerId = getMarkerUniqueId(location.lat, location.lng);
-                var marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    animation: google.maps.Animation.DROP,
-                    id: markerId
-                });
-                markers[markerId] = marker;
-            }
-            
-            //** sets the map on all markers in the array
-            function setMapOnAll(map) {
-                for (marker in markers) {
-                    markers[marker].setMap(map);
-                }                
-            }
-            
-            // Removes the markers from the map, but keeps them in the array.
-            function clearMarkers() {
-                setMapOnAll(null);
-            }
-            // Deletes all markers in the array by removing references to them.
-            function deleteMarkers() {
-                clearMarkers();
-                markers = [];
-            }
-
-            var removeMarker = function(marker, markerId) {
-	            marker.setMap(null); // set markers setMap to null to remove it from map
-	            delete markers[markerId]; // delete marker instance from markers object
-            }; 
-
-            var socket = io();
-            $(document).ready(function() {
-                socket.on('geocodes', function(geocodes) {
-                    deleteMarkers();
-                    console.log("EMPTY" +markers);
-                    console.log("ALL:" + geocodes);
-                    for(i in geocodes) {
-                        parsedGeocode = {lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng)};
-                        console.log("EACH" + parsedGeocode);
-                        addMarker(parsedGeocode);
-                    }
-                    map.setZoom(5);
-                    map.setCenter(new google.maps.LatLng(parseFloat(geocodes[0].lat),parseFloat(geocodes[0].lng)));
-
-                });
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: usa,
+                zoom: 2
             });
-            
-        </script>    
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
+        }
 
-    </div>
+
+        var markers = [];
+        var getMarkerUniqueId = function(lat, lng) {
+            return lat + '_' + lng;
+        }
+        //Adds marker to map and push to the array
+        function addMarker(location) {
+            var markerId = getMarkerUniqueId(location.lat, location.lng);
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                id: markerId
+            });
+            markers[markerId] = marker;
+        }
+        
+        //** sets the map on all markers in the array
+        function setMapOnAll(map) {
+            for (marker in markers) {
+                markers[marker].setMap(map);
+            }                
+        }
+        
+        // Removes the markers from the map, but keeps them in the array.
+        function clearMarkers() {
+            setMapOnAll(null);
+        }
+        // Deletes all markers in the array by removing references to them.
+        function deleteMarkers() {
+            clearMarkers();
+            markers = [];
+        }
+
+        var removeMarker = function(marker, markerId) {
+            marker.setMap(null); // set markers setMap to null to remove it from map
+            delete markers[markerId]; // delete marker instance from markers object
+        }; 
+
+        var socket = io();
+        $(document).ready(function() {
+            socket.on('geocodes', function(geocodes) {
+                deleteMarkers();
+                console.log("EMPTY" +markers);
+                console.log("ALL:" + geocodes);
+                for(i in geocodes) {
+                    parsedGeocode = {lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng)};
+                    console.log("EACH" + parsedGeocode);
+                    addMarker(parsedGeocode);
+                }
+                map.setZoom(5);
+                map.setCenter(new google.maps.LatLng(parseFloat(geocodes[0].lat),parseFloat(geocodes[0].lng)));
+
+            });
+        });
+        
+    </script>    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
+    <script src="/scripts/view-campaign.js"></script>
+
+</div><!-- div.container -->
+
 
 </body>
 
