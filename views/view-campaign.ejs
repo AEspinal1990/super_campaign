@@ -1,4 +1,5 @@
 <% include ./partials/header %>
+<% include ./partials/managerNav %>
 
 <head>
     <title>Super Campaign</title>
@@ -19,48 +20,80 @@
 <body>
 <div class="container">
     <div class="accordion-option">
-        <h3 class="title">View Campaign</h3>
+        <h1 class="title">View Campaign</h1>
         <!-- <a href="javascript:void(0)" style="text-decoration:none" class="toggle-accordion" accordion-id="#accordion"></a> -->
         <a href="javascript:void(0)" class="openAll" style="text-decoration:none">&nbspExpand All</a>
         <a href="javascript:void(0)" class="closeAll" style="text-decoration:none">Collapse All&nbsp</a>
 
     </div><!-- div.accordion-option -->
     <div class="clearfix"></div>
-    <div class="panel-group" id="accordion" aria-multiselectable="true">
+
+    <div class="accordion panel-group" id="accordion" aria-multiselectable="true">
         <!--Campaign ID-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
                 <h4 class="panel-title">
-                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamID" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
                         Campaign ID
                     </a>
                 </h4>
             </div><!--div.panel-heading-->
-            <div id="collapseOne" class="panel-collapse show">
-                <div class="panel-body">
+            <div id="collapseCamID" class="panel-collapse show">
+                <div class="card-body panel-body">
                     <%= id %>
                 </div>
             </div><!--div.panel-collaspe-->
         </div><!--div.panel-->
 
-        <!--SECOND ONE-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <!--Campaign Name-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
                 <h4 class="panel-title">
-                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" style="text-decoration:none" aria-expanded="true" aria-controls="collapseTwo">
-                        Campaign ID
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamName" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Campaign Name
                     </a>
                 </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse show">
-                <div class="panel-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-                    on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table,
-                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div><!--div.panel-heading-->
+            <div id="collapseCamName" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= name %>
                 </div>
             </div><!--div.panel-collaspe-->
-        </div><!--div.panel-->
-    </div><!--div.panel-group-->
+        </div><!--div.card div.panel-->
+
+        <!--Start Date-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseStartDate" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Start Date
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseStartDate" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= sDate %>
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
+
+        <!--End Date-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseStartDate" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        End Date
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseStartDate" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= endDate %>
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
+    
+    </div><!--div.accordion div.panel-group-->
 
 
     <br><br><br>

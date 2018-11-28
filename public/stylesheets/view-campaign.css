@@ -86,6 +86,10 @@
     font-size: 16px;
 }
 
+
+.panel-default + .panel-default {
+    margin-top: 0.5em;
+}
 .panel-default .panel-heading .panel-title .panel-title-text {
     color: #6a6c6f;
     font-size: 16px;
