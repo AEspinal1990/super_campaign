@@ -5,14 +5,10 @@ import { Availability } from '../backend/entity/Availability';
 import { io } from '../server';
 import { Campaign } from '../backend/entity/Campaign';
 import { Questionaire } from '../backend/entity/Questionaire';
-import { TalkPoint } from '../backend/entity/TalkPoint';
-import { Assignment } from '../backend/entity/Assignment';
-import { Task } from '../backend/entity/Task';
 import { Results } from '../backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { Locations } from '../backend/entity/Locations';
-import { RemainingLocation } from '../backend/entity/RemainingLocation';
-import { getTaskByID, getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign } from '../util/canvasserTools';
+import { getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign, getTaskByID, fillCampaign } from '../util/canvasserTools';
 
 const router: Router = Router();
 const middleware = require('../middleware');
@@ -247,7 +243,9 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
         points.push(tp.talk);
     });
 
-    var task = await sendToMap(req.body.taskID, req.body.campaignID);
+    var task = await getTaskByID(req.body.taskID)
+    // ISSUE IS HERE
+    sendToMap(task, req.body.campaignID);
 
     res.render("canvassing-map", {
         // res.send({
@@ -285,7 +283,7 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
     var rating = req.body.rating;
     var completedLocation = new CompletedLocation();
 
-    var location = await getManager().findOne(Locations, { where: { "_ID": req.body.locationID } })
+    var location = await getManager().findOne(Locations, { where: { "_ID": req.body.locationID } });
     completedLocation.locations = [location];
 
     var campaign = await getManager()
@@ -294,44 +292,64 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         .getOne();
 
     campaign.results = await getManager().find(Results, { where: { "_campaign": campaign.ID } });
-    // fill the new results
-    completedLocation.results = fillResults(results, rating, campaign);
 
     // delete this location from remaining locations
     var tasks = await getTasksByCampaign(req.body.campaignID);
     var task = await findTask(tasks, req.body.locationID);
-    var location:Locations = removeLocation(task.remainingLocation.locations, req.body.locationID);
-    
-    // save the remainingLocation without this completed location
-    await getManager().save(task.remainingLocation);
-
-    // pull the task's completed locations
-    if (task.completedLocation == undefined){
-        task.completedLocation = completedLocation;
-    }else {
-        task.completedLocation.locations.push(location);
+    var location: Locations;
+    if (task.remainingLocation != undefined || task.remainingLocation != null) {
+        location = removeLocation(task.remainingLocation.locations, req.body.locationID);
     }
-
-    // update the current task
-    await getManager().save(task);
-
-    // add campaign reference to results
-    completedLocation.results.forEach(re => {
-        re.completedLocation = completedLocation;
-    });
-
-    // save the results
-    await getManager().save(completedLocation.results)
-        .then(res => console.log("saved results"))
+    // save the remainingLocation without this completed location
+    await getManager().save(task.remainingLocation)
+        .then(res => console.log("after remaining locations save"))
         .catch(e => console.log(e));
 
-    // remove the circular references - NOT NECESSARY
-    completedLocation.results.forEach(re => {
-        re.completedLocation = undefined;
-    });
+    // add location to task's completed locations
+    var pushed = false;
+    if (task.completedLocation == undefined) {
+        task.completedLocation = completedLocation;
+    } else {
+        task.completedLocation.locations.push(location);
+        pushed = true;
+    }
 
-    await sendToMap(req.body.taskID, req.body.campaignID);
+    //save completed location
+    await getManager().save(task.completedLocation)
+        .then(res => console.log("after completed location save"))
+        .catch(e => console.log(e));
+    // update the current task
+    await getManager().save(task)
+        .then(res => console.log("after task save"))
+        .catch(e => console.log(e));
+    // fill the new results
+    completedLocation.results = fillResults(results, rating, campaign);
+
+    // load the task again and get the newly saved completedLocation ID
+    if (!pushed){
+        tasks = await getTasksByCampaign(req.body.campaignID);
+        task = await findTask(tasks, req.body.locationID);
+    }
+console.log(task.completedLocation)
+    // insert results into completedLocation
+    await getManager()
+            .createQueryBuilder()
+            .relation(CompletedLocation, "_results")
+            .of(task.completedLocation)
+            .add(completedLocation.results)
+            .then(res => console.log("after results insert into completed location"))
+            .catch(e => console.log(e));
+
+    // save the results
+    // await getManager().save(completedLocation.results)
+    //     .then(res => console.log("saved results"))
+    //     .catch(e => console.log(e));
+
     
+
+    await getTaskByID(req.body.taskID)
+        .then(res => sendToMap(res, req.body.campaignID));
+
     // go to success message and redirect to '/canvassing/map'
     res.render("canvassing-return-map", {
         taskID: req.body.taskID,

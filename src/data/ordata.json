@@ -35,17 +35,6 @@
 		},
 		{
 			"_ID": 4,
-			"_streetNumber": 77,
-			"_street": "Massachusetts Ave",
-			"_unit": "0",
-			"_city": "Cambridge",
-			"_state": "MA",
-			"_zipcode": 2139,
-			"_lat": 42.363672,
-			"_long": -71.101502
-		},
-		{
-			"_ID": 5,
 			"_streetNumber": 1,
 			"_street": "South Ave",
 			"_unit": "0",
@@ -56,7 +45,7 @@
 			"_long": -73.651099
 		},
 		{
-			"_ID": 6,
+			"_ID": 5,
 			"_streetNumber": 188,
 			"_street": "Merritts Rd",
 			"_unit": "0",
@@ -67,7 +56,7 @@
 			"_long": -73.459155
 		},
 		{
-			"_ID": 7,
+			"_ID": 6,
 			"_streetNumber": 234,
 			"_street": "Main St",
 			"_unit": "0",
@@ -78,7 +67,7 @@
 			"_long": -73.442116
 		},
 		{
-			"_ID": 8,
+			"_ID": 7,
 			"_streetNumber": 202,
 			"_street": "Airport Plaza Blvd",
 			"_unit": "0",
@@ -89,7 +78,7 @@
 			"_long": -73.419253
 		},
 		{
-			"_ID": 9,
+			"_ID": 8,
 			"_streetNumber": 2245,
 			"_street": "Broadhollow Rd",
 			"_unit": "0",
@@ -100,7 +89,7 @@
 			"_long": -73.423329
 		},
 		{
-			"_ID": 10,
+			"_ID": 9,
 			"_streetNumber": 5316,
 			"_street": "Nesconset highway",
 			"_unit": "0",
@@ -111,7 +100,7 @@
 			"_long": -73.05201
 		}
 	],
-	"num_canvassers": 15,
+	"num_canvassers": 6,
 	"estimated_visit_time": 10,
 	"workday_limit": 360,
 	"avg_travel_speed": 804
