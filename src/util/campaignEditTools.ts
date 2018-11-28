@@ -69,19 +69,38 @@ export const compareNames = (originalname, updatedName) => {
 
 export const compareDates = (originalDate, updatedDate) => { 
     let date: Date = campaignParser.getDate(updatedDate);
-    console.log(originalDate + " vs ", date)
-    return (originalDate === date);
+    originalDate = date.getFullYear() + "-" 
+        + (date.getMonth() + 1) + "-" 
+        + date.getDate();
+    return (originalDate === updatedDate);
 }
 
 
 export const compareAvgDurations = (originalAvgDuration, updatedAvgDuration) => {
-    return (originalAvgDuration === updatedAvgDuration)
+    console.log(originalAvgDuration + " vs " + updatedAvgDuration)
+    return (originalAvgDuration == updatedAvgDuration)
 }
 
-export const compareTalkingPoints = (originalTalkingPoints, updatedTalkingPoints) => {
-
+export const updatedDate = (updatedDate) => {
+    return campaignParser.getDate(updatedDate);
 }
 
-export const compareQuestionnaires = (originalQuestions, updatedQuestions) => {
+export const updateTalkingPoints = async (campaign, talkingPoints) => {
+    talkingPoints = campaignParser.getTalkingPoints(campaign, talkingPoints);
 
+    /**
+     * Delete original talking points
+     */
+    await getRepository(TalkPoint)
+        .createQueryBuilder()
+        .delete()
+        .where("_campaign = :ID", { ID: campaign._ID })
+        .execute();
+
+    /**
+     * Save each indivdual talking point to the DB.
+     */
+    talkingPoints.forEach(async point => {
+        await getManager().save(point).catch(e => console.log(e));
+    });
 }

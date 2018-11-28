@@ -208,27 +208,15 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
         where: { "_campaignName": updatedCampaign.campaignName } 
     });
 
-    let sameNames = editTools.compareNames(originalCampaign.name, 
-        updatedCampaign.campaignName)
-    console.log('Same names', sameNames)
-    let sameStartDates = editTools.compareDates(originalCampaign.startDate,
-        updatedCampaign.startDate);
-    let sameEndDates = editTools.compareDates(originalCampaign.endDate,
-        updatedCampaign.endDate);
-    console.log('Same startdates', sameStartDates);
-    console.log('Same enddates', sameEndDates);
-    let sameAvgDuration = editTools.compareAvgDurations(originalCampaign.avgDuration,
-        updatedCampaign.averageExpectedDuration);
-    console.log('Same avgDurations', sameAvgDuration)
-    let sameTalkingPoints = editTools.compareTalkingPoints(originalCampaign.talkingPoint,
-        updatedCampaign.talkingPoints);
-    let sameQuestions = editTools.compareQuestionnaires(originalCampaign.question, 
-        updatedCampaign.questionaire);
-    let sameManagers;
-    let sameCanvassers;
-    
-    
+    // Update campaign attributes
+    originalCampaign.name = updatedCampaign.campaignName;
+    originalCampaign.startDate = editTools.updatedDate(updatedCampaign.startDate);
+    originalCampaign.endDate = editTools.updatedDate(updatedCampaign.endDate);
+    originalCampaign.avgDuration = updatedCampaign.averageExpectedDuration;
+    await getManager().save(originalCampaign).catch(e => console.log(e));
 
+    // Update Talking Points
+    await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
     res.send(originalCampaign)
 });
 
