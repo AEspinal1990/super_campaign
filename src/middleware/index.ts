@@ -14,19 +14,19 @@ middlewareObj.isAuthenticated = (req: Request, res: Response, next: NextFunction
 }
 
 middlewareObj.isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    if (req.isAuthenticated()) {
-        if (req.user[0]._permission & 100)
-            return next()
+    if (req.isAuthenticated() && req.user[0]._permission === 3) {
+        return next()
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/');
 }
 
 middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
-    if (req.isAuthenticated()) {
-        if (req.user[0]._permission & 10)
-            return next()
+    if (req.isAuthenticated() && req.user[0]._permission === 1) {
+        return next()
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/');
 }
 
 middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) => {
@@ -43,11 +43,11 @@ middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) 
 
 middlewareObj.isCanvasser = async (req: Request, res: Response, next: NextFunction) => {
 
-    if (req.isAuthenticated()) {
-        if (req.user[0]._permission & 1)
-            return next()
+    if (req.isAuthenticated() && (req.user[0]._employeeID == req.params.id)) {
+        return next()
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/');
 }
 
 

@@ -63,7 +63,7 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
             authLogger.warn(`${username} was not found.`)
             return done(null, false, {message: 'User does not exist.'})
         }
-
+        
         // Check if password is correct for this account
         const isValid = await comparePasswords(password, user[0]._password);      
         if (!isValid) {          

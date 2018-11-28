@@ -74,7 +74,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Remove canvassers with no openings in schedule
      */
-    console.log('Before remove busy', canvassers)
+    // console.log('Before remove busy', canvassers)
     canvassers = managerTools.removeBusy(canvassers);
 
     canvassers = managerTools.assignTasks(canvassers, tasks);

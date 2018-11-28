@@ -123,7 +123,7 @@ router.post('/', [
     });
 
 
-router.get('/:username', async (req: Request, res: Response) => {
+router.get('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
 
     const userRepository = getRepository(User);
     const username = req.params.username;
