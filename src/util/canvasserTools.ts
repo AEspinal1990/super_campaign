@@ -14,7 +14,9 @@ export const getTaskByID = async (taskID) => {
         // .leftJoinAndSelect("CL._results", "results")
         .where("task._ID = :id", { id: taskID })
         .getOne()
-        .then(res => console.log("The result"))
+        .then(res =>{
+            return res;
+        })
         .catch(e => console.log(e));
     // task.completedLocation.results = await getResults(task);
     console.log('The task', task)
