@@ -10,7 +10,8 @@ const authLogger = logger.getLogger('authLogger');
  * GET and POST routes for Log In / Authentications
  */
 router.get('/', (req: Request, res: Response) => {
-    res.render('login', {message: ""});
+    // res.render('login', {message: ""});
+    res.render('login');
 });
 
 
