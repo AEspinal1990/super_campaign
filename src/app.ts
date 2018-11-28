@@ -57,10 +57,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
-  // @ts-ignore
-  res.locals.error = req.flash('error');
-  // @ts-ignore
-  res.locals.success = req.flash('success');
+  // // @ts-ignore
+  // res.locals.error = req.flash('error');
+  // // @ts-ignore
+  // res.locals.success = req.flash('success');
   res.locals.isAuthenticated = req.isAuthenticated();
   next();
 });
