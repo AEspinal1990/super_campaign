@@ -64,6 +64,7 @@
         } else {
             getIcon = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green.png";
         }
+
         var marker = new google.maps.Marker({
             position: location,
             map: map,
@@ -72,6 +73,7 @@
             icon: getIcon
         
         });
+
         infoContent = ('<div id="content">'+
             '<form action="/canvasser/canvassing/enter-results" method="POST">'+
                 '<input type="hidden" name="campaignID" value="'+campaignID+'">'+
@@ -80,12 +82,14 @@
                 '<input type="submit" value="Enter Results">'+
             '</form>'+
             '</div>');
+            
         var infoWindow = new google.maps.InfoWindow({
             content: infoContent
         });
         marker.addListener('click', function() {
             infoWindow.open(map, marker);
         });
+
         markers[markerId] = marker;
     };
 
@@ -108,7 +112,7 @@
             }
             map.setZoom(5);
             map.setCenter(new google.maps.LatLng(parseFloat(route[0].lat), parseFloat(route[0].lng)));
-            socket.close();
+            // socket.close();
         });
     });
 </script>

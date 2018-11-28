@@ -10,11 +10,6 @@ var _ = require('lodash');
 var moment = require('moment');
 moment().format();
 
-const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
-    Promise: Promise
-});
-
 // Empty "campaign" object we return when user 
 // tries to access a page with an invalid campaign id.
 export const emptyCampaign = {
@@ -57,6 +52,7 @@ export const getWorkdayLimit = () => {
     let globals = getGlobalParams();
     return Number(globals.taskTimeLimit);
 };
+
 
 /**
  * Returns the locations for a campaign
@@ -152,7 +148,6 @@ export const getRemainingLocations = async taskID => {
  * @param coord4 
  */
 export const manhattanDist = (coord1: number, coord2: number, coord3: number, coord4: number): number => {
-    // or we can just use google map geometry api... 
     let R = 6371e3; // meters
     let t1 = coord1 * Math.PI / 180;
     let t2 = coord3 * Math.PI / 180;
@@ -187,7 +182,6 @@ export const estimateTask = (locations, avgDuration, travelSpeed, workdayDuratio
             avgSingleDistance +=
                 manhattanDist(location.lat, location.long, otherLocation.lat, otherLocation.long) / travelSpeed;
         });
-
 
         avgSingleDistance /= locations.length;
         avgDistance += avgSingleDistance;
@@ -269,18 +263,21 @@ export const removeBusy = (canvassers: Canvasser[]) => {
 }
 
 export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
-    let result;
     let availableDates = [];
-    console.log('Canvassers at start', canvassers)
     // Sort by dates to allow for easier front loading.
     canvassers.forEach(canvasser => {
-        console.log(canvasser);
         canvasser.availableDates = sortDates(canvasser.availableDates);
+
+        // all available dates for this canvasser will be the actual available dates
         if (canvasser.assignedDates.length === 0){
             canvasser.assignedDates = [];
             canvasser.task = [];
             availableDates.push(canvasser.availableDates);
         } else {
+            /**
+             * create a list of available dates by comparing
+             * the assigned dates with all inital availablle dates
+             */
             var date = [];
             canvasser.availableDates.forEach(vdate => {
                 for (let l in canvasser.assignedDates) {
@@ -299,8 +296,8 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     let earliestDate;
     let canvasserIndex;
     tasks.forEach(task => {
-        // Since dates are already sorted earliest date will
-        // be at a canvassers first available date.
+        // Since dates are already sorted,
+        // earliest date will be at a canvassers first available date.
         for (let i in canvassers) {
             if (availableDates[i] === undefined) {
                 continue;
@@ -315,36 +312,30 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         }
 
         // Found earliest date remove them from canvassers available list
-        // Insert into datesAssigned    
-        // console.log(canvassers[canvasserIndex])
+        // Insert into datesAssigned
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
         task.canvasser = canvassers[canvasserIndex].ID.name;
         task.scheduledOn = earliestDate;
         earliestDate = undefined;
     });
 
-
     return canvassers;
 };
 
 function assignTask(canvasser: Canvasser, task: Task) {
-    // Create AssignedDate object and insert into canvasser    
-    console.log('The canvasser', canvasser)
+    // Create AssignedDate object and insert into canvasser
     let assignedDate = new AssignedDate();
     assignedDate.canvasserID = canvasser;
     assignedDate.assignedDate = canvasser.availableDates[0].availableDate
     canvasser.assignedDates.push(assignedDate);
-
-    // Remove date that was just assigned from available dates
-    canvasser.availableDates.shift();
     canvasser.task.push(task);
     task.canvasser = canvasser.ID.name;
-
+    // do not delete the date of the newly assigned from available dates
+    // the available dates are a record of all dates canvasser was initally available for
     return canvasser;
 }
 
 function canvassersEarliestDates(availbleDates) {
-    //console.log('Dates', availbleDates[0].availableDate)
     return availbleDates[0].availableDate;
 }
 
@@ -354,6 +345,12 @@ function sortDates(availableDates) {
     });
 };
 
+/**
+ * Update tasks that already exists in the database
+ * @param tasks 
+ * @param campaignID 
+ * @param canvassers 
+ */
 export const updateTasks = async (tasks, campaignID, canvassers) => {
     let dbTasks = await getCampaignTask(campaignID);
     // we can assume the campaign will have the tasks at this point
@@ -380,6 +377,10 @@ export const updateTasks = async (tasks, campaignID, canvassers) => {
     return tasks;
 };
 
+/**
+ * Launches and handles the response of OR-Tools from our python file
+ * @param data 
+ */
 export const launchORT = (data) => {
     fs.writeFile("src/data/ordata.json", JSON.stringify(data, null, "\t"), function (err) {
         if (err) throw err;
@@ -396,6 +397,12 @@ export const launchORT = (data) => {
     return newTasks;
 };
 
+
+/**
+ * Load the rest of the campaigns the canvasser may be in.
+ * This is needed for saving the entity, as to not lose previous data
+ * @param canvassers
+ */
 export const loadCanvasserCampaigns = async (canvassers) => {
     for (let l in canvassers){
         var canvass = await getManager()
@@ -405,7 +412,7 @@ export const loadCanvasserCampaigns = async (canvassers) => {
             .leftJoinAndSelect("campaigns._assignment", "assignment")
             .where("user._employeeID = :id", {id: canvassers[l].ID.employeeID})
             .getOne();
-        // console.log(canvass)
+
         if (canvass != undefined){
             for (let m in canvass.campaigns){
                 if (canvass.campaigns[m].ID == canvassers[l].campaigns[0].ID)
