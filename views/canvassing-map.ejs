@@ -26,7 +26,6 @@
 <script>
     var map;
     var markers = [];
-    var infoWindow;
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -105,7 +104,7 @@
                 }
             }
             map.setZoom(5);
-            map.setCenter(new google.maps.LatLng(parseFloat(route.route[0].lat), parseFloat(route.route[0].lng)));
+            map.setCenter(new google.maps.LatLng(parseFloat(route[0].lat), parseFloat(route[0].lng)));
         });
     });
 </script>

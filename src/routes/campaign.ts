@@ -24,38 +24,19 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
     const canvasser = await canvasserRepository.find().catch(e => console.log(e));
     res.render('create-campaign', {canvassers: canvasser});
 });
-
-router.get('/home', middleware.isManager, async (req: Request, res: Response) => {
+//Removed authentication for now
+router.get('/home', async (req: Request, res: Response) => {
 
     let campaigns = await getManager()
             .createQueryBuilder(Campaign, "campaigns")
             .leftJoinAndSelect("campaigns._managers", "managers")
             .leftJoinAndSelect("managers._ID", "ids")
             .getMany();
-  
-    
 
-    let c = [];
-    // campaigns.forEach(campaign => {
-    //     campaign.managers.forEach(manager => {
-    //         // if(manager !== undefined) {
-                
-    //         // }
-    //         for(let manager in campaign.managers) {
-    //             if(manager.ID.employeeID === req.user[0]._employeeID)
-    //                 console.log("FOund");
-    //                 break;
-    //         }
-    //     });
-    // });
-    
-    for (let i = 0; i < campaigns.length; i++) {
-         
+    let c = [];    
+    for (let i = 0; i < campaigns.length; i++) {         
         for (let j = 0; j < campaigns[i].managers.length; j++) {
-            //console.log(campaigns[i].managers[j].ID.employeeID)
-            // console.log(req.user[0]._employeeID)
             if (req.user[0]._employeeID === campaigns[i].managers[j].ID.employeeID) {
-                //console.log('Found')
                 c.push(campaigns[i]);
             }
         }
@@ -68,8 +49,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     let endDate;
     let avgDuration;
     let campaign;
-
-    console.log(req.body.campaign);
+    
     // Grab dates needed to create campaign object 
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);

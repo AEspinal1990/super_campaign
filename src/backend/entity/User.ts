@@ -8,15 +8,16 @@ export class User {
     private _username!: string;
     @Column({name: "fullName"})
     private _name!: string;
-    /**
-     * 1xx is a admin
-     * x1x is a manager
-     * xx1 is a canvasser
-     */
     @Column({name: "permission"})
     private _permission!: number;
     @Column({ name: "passwd" })
     private _password!: string;
+
+    // constructor (username:string, name:string, permission:number){
+    //     this._username = username;
+    //     this._name = name;
+    //     this._permission = permission;
+    // }
 
     public get username(): string {
         return this._username;

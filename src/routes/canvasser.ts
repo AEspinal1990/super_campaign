@@ -341,8 +341,8 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
     for (let l in results) {
         var result = new Results();
         result.answerNumber = Number(l);
-        result.answer = (results[l] == 'true');
-        result.rating = Number(rating);
+        result.answer = results[l];
+        result.rating = rating;
         result.campaign = campaign;
         completedLocation.results.push(result);
     }
