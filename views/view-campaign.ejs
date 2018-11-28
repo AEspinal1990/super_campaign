@@ -1,4 +1,5 @@
 <% include ./partials/header %>
+<% include ./partials/managerNav %>
 
 <head>
     <title>Super Campaign</title>
@@ -18,186 +19,308 @@
 
 <body>
 <div class="container">
+    <% if (id === ""){ %>
+        <h2>Campaign was not found.</h2>
+    <% } else { %>
     <div class="accordion-option">
-        <h3 class="title">View Campaign</h3>
+        <h1 class="title">View Campaign</h1>
         <!-- <a href="javascript:void(0)" style="text-decoration:none" class="toggle-accordion" accordion-id="#accordion"></a> -->
         <a href="javascript:void(0)" class="openAll" style="text-decoration:none">&nbspExpand All</a>
         <a href="javascript:void(0)" class="closeAll" style="text-decoration:none">Collapse All&nbsp</a>
 
     </div><!-- div.accordion-option -->
     <div class="clearfix"></div>
-    <div class="panel-group" id="accordion" aria-multiselectable="true">
+
+    <div class="accordion panel-group" id="accordion" aria-multiselectable="true">
         <!--Campaign ID-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
                 <h4 class="panel-title">
-                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamID" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
                         Campaign ID
                     </a>
                 </h4>
             </div><!--div.panel-heading-->
-            <div id="collapseOne" class="panel-collapse show">
-                <div class="panel-body">
+            <div id="collapseCamID" class="panel-collapse show">
+                <div class="card-body panel-body">
                     <%= id %>
                 </div>
             </div><!--div.panel-collaspe-->
         </div><!--div.panel-->
 
-        <!--SECOND ONE-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <!--Campaign Name-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
                 <h4 class="panel-title">
-                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" style="text-decoration:none" aria-expanded="true" aria-controls="collapseTwo">
-                        Campaign ID
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamName" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Campaign Name
                     </a>
                 </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse show">
-                <div class="panel-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-                    on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table,
-                    raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div><!--div.panel-heading-->
+            <div id="collapseCamName" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= name %>
                 </div>
             </div><!--div.panel-collaspe-->
-        </div><!--div.panel-->
-    </div><!--div.panel-group-->
+        </div><!--div.card div.panel-->
 
+        <!--Start Date-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseStartDate" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Start Date
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseStartDate" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= sDate %>
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <br><br><br>
-    <% if (id === ""){ %>
-    <h2>Campaign was not found.</h2>
-    <% } %>
+        <!--End Date-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseEndDate" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        End Date
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseEndDate" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= endDate %>
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <h1>View a Campaign</h1>
+        <!--Estimated Visit Duration-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseDuration" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Estimated Visit Duration
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseDuration" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <%= duration %> minutes
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
+    
+        <!--Campaign's Managers-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamManagers" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Campaign Managers
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseCamManagers" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <!--Start of table-->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-light">
+                                <th class="">ID</th>
+                                <th class="">Manager Name</th>                
+                            </thead>
+                            <tbody>
+                                <% for (var i = 0; i < manager.length; i++){ %>
+                                <tr>
+                                    <td><%= manager[i].ID.employeeID %></td>
+                                    <td><%= manager[i].ID.name %></td>
+                                </tr>
+                                <% } %>                                              
+                            </tbody>
+                        </table>
+                    </div><!--div.table-responsive-->
+                    <!--End of Table-->
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <h3>Campaign ID</h3>
-    <p>
-        <%= id %>
-    </p>
+        <!--Campaign's Canvassers-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamCanvassers" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Campaign Canvassers
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseCamCanvassers" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <!--Start of table-->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-light">
+                                <th class="">ID</th>
+                                <th class="">Canvasser Name</th>                
+                            </thead>
+                            <tbody>
+                                <% for (var i = 0; i < canv.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= canv[i].ID.employeeID %>
+                                    </td>
+                                    <td>
+                                        <%= canv[i].ID.name %>
+                                    </td>
+                                </tr>
+                                <% } %>                                          
+                            </tbody>
+                        </table>
+                    </div><!--div.table-responsive-->
+                    <!--End of Table-->
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <h3>Campaign Name</h3>
-    <p>
-        <%= name %>
-    </p>
+        <!--Questionaire-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamQuestionnaire" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Questionnaire
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseCamQuestionnaire" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <!--Start of table-->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-light">
+                                <th class="">Questions</th>                
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i < question.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= question[i].question %>
+                                    </td>
+                                </tr>
+                                <% } %>                                       
+                            </tbody>
+                        </table>
+                    </div><!--div.table-responsive-->
+                    <!--End of Table-->
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <h3>Start Date</h3>
-    <p>
-        <%= sDate %>
-    </p>
+        <!--Talking Points-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamTalkPoints" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Talking Points
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseCamTalkPoints" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <!--Start of table-->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-light">
+                                <th class="">Talking Points</th>                
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i < points.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= points[i].talk %>
+                                    </td>
+                                </tr>
+                                <% } %>                                    
+                            </tbody>
+                        </table>
+                    </div><!--div.table-responsive-->
+                    <!--End of Table-->
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <h3>End Date</h3>
-    <p>
-        <%= endDate %>
-    </p>
+        <!--Locations-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseCamLocations" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Locations Table View
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseCamLocations" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <!--Start of table-->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-light">
+                                <th class="">Door Number</th>     
+                                <th class="">Street</th>                
+                                <th class="">Unit</th>                
+                                <th class="">City</th>                
+                                <th class="">State</th>                
+                                <th class="">ZIP Code</th>                
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i < locationz.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= locationz[i]._streetNumber %>
+                                    </td>
+                                    <td>
+                                        <%= locationz[i]._street %>
+                                    </td>
+                                    <td>
+                                        <%= locationz[i]._unit %>
+                                    </td>
+                                    <td>
+                                        <%= locationz[i]._city %>
+                                    </td>
+                                    <td>
+                                        <%= locationz[i]._state %>
+                                    </td>
+                                    <td>
+                                        <%= locationz[i]._zipcode %>
+                                    </td>
+                                </tr>
+                                <% } %>                                 
+                            </tbody>
+                        </table>
+                    </div><!--div.table-responsive-->
+                    <!--End of Table-->
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
+    
+        <!--Map-->
+        <div class="card panel panel-default">
+            <div class="card-header panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-title-text" data-toggle="collapse" data-parent="#accordion" href="#collapseMap" style="text-decoration:none" aria-expanded="true" aria-controls="collapseOne">
+                        Locations Map View
+                    </a>
+                </h4>
+            </div><!--div.panel-heading-->
+            <div id="collapseMap" class="panel-collapse show">
+                <div class="card-body panel-body">
+                    <!--Map part of the page-->
+                    <div id="map"></div>
+                </div>
+            </div><!--div.panel-collaspe-->
+        </div><!--div.card div.panel-->
 
-    <h3>Estimated Visit Duration</h3>
-    <p>
-        <%= duration %>
-    </p>
+    </div><!--div.accordion div.panel-group-->
+    <% } %> <!--If else loof for wheter a campaign was found on server-->
 
-    <h3>Assignment</h3>
-    <p>
-        <%= assignment %>
-    </p>
-
-    <h3>Campaign Managers</h3>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-        </tr>
-        <% for (var i = 0; i < manager.length; i++){ %>
-        <tr>
-            <td>
-                <%= manager[i].ID.employeeID %>
-            </td>
-            <td>
-                <%= manager[i].ID.name %>
-            </td>
-        </tr>
-        <% } %>
-    </table>
-    <br>
-
-    <h3>Canvassers</h3>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-        </tr>
-        <% for (var i = 0; i < canv.length; i++){ %>
-        <tr>
-            <td>
-                <%= canv[i].ID.employeeID %>
-            </td>
-            <td>
-                <%= canv[i].ID.name %>
-            </td>
-        </tr>
-        <% } %>
-    </table>
-    <br>
-
-    <h3>Questionaire</h3>
-    <table>
-        <% for(var i=0; i < question.length; i++){ %>
-        <tr>
-            <td>
-                <%= question[i].question %>
-            </td>
-        </tr>
-        <% } %>
-    </table>
-    <br>
-
-    <h3>Talking Points</h3>
-    <table>
-        <% for(var i=0; i < points.length; i++){ %>
-        <tr>
-            <td>
-                <%= points[i].talk %>
-            </td>
-        </tr>
-        <% } %>
-    </table>
-    <br>
-
-    <h3>Locations</h3>
-    <table>
-        <tr>
-            <th>Street Number</th>
-            <th>Street</th>
-            <th>Unit</th>
-            <th>City</th>
-            <th>State</th>
-            <th>Zip Code</th>
-        </tr>
-        <% for(var i=0; i < locationz.length; i++){ %>
-        <tr>
-            <td>
-                <%= locationz[i]._streetNumber %>
-            </td>
-            <td>
-                <%= locationz[i]._street %>
-            </td>
-            <td>
-                <%= locationz[i]._unit %>
-            </td>
-            <td>
-                <%= locationz[i]._city %>
-            </td>
-            <td>
-                <%= locationz[i]._state %>
-            </td>
-            <td>
-                <%= locationz[i]._zipcode %>
-            </td>
-        </tr>
-        <% } %>
-    </table>
-
-    <!--Map part of the page-->
-    <div id="map"></div>
     <script>
         var map;
         var usa = {lat: 37.09024, lng: -95.7129};
