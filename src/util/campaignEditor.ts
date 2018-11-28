@@ -6,10 +6,15 @@ import { Locations } from "../backend/entity/Locations";
 import { CampaignManager } from "../backend/entity/CampaignManager";
 import { User } from "../backend/entity/User";
 import { Canvasser } from "../backend/entity/Canvasser";
+import * as campaignParser      from './campaignParser';
 
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
 });
+
+export const getTalkingPoints = async  (campaign, talkingPoints) => {
+    return campaignParser.getTalkingPoints(campaign, talkingPoints);
+}
 
 //This part is for the posting the form for editing campaign with the new camaignData
 export const editCampaign = async (campaignData, campaignID) => {

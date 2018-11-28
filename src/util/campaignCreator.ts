@@ -58,9 +58,9 @@ export const saveTalkingPoints = (campaign, talkingPoints) => {
 };
 
 
-export const saveQuestionaire = (campaign, questionaire) => {
+export const saveQuestionnaire = (campaign, questionaire) => {
     const Manager = getManager();
-    questionaire = campaignParser.getQuestionaire(campaign, questionaire);
+    questionaire = campaignParser.getQuestionnaire(campaign, questionaire);
 
     /**
      * Save each indivdual question to the DB.

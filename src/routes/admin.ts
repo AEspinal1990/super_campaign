@@ -119,7 +119,7 @@ router.post('/', [
                 adminLogger.error(`/user/new Error occured while creating ${newUser.username}, ${e}`);
             });
 
-        res.status(200).redirect('/user/new');
+        res.render('create-user', {message: ""});
     });
 
 

@@ -3,6 +3,12 @@
 
 	<div class="container">
 
+        <% if (message !== "") { %>
+            <div class="alert alert-warning"> 
+                <strong>Warning!</strong> <%= message %> 
+            </div> 
+        <% } %> 
+
         <h1>Add a User</h1>
         
         
