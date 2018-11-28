@@ -11,6 +11,8 @@ import { Task } from '../backend/entity/Task';
 import { Results } from '../backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { Locations } from '../backend/entity/Locations';
+import { RemainingLocation } from '../backend/entity/RemainingLocation';
+import { getTaskByID, getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign } from '../util/canvasserTools';
 
 const router: Router = Router();
 const middleware = require('../middleware');
@@ -211,14 +213,14 @@ router.get('/canvassing', async (req: Request, res: Response) => {
         .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._campaigns", "campaigns")
         .leftJoinAndSelect("canvasser._task", "task")
-        .where("user._employeeID = :id", {id: req.user[0]._employeeID})
+        .where("user._employeeID = :id", { id: req.user[0]._employeeID })
         .getOne();
-// console.log(canvasser)
+    // console.log(canvasser)
     var tasks = [];
-    for (let l in canvasser.campaigns){
+    for (let l in canvasser.campaigns) {
         var task = [];
-        for (let m in canvasser.task){
-            if (canvasser.campaigns[l].ID === canvasser.task[m].campaignID){
+        for (let m in canvasser.task) {
+            if (canvasser.campaigns[l].ID === canvasser.task[m].campaignID) {
                 task.push(canvasser.task[m]);
             }
         }
@@ -238,57 +240,39 @@ router.get('/canvassing', async (req: Request, res: Response) => {
  */
 router.post('/canvassing/map', async (req: Request, res: Response) => {
     // router.get('/canvassing/:campaignID/:taskID', async (req: Request, res: Response) => {
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "RLocations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .where("task._ID = :id", {id: req.body.taskID})
-        .getOne();
-
     // create a list of talking points withou the campaign object
-    var talkingPoints = await getManager().find(TalkPoint, {where: {"_campaign": req.body.campaignID}});
+    var talkingPoints = await getTalk(req.body.campaignID);
     var points = [];
     talkingPoints.forEach(tp => {
         points.push(tp.talk);
     });
-   
-    var route = [];
-    for (let l in task.remainingLocation.locations){
-        route.push({
-            lat: task.remainingLocation.locations[l].lat,
-            lng: task.remainingLocation.locations[l].long
-        });
-    }
-    io.on('connection', function (socket) {
-        socket.emit('route', route);
-    });
-    
+
+    var task = await sendToMap(req.body.taskID, req.body.campaignID);
+
     res.render("canvassing-map", {
-    // res.send({
+        // res.send({
         task: task,
-        talkingPoints: points 
-     });
-    // use google directions api in frontend: https://developers.google.com/maps/documentation/javascript/directions
-    // only show route from point a to b where a is current location and b is next destination
+        talkingPoints: points,
+    });
 });
 
 /**
  * For entering results of a location
- * THIS CAN BE PART OF THE ROUTE 'canvassing/map' IT IS UP TO FRONTEND
  */
 router.post('/canvassing/enter-results', async (req: Request, res: Response) => {
     // create a list of questions without the campaign object
-    var questionaire = await getManager().find(Questionaire, {where: {"_campaign": req.body.campaignID}});
+    var questionaire = await getManager().find(Questionaire, { where: { "_campaign": req.body.campaignID } });
     var questions = [];
     questionaire.forEach(q => {
         questions.push(q.question);
     });
-
+    // console.log(req.body.taskID)
     res.render("canvassing-enter-results", {
-    // res.send({
+        // res.send({
         questions: questions,
+        campaignID: req.body.campaignID,
+        locationID: req.body.locationID,
+        taskID: req.body.taskID
     })
 });
 
@@ -296,37 +280,47 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
  * For saving the results
  */
 router.post('/canvassing/results', async (req: Request, res: Response) => {
-// router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
+    // router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
     var results = req.body.results;
     var rating = req.body.rating;
     var completedLocation = new CompletedLocation();
-    completedLocation.locations = [req.body.completedLocation];
-    
+
+    var location = await getManager().findOne(Locations, { where: { "_ID": req.body.locationID } })
+    completedLocation.locations = [location];
+
     var campaign = await getManager()
         .createQueryBuilder(Campaign, "campaign")
-        .where("campaign._ID = :id", {id: req.params.campaignID})
+        .where("campaign._ID = :id", { id: req.body.campaignID })
         .getOne();
 
-    campaign.results = await getManager().find(Results, {where: { "_campaign": campaign }});
+    campaign.results = await getManager().find(Results, { where: { "_campaign": campaign.ID } });
+    // fill the new results
+    completedLocation.results = fillResults(results, rating, campaign);
 
-    completedLocation.results = [];
-    for (let l in results){
-        var result = new Results();
-        result.answerNumber = Number(l);
-        result.answer = results[l];
-        result.rating = rating;
-        result.campaign = campaign;
-        completedLocation.results.push(result);
+    // delete this location from remaining locations
+    var tasks = await getTasksByCampaign(req.body.campaignID);
+    var task = await findTask(tasks, req.body.locationID);
+    var location:Locations = removeLocation(task.remainingLocation.locations, req.body.locationID);
+    
+    // save the remainingLocation without this completed location
+    await getManager().save(task.remainingLocation);
+
+    // pull the task's completed locations
+    if (task.completedLocation == undefined){
+        task.completedLocation = completedLocation;
+    }else {
+        task.completedLocation.locations.push(location);
     }
 
-    await getManager().save(completedLocation)
-        .then(res => console.log("saved completedLocation"))
-        .catch(e => console.log(e));
-    
+    // update the current task
+    await getManager().save(task);
+
     // add campaign reference to results
     completedLocation.results.forEach(re => {
         re.completedLocation = completedLocation;
     });
+
+    // save the results
     await getManager().save(completedLocation.results)
         .then(res => console.log("saved results"))
         .catch(e => console.log(e));
@@ -336,8 +330,14 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         re.completedLocation = undefined;
     });
 
+    await sendToMap(req.body.taskID, req.body.campaignID);
+    
     // go to success message and redirect to '/canvassing/map'
-    res.send(campaign);
+    res.render("canvassing-return-map", {
+        taskID: req.body.taskID,
+        campaignID: req.body.campaignID
+    });
 });
+
 
 export { router as canvasserRouter }

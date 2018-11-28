@@ -1,0 +1,15 @@
+<% include ./partials/header %>
+
+<div id="auto-form">
+    <form id="force-form" action="/canvasser/canvassing/map" method="POST">
+        <input type="hidden" name="taskID" value="<%= taskID %>">
+        <input type="hidden" name="campaignID" value="<%= campaignID %>">
+        <input type="submit" id="bsumit" name="bsubmit" value="submit">
+    </form>
+</div>
+
+<script>
+    $('#force-form').submit();
+</script>
+
+<% include ./partials/footer %>

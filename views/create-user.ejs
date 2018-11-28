@@ -4,12 +4,13 @@
 	<div class="container">
 
         <% if (message !== "") { %>
-            <div class="alert alert-warning">
-                <strong>Warning!</strong> <%= message %>
-            </div>
-        <% } %>
+            <div class="alert alert-warning"> 
+                <strong>Warning!</strong> <%= message %> 
+            </div> 
+        <% } %> 
 
-        <h1>Add a User</h1>        
+        <h1>Add a User</h1>
+        
         
 		<form action="/user" method="POST">
 	  		<div class="form-group">

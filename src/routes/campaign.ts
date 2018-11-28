@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { getManager, getRepository } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 import * as campaignEditor from '../util/campaignEditor';
+import * as editTools from '../util/campaignEditTools';
 import * as campaignCreator from '../util/campaignCreator';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
@@ -24,6 +25,7 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
     const canvasser = await canvasserRepository.find().catch(e => console.log(e));
     res.render('create-campaign', {canvassers: canvasser});
 });
+
 //Removed authentication for now
 router.get('/home', async (req: Request, res: Response) => {
 
@@ -53,6 +55,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     // Grab dates needed to create campaign object 
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);
+
     avgDuration = Number(req.body.campaign.averageExpectedDuration);
 
 
@@ -68,7 +71,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
 
 
     // Parse the questionaire then save it.     
-    await campaignCreator.saveQuestionaire(campaign, req.body.campaign.questionaire);
+    await campaignCreator.saveQuestionnaire(campaign, req.body.campaign.questionaire);
     console.log(req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
@@ -194,9 +197,39 @@ router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
     campaignEditor.editCampaign(req.body.campaign, req.params.id);
     campaignLogger.info(`Updated campaign with id: ${req.params.id}`);
     if (res.status(200))
-        res.send("Campaign Edited!");
+        res.redirect('/campaign/home');
     else
         res.send("Error!");
+});
+
+router.post('/replacement/:id',middleware.manages, async (req: Request, res: Response) => {
+    let updatedCampaign = req.body.campaign;
+    let originalCampaign: Campaign = await getManager().findOne(Campaign, { 
+        where: { "_campaignName": updatedCampaign.campaignName } 
+    });
+
+    let sameNames = editTools.compareNames(originalCampaign.name, 
+        updatedCampaign.campaignName)
+    console.log('Same names', sameNames)
+    let sameStartDates = editTools.compareDates(originalCampaign.startDate,
+        updatedCampaign.startDate);
+    let sameEndDates = editTools.compareDates(originalCampaign.endDate,
+        updatedCampaign.endDate);
+    console.log('Same startdates', sameStartDates);
+    console.log('Same enddates', sameEndDates);
+    let sameAvgDuration = editTools.compareAvgDurations(originalCampaign.avgDuration,
+        updatedCampaign.averageExpectedDuration);
+    console.log('Same avgDurations', sameAvgDuration)
+    let sameTalkingPoints = editTools.compareTalkingPoints(originalCampaign.talkingPoint,
+        updatedCampaign.talkingPoints);
+    let sameQuestions = editTools.compareQuestionnaires(originalCampaign.question, 
+        updatedCampaign.questionaire);
+    let sameManagers;
+    let sameCanvassers;
+    
+    
+
+    res.send(originalCampaign)
 });
 
 /**
