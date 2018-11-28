@@ -7,7 +7,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as methodOverride from 'method-override'
 import * as expressValidator from 'express-validator';
-import * as flash from 'connect-flash';
+// import * as flash from 'connect-flash';
 var session     = require('express-session');
 var MySQLStore  = require('express-mysql-session')(session);
 var passport    = require('passport');
@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());    // This MUST come after bodyParser.
 app.use(methodOverride('_method'));
-app.use(flash())
+// app.use(flash())
 const options = {
   host: '35.237.149.4',
   port: 3306,
