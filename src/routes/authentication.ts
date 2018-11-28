@@ -10,14 +10,15 @@ const authLogger = logger.getLogger('authLogger');
  * GET and POST routes for Log In / Authentications
  */
 router.get('/', (req: Request, res: Response) => {
-    res.render('login');
+    res.render('login', {message: ""});
 });
 
 
 router.post('/', passport.authenticate(
     'local', {
         successRedirect: '/main',
-        failureRedirect: '/'
+        failureRedirect: '/',
+        failureFlash: true
     }
 ));
 
