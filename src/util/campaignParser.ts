@@ -52,11 +52,11 @@ export function constructAddress(location){
  * Returns the talking points from a campaign object
  */
 export const getTalkingPoints = (campaign, talkingPoints) => {
-
-    // Split up points by line breaks and remove carriage returns
-    console.log('From talking points', talkingPoints)
+    /**
+     * Split up points by line breaks and remove carriage returns
+     */
     talkingPoints = talkingPoints.trim().split('\n');
-    for(let i in talkingPoints) {
+    for (let i in talkingPoints) {
         talkingPoints[i] = talkingPoints[i].trim().replace('r','');
     }
 
@@ -76,7 +76,7 @@ export const getTalkingPoints = (campaign, talkingPoints) => {
 /**
  * Returns the questions from a campaign object
  */
-export const getQuestionaire = (campaign, questionaire) => {
+export const getQuestionnaire = (campaign, questionaire) => {
     questionaire = questionaire.trim().split("\n");
     for(let i in questionaire) {
         questionaire[i] = questionaire[i].replace('\r','');
@@ -181,3 +181,25 @@ exports.createCampaignLocations = campaignData => {
     campaign.locations = allLocations;
     return campaign;
 };
+
+
+export const getLocations = (locations) => {
+    locations = locations.trim().split('\n');
+    let places = [];
+    for (let i in locations) {
+        places.push(createLocation(locations[i]));
+    }
+    return places;
+    
+}
+
+function createLocation(location) {
+    let places = new Locations();
+    places.streetNumber = getStreetNumber(location);
+    places.street = getStreet(location);
+    places.unit = getUnit(location);
+    places.city = getCity(location);
+    places.state = getState(location);
+    places.zipcode = getZip(location);
+    return places;
+}
