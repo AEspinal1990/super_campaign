@@ -80,14 +80,6 @@ router.post('/', [
 ]
     , async (req: Request, res: Response) => {
 
-        const userRepository = getRepository(User);
-
-        const user = await userRepository.find({ where: { "_username": req.body.user.username } })
-            .catch(e => adminLogger.error(`Could not find user in ${req.body.user.username} in database, ${e}`));
-
-        if (user !== undefined) {
-            return res.render('create-user', {message: `${req.body.user.username} already exist`});
-        }
         /** TODO: Finish validation
          * Ensure data from user is valid.
          */
@@ -127,7 +119,7 @@ router.post('/', [
                 adminLogger.error(`/user/new Error occured while creating ${newUser.username}, ${e}`);
             });
 
-        res.render('create-user', {message: ""});
+        res.status(200).redirect('/user/new');
     });
 
 

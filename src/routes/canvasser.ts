@@ -12,6 +12,7 @@ import { Results } from '../backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { Locations } from '../backend/entity/Locations';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
+import { getTaskByID, getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign } from '../util/canvasserTools';
 
 const router: Router = Router();
 const middleware = require('../middleware');
@@ -239,56 +240,14 @@ router.get('/canvassing', async (req: Request, res: Response) => {
  */
 router.post('/canvassing/map', async (req: Request, res: Response) => {
     // router.get('/canvassing/:campaignID/:taskID', async (req: Request, res: Response) => {
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "RLocations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .where("task._ID = :id", { id: req.body.taskID })
-        .getOne();
-
     // create a list of talking points withou the campaign object
-    var talkingPoints = await getManager().find(TalkPoint, { where: { "_campaign": req.body.campaignID } });
+    var talkingPoints = await getTalk(req.body.campaignID);
     var points = [];
     talkingPoints.forEach(tp => {
         points.push(tp.talk);
     });
 
-    var route = [];
-    var rlocations;
-    if (task.remainingLocation != undefined) {
-        for (let l in task.remainingLocation.locations) {
-            route.push({
-                lat: task.remainingLocation.locations[l].lat,
-                lng: task.remainingLocation.locations[l].long
-            });
-        }
-        rlocations = task.remainingLocation.locations;
-    }
-
-    var completed = [];
-    var clocations;
-    if (task.completedLocation != undefined) {
-        for (let l in task.completedLocation) {
-            completed.push({
-                lat: task.completedLocation.locations[l].lat,
-                lng: task.completedLocation.locations[l].long
-            });
-        }
-        clocations = task.completedLocation.locations;
-    }
-
-    io.on('connection', function (socket) {
-        socket.emit('route', {
-            route: route,
-            campaignID: req.body.campaignID,
-            locations: rlocations,
-            completed: completed,
-            cLocations: clocations,
-            taskID: task.ID
-        });
-    });
+    var task = await sendToMap(req.body.taskID, req.body.campaignID);
 
     res.render("canvassing-map", {
         // res.send({
@@ -307,7 +266,7 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
     questionaire.forEach(q => {
         questions.push(q.question);
     });
-
+    // console.log(req.body.taskID)
     res.render("canvassing-enter-results", {
         // res.send({
         questions: questions,
@@ -335,61 +294,33 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         .getOne();
 
     campaign.results = await getManager().find(Results, { where: { "_campaign": campaign.ID } });
-
-    // populate results
-    completedLocation.results = [];
-    for (let l in results) {
-        var result = new Results();
-        result.answerNumber = Number(l);
-        result.answer = results[l];
-        result.rating = rating;
-        result.campaign = campaign;
-        completedLocation.results.push(result);
-    }
-    // save the completed location
-    // await getManager().save(completedLocation)
-    //     .then(res => console.log("saved completedLocation"))
-    //     .catch(e => console.log(e));
-
+    // fill the new results
+    completedLocation.results = fillResults(results, rating, campaign);
 
     // delete this location from remaining locations
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "locations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .where("task._campaignID = :cid", { cid: req.body.campaignID })
-        .andWhere("locations._ID = :lid", { lid: req.body.locationID })
-        .getOne();
-    var location:Locations;
-    for(let l in task.remainingLocation.locations){
-        if (req.body.locationID == task.remainingLocation.locations[l]){
-            location = task.remainingLocation.locations[l];
-        }
-    }
+    var tasks = await getTasksByCampaign(req.body.campaignID);
+    var task = await findTask(tasks, req.body.locationID);
+    var location:Locations = removeLocation(task.remainingLocation.locations, req.body.locationID);
+    
+    // save the remainingLocation without this completed location
+    await getManager().save(task.remainingLocation);
 
-    await getManager()
-        .createQueryBuilder()
-        .relation(RemainingLocation, "_locations")
-        .of(task.remainingLocation)
-        .remove(location)
-
-    // await getManager()
-    //     .createQueryBuilder()
-    //     .relation(Task, "_remainingLocation")
-    //     .of(task)
-    //     .add()
+    // pull the task's completed locations
     if (task.completedLocation == undefined){
         task.completedLocation = completedLocation;
     }else {
         task.completedLocation.locations.push(location);
     }
+
+    // update the current task
     await getManager().save(task);
+
     // add campaign reference to results
     completedLocation.results.forEach(re => {
         re.completedLocation = completedLocation;
     });
+
+    // save the results
     await getManager().save(completedLocation.results)
         .then(res => console.log("saved results"))
         .catch(e => console.log(e));
@@ -399,7 +330,7 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         re.completedLocation = undefined;
     });
 
-    sendToMap(req.body.taskID, req.body.campaignID);
+    await sendToMap(req.body.taskID, req.body.campaignID);
     
     // go to success message and redirect to '/canvassing/map'
     res.render("canvassing-return-map", {
@@ -408,50 +339,5 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
     });
 });
 
-async function sendToMap(taskID, campaignID){
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "RLocations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .where("task._ID = :id", { id: taskID })
-        .getOne();
-
-
-    var route = [];
-    var rlocations;
-    if (task.remainingLocation != undefined) {
-        for (let l in task.remainingLocation.locations) {
-            route.push({
-                lat: task.remainingLocation.locations[l].lat,
-                lng: task.remainingLocation.locations[l].long
-            });
-        }
-        rlocations = task.remainingLocation.locations;
-    }
-
-    var completed = [];
-    var clocations;
-    if (task.completedLocation != undefined) {
-        for (let l in task.completedLocation) {
-            completed.push({
-                lat: task.completedLocation.locations[l].lat,
-                lng: task.completedLocation.locations[l].long
-            });
-        }
-        clocations = task.completedLocation.locations;
-    }
-    io.on('connection', function (socket) {
-        socket.emit('route', {
-            route: route,
-            campaignID: campaignID,
-            locations: rlocations,
-            completed: completed,
-            cLocations: clocations,
-            taskID: task.ID
-        });
-    });
-}
 
 export { router as canvasserRouter }
