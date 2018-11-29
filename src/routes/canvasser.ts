@@ -22,15 +22,17 @@ router.get('/calendar', middleware.isAuthenticated, async (req: Request, res: Re
 
 });
 
-router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
+router.get('/home', middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('canvasserScreen');
 
 });
 
+
+
 /**
  * GET and POST for Edit Availability
  */
-router.get('/availability', async (req: Request, res: Response) => {
+router.get('/availability', middleware.isAuthenticated, async (req: Request, res: Response) => {
     let canvasserID = req.params.id;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -63,19 +65,15 @@ router.get('/availability', async (req: Request, res: Response) => {
     if (assigned !== "") {
         assigned = assigned.slice(0, -1);
     }
-
+    
     res.render('edit-availability', { availableOrAssigned, canvasserID, assigned });
 });
 
-// { dates:
-//     [ Node]       '11/04/2018,11/05/2018,11/06/2018,11/07/2018,11/08/2018,11/09/2018,11/15/2018,11/22/2018,11/29/2018,11/28/2018,11/30/2018,11/21/2018,11/24/2018,11/23/2018,11/16/2018,11/14/2018' } }
-
-router.post('/availability', async (req: Request, res: Response) => {
+router.post('/availability', middleware.isAuthenticated, async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
     }
-    console.log('Dates', req.body)
     var newDates = req.body.editAvailability.dates.split(",");
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -131,7 +129,7 @@ router.post('/availability', async (req: Request, res: Response) => {
 
     await getManager().save(canv);
     //redirect after finish posting
-    canvasserLogger.info(`Editted availability for canvasser with id: ${req.params.id}`);
+    canvasserLogger.info(`Editted availability for canvasser with id: ${req.user[0]._employeeID}`);
 
     res.send("Done Editing Availability");
 });

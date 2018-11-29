@@ -39,15 +39,6 @@ middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) 
     }
 }
 
-middlewareObj.isCanvasser = async (req: Request, res: Response, next: NextFunction) => {
-
-    if (req.isAuthenticated() && (req.user[0]._employeeID == req.params.id)) {
-        return next()
-    } else {
-        res.redirect('/');
-    }
-}
-
 
 /**
  * Given a campaignID return true if this manager 
