@@ -8,7 +8,9 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import { Results } from '../backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { Locations } from '../backend/entity/Locations';
-import { getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign, getTaskByID, fillCampaign } from '../util/canvasserTools';
+import { getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign, getTaskByID, fillCampaign, getResults } from '../util/canvasserTools';
+import { Task } from '../backend/entity/Task';
+import { Result } from 'range-parser';
 
 const router: Router = Router();
 const middleware = require('../middleware');
@@ -28,16 +30,15 @@ router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) 
 /**
  * GET and POST for Edit Availability
  */
-router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
+router.get('/availability', async (req: Request, res: Response) => {
     let canvasserID = req.params.id;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
         .leftJoinAndSelect("canvasser._availableDates", "avaDate")
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .where("canvasser._ID = :ID", { ID: canvasserID })
+        .where("canvasser._ID = :ID", { ID: req.user[0]._employeeID })
         .getOne();
-
     if (canvas == undefined) {
         return res.send("Wrong Link (Canvasser ID)");
     }
@@ -69,7 +70,7 @@ router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res
 // { dates:
 //     [ Node]       '11/04/2018,11/05/2018,11/06/2018,11/07/2018,11/08/2018,11/09/2018,11/15/2018,11/22/2018,11/29/2018,11/28/2018,11/30/2018,11/21/2018,11/24/2018,11/23/2018,11/16/2018,11/14/2018' } }
 
-router.post('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
+router.post('/availability', async (req: Request, res: Response) => {
     //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
@@ -82,7 +83,7 @@ router.post('/availability/:id', middleware.isCanvasser, async (req: Request, re
         .leftJoinAndSelect("canvasser._campaigns", "campaigns")
         .leftJoinAndSelect("canvasser._availableDates", "avaDate")
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .where("canvasser._ID = :ID", { ID: req.params.id })
+        .where("canvasser._ID = :ID", { ID: req.user[0]._employeeID })
         .getOne();
     // copy canvasser's old available dates
     var availCopy = [];
@@ -235,7 +236,7 @@ router.get('/canvassing', async (req: Request, res: Response) => {
  * along with talking points, questionaire, and option for entering results
  */
 router.post('/canvassing/map', async (req: Request, res: Response) => {
-    // router.get('/canvassing/:campaignID/:taskID', async (req: Request, res: Response) => {
+    var task = await getTaskByID(req.body.taskID);
     // create a list of talking points withou the campaign object
     var talkingPoints = await getTalk(req.body.campaignID);
     var points = [];
@@ -243,9 +244,8 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
         points.push(tp.talk);
     });
 
-    var task = await getTaskByID(req.body.taskID)
-    // ISSUE IS HERE
-    console.log('The task:', task);
+    var task = await getTaskByID(req.body.taskID);
+    // console.log('The task:', task);
     sendToMap(task, req.body.campaignID);
 
     res.render("canvassing-map", {
@@ -279,74 +279,72 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
  * For saving the results
  */
 router.post('/canvassing/results', async (req: Request, res: Response) => {
-    // router.get('/canvassing/results/:campaignID', async (req: Request, res: Response) => {
     var results = req.body.results;
     var rating = req.body.rating;
     var completedLocation = new CompletedLocation();
 
-    var location = await getManager().findOne(Locations, { where: { "_ID": req.body.locationID } });
-    completedLocation.locations = [location];
-
-    var campaign = await getManager()
-        .createQueryBuilder(Campaign, "campaign")
-        .where("campaign._ID = :id", { id: req.body.campaignID })
-        .getOne();
-
+    completedLocation.locations = [await getManager().findOne(Locations, { where: { "_ID": req.body.locationID } })];
+    var campaign = await getManager().findOne(Campaign, { where: { "_ID": req.body.campaignID } });
     campaign.results = await getManager().find(Results, { where: { "_campaign": campaign.ID } });
 
     // delete this location from remaining locations
     var tasks = await getTasksByCampaign(req.body.campaignID);
     var task = await findTask(tasks, req.body.locationID);
-    var location: Locations;
-    if (task.remainingLocation != undefined || task.remainingLocation != null) {
-        location = removeLocation(task.remainingLocation.locations, req.body.locationID);
-    }
+    console.log("before removelocation task: ",task)
+    var location = removeLocation(task.remainingLocation.locations, req.body.locationID);
+
     // save the remainingLocation without this completed location
     await getManager().save(task.remainingLocation)
         .then(res => console.log("after remaining locations save"))
         .catch(e => console.log(e));
 
-    // add location to task's completed locations
+    /** 
+     * Check if there is a existing completed location in the task and adjust accordingly
+     * add the new results and new location to the completed location
+     */
     var pushed = false;
-    if (task.completedLocation == undefined) {
+    if (task.completedLocation == undefined || task.completedLocation == null) {
         task.completedLocation = completedLocation;
+        console.log("before task save CL: ", completedLocation)
+        // Re-load the task with a new completed location ID
+        await getManager().save(task)
+            .then(res => console.log("after task save"))
+            .catch(e => console.log(e));
+        task = await getTaskByID(task.ID);
+        // console.log(task)
+        // fill the new results
+        completedLocation.results = fillResults(results, rating, campaign, null);
     } else {
         task.completedLocation.locations.push(location);
         pushed = true;
+
+        // fill the new and old results
+        var oldRes = await getResults(task, campaign.ID).then(res => {
+            return res;
+        });
+        
+        completedLocation.results = fillResults(results, rating, campaign, oldRes);
     }
 
-    //save completed location
-    await getManager().save(task.completedLocation)
-        .then(res => console.log("after completed location save"))
-        .catch(e => console.log(e));
-    // update the current task
-    await getManager().save(task)
-        .then(res => console.log("after task save"))
-        .catch(e => console.log(e));
-    // fill the new results
-    completedLocation.results = fillResults(results, rating, campaign);
+    console.log(task)
+    completedLocation.ID = task.completedLocation.ID;
 
-    // load the task again and get the newly saved completedLocation ID
-    if (!pushed){
-        tasks = await getTasksByCampaign(req.body.campaignID);
-        task = await findTask(tasks, req.body.locationID);
-    }
-console.log(task.completedLocation)
-    // insert results into completedLocation
-    await getManager()
-            .createQueryBuilder()
-            .relation(CompletedLocation, "_results")
-            .of(task.completedLocation)
-            .add(completedLocation.results)
-            .then(res => console.log("after results insert into completed location"))
-            .catch(e => console.log(e));
-
-    // save the results
-    // await getManager().save(completedLocation.results)
-    //     .then(res => console.log("saved results"))
+    // await getManager().save(completedLocation)
+    //     .then(res => console.log("saved completed location"))
     //     .catch(e => console.log(e));
 
-    
+    // assign the completed location for every results
+    for (let l in completedLocation.results) {
+        completedLocation.results[l].completedLocation = completedLocation;
+    }
+
+    // save the results
+    await getManager().save(completedLocation.results)
+        .then(res => console.log("saved results"))
+        .catch(e => console.log(e));
+
+    // await getManager().save(completedLocation)
+    //     .then(res => console.log("after completed location"));
 
     await getTaskByID(req.body.taskID)
         .then(res => sendToMap(res, req.body.campaignID));
@@ -356,6 +354,24 @@ console.log(task.completedLocation)
         taskID: req.body.taskID,
         campaignID: req.body.campaignID
     });
+});
+
+router.get("/test-task-save/:id", async (req:Request, res:Response) => {
+    var task = await getTaskByID(req.params.id);
+    console.log(task)
+    //@ts-ignore
+    task.completedLocation.locations.push(await getManager().findOne(Locations, {where: {"_ID": 4}}));
+    var result = await getResults(task, 1);
+    console.log(result)
+    //@ts-ignore
+    await getManager().save(task.completedLocation).then(res => console.log("after CL save"));
+    await getManager().save(result).then(res => console.log("after result save"));
+    // //@ts-ignore
+    // task.completedLocation.results = [result];
+    // //@ts-ignore
+    // task.completedLocation = CL;
+    // await getManager().save(task);
+    res.send("done");
 });
 
 

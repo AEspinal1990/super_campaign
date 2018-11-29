@@ -14,12 +14,12 @@ export const getTaskByID = async (taskID) => {
         // .leftJoinAndSelect("CL._results", "results")
         .where("task._ID = :id", { id: taskID })
         .getOne()
-        .then(res =>{
+        .then(res => {
             return res;
         })
         .catch(e => console.log(e));
     // task.completedLocation.results = await getResults(task);
-    console.log('The task', task)
+    // console.log('The task', task)
     return task;
 };
 
@@ -33,34 +33,44 @@ export const getTasksByCampaign = async (campaignID) => {
         // .leftJoinAndSelect("CL._results", "results")
         .where("task._campaignID = :cid", { cid: campaignID })
         .getMany()
-        .then(res => console.log("after campaign tasks finds"))
+        .then(res => {
+            return res;
+        })
         .catch(e => console.log(e));
     return task;
 };
 
-async function getResults(task){
-    task.completedLocation.results = await getManager()
+export const getResults = async (task, campaignID) => {
+    var res = [];
+    var results = await getManager()
         .createQueryBuilder(Results, "results")
         .leftJoinAndSelect("results._completedLocation", "CL")
         .leftJoinAndSelect("results._campaign", "campaign")
-        .where("CL = :id", {id: task.completedLocation.ID})
-        
+        .where("campaign._ID = :id", { id: campaignID })
+        .getMany();
+
+    for (let l in results) {
+        if (results[l].completedLocation.ID == task.completedLocation.ID) {
+            res = res.concat(task.completedLocation.results);
+        }
+    }
+
     return task.completedLocation.results;
 }
 
 export const findTask = (tasks, locationID) => {
     var task;
 
-    for (let l in tasks){
-        if (tasks[l].remainingLocation != null || tasks[l].remainingLocation != undefined){
-            for (let m in tasks[l].remainingLocation.locations){
-                if (tasks[l].remainingLocation.locations[m].ID == locationID){
+    for (let l in tasks) {
+        if (tasks[l].remainingLocation != null || tasks[l].remainingLocation != undefined) {
+            for (let m in tasks[l].remainingLocation.locations) {
+                if (tasks[l].remainingLocation.locations[m].ID == locationID) {
                     task = tasks[l];
                     break;
                 }
             }
         }
-        if (task != undefined){
+        if (task != undefined) {
             break;
         }
     }
@@ -72,7 +82,7 @@ export const getTalk = async (campaignID) => {
     return talk;
 };
 
-export const fillResults = (results, rating, campaign) => {
+export const fillResults = (results, rating, campaign, oldRes) => {
     // populate results
     var res = [];
     for (let l in results) {
@@ -83,7 +93,11 @@ export const fillResults = (results, rating, campaign) => {
         result.campaign = campaign;
         res.push(result);
     }
-
+    if (oldRes != undefined || oldRes != null){
+        for (let l in oldRes){
+            res.push(oldRes[l]);
+        }
+    }
     return res;
 };
 
@@ -95,8 +109,8 @@ export const fillCampaign = (results, campaign) => {
 };
 
 export const removeLocation = (locations, locationID) => {
-    for (let l in locations){
-        if (locationID == locations[l].ID){
+    for (let l in locations) {
+        if (locationID == locations[l].ID) {
             locations.splice(Number(l), 1);
         }
     }
@@ -133,7 +147,7 @@ export const sendToMap = (task, campaignID) => {
     return task;
 };
 
-function convertGeocodes(locations){
+function convertGeocodes(locations) {
     var codes = []
     for (let l in locations) {
         // console.log(task.remainingLocation.locations[l])
