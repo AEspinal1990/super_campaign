@@ -28,8 +28,8 @@ router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) 
 /**
  * GET and POST for Edit Availability
  */
-router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res: Response) => {
-    let canvasserID = req.params.id;
+router.get('/availability/',  async (req: Request, res: Response) => {
+    let canvasserID = req.user[0]._employeeID;
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
@@ -37,7 +37,7 @@ router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: canvasserID })
         .getOne();
-
+        console.log('Here')
     if (canvas == undefined) {
         return res.send("Wrong Link (Canvasser ID)");
     }
@@ -62,7 +62,7 @@ router.get('/availability/:id', middleware.isCanvasser, async (req: Request, res
     if (assigned !== "") {
         assigned = assigned.slice(0, -1);
     }
-
+    
     res.render('edit-availability', { availableOrAssigned, canvasserID, assigned });
 });
 
