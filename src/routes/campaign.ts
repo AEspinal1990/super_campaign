@@ -205,7 +205,7 @@ router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
 router.post('/replacement/:id',middleware.manages, async (req: Request, res: Response) => {
     let updatedCampaign = req.body.campaign;
     let originalCampaign: Campaign = await getManager().findOne(Campaign, { 
-        where: { "_campaignName": updatedCampaign.campaignName } 
+        where: { "_ID": req.params.id } 
     });
 
     // Update campaign attributes
@@ -217,7 +217,19 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
 
     // Update Talking Points
     await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
-    res.send(originalCampaign)
+
+    // Update Questions
+    await editTools.updateQuestionnaire(originalCampaign, req.body.campaign.questionaire);
+
+    // Update Managers
+    await editTools.updateManagers(originalCampaign, req.body.campaign.managers)
+
+
+    // Update Canvassers
+    await editTools.updateCanvassers(originalCampaign, req.body.campaign.canvassers);
+
+
+    res.redirect('/campaign/home')
 });
 
 /**
