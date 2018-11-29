@@ -226,7 +226,7 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
 
 
     // Update Canvassers
-    //await campaignCreator.saveCanavaser(originalCampaign, req.body.campaign.canvassers);
+    await editTools.updateCanvassers(originalCampaign, req.body.campaign.canvassers);
 
 
     res.redirect('/campaign/home')

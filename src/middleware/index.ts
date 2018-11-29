@@ -30,9 +30,7 @@ middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
 }
 
 middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('id', req.params.id)
     let thing = await isManagerOf(req.user[0]._employeeID, req.params.id);
-    console.log('The user that logged in', thing)
     if (req.isAuthenticated() && thing) {
         return next()
     } else {

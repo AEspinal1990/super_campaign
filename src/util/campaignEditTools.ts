@@ -145,6 +145,7 @@ export const updateManagers = async (campaign, managers) => {
                 // If user is a campaign manager
                 if (cm !== undefined) {
                     campaign.managers.push(cm);
+                    
                 } else {
                     
                     campaignLogger.warn(`${usr._username} is not a campaign manager, not added`);
@@ -156,7 +157,7 @@ export const updateManagers = async (campaign, managers) => {
 
         }
     }
-    console.log('Saving', campaign._ID, campaign._name)
+    campaignLogger.info(`Updating managers for: ${campaign.name}`);
     await getManager().save(campaign).catch(e => console.log(e));
 }
 
@@ -191,6 +192,7 @@ export const updateCanvassers = async (campaign, canvassers) => {
 
         }
     }
+    console.log(campaign.canvassers)
     await getManager().save(campaign.canvassers)
         .catch(e => console.log('Error', e));
 }
