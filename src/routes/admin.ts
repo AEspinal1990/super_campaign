@@ -87,8 +87,8 @@ router.post('/', [
         const userRepository = getRepository(User); 
         const user = await userRepository.find({ where: { "_username": req.body.user.username } })  
             .catch(e => adminLogger.error(`Could not find user in ${req.body.user.username} in database, ${e}`)); 
-
-        if (user !== undefined) { 
+        console.log('the user', user)
+        if (user.length > 0) { 
             return res.render('create-user', {message: `${req.body.user.username} already exist`});  
         } 
 
