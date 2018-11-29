@@ -104,3 +104,7 @@ export const updateTalkingPoints = async (campaign, talkingPoints) => {
         await getManager().save(point).catch(e => console.log(e));
     });
 }
+
+export const updateQuestionnaire = (originalCampaign, updatedQuestionnaire) => {
+    
+}

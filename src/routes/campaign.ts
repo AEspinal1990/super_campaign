@@ -217,6 +217,11 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
 
     // Update Talking Points
     await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
+
+    // Update Questions
+    await campaignCreator.saveQuestionnaire(originalCampaign, req.body.campaign.questionaire);
+
+
     res.send(originalCampaign)
 });
 
