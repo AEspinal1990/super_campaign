@@ -68,9 +68,10 @@ router.get('/new', async (req: Request, res: Response) => {
     res.status(200).render('create-user', {message: ""});
 });
 
-router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    res.render('SysAdminScreen');
+router.get('/home', middleware.isAuthenticated, async (req: Request, res: Response) => {
 
+
+    res.render('SysAdminScreen');
 });
 
 router.post('/', [
@@ -80,6 +81,14 @@ router.post('/', [
 ]
     , async (req: Request, res: Response) => {
 
+        const userRepository = getRepository(User); 
+        const user = await userRepository.find({ where: { "_username": req.body.user.username } })  
+            .catch(e => adminLogger.error(`Could not find user in ${req.body.user.username} in database, ${e}`)); 
+
+        if (user !== undefined) { 
+            return res.render('create-user', {message: `${req.body.user.username} already exist`});  
+        } 
+        
         /** TODO: Finish validation
          * Ensure data from user is valid.
          */
