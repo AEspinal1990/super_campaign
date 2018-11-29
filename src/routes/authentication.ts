@@ -18,8 +18,7 @@ router.get('/', (req: Request, res: Response) => {
 router.post('/', passport.authenticate(
     'local', {
         successRedirect: '/main',
-        failureRedirect: '/',
-        failureFlash: true
+        failureRedirect: '/'
     }
 ));
 

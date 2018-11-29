@@ -6,7 +6,7 @@
     </head>
 
     <body class="container jumbotron" style="margin-top: 50px;">
-        <form action="/canvasser/availability/<%= canvasserID %>" method="POST">
+        <form action="/canvasser/availability" method="POST">
             <div class="container">
                 <h3>Availability</h3>
                 <input type="text" class="form-control date" name=editAvailability[dates] placeholder="No dates selected. Click to open calendar." value=<%= availableOrAssigned %>>
