@@ -69,9 +69,12 @@ router.get('/new', async (req: Request, res: Response) => {
 });
 
 router.get('/home', middleware.isAuthenticated, async (req: Request, res: Response) => {
+    let users = await getManager()
+        .createQueryBuilder(User, "userscampaigns")
+        .getMany();
 
-
-    res.render('SysAdminScreen');
+    console.log(users) 
+    res.render('SysAdminScreen', {users});
 });
 
 router.post('/', [
@@ -88,7 +91,7 @@ router.post('/', [
         if (user !== undefined) { 
             return res.render('create-user', {message: `${req.body.user.username} already exist`});  
         } 
-        
+
         /** TODO: Finish validation
          * Ensure data from user is valid.
          */
@@ -214,11 +217,13 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
 
 router.delete('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
 
+    console.log('Deleting', req.params.username)
     // EmployeeID is required to remove user from roled table
     const userRepository = getRepository(User);
     const user = await userRepository.find({ where: { "_username": req.params.username } })
         .catch(e => adminLogger.error(`Could not find ${req.params.username} in database, ${e}`));
 
+    console.log('Found', user)
     /**
      * Delete User from Specific Role Table
      * This record must be deleted first due
