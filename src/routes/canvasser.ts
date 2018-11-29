@@ -341,9 +341,14 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         .then(res => console.log("saved results"))
         .catch(e => console.log(e));
 
-    // await getManager().save(completedLocation)
-    //     .then(res => console.log("after completed location"));
-
+    await getManager()
+        .createQueryBuilder()
+        .relation(Canvasser, "_results")
+        .of(req.user[0]._employeeID)
+        .add(completedLocation.results)
+        .then(res => console.log("after results save for canvassers"))
+        .catch(e => console.log(e));
+    
     await getTaskByID(req.body.taskID)
         .then(res => sendToMap(res, req.body.campaignID));
 
@@ -395,9 +400,15 @@ router.get('/canvasser-save-test', async (req:Request, res:Response) => {
     // canvasser.results = results;
     await getManager()
         .createQueryBuilder()
-        .relation(Canvasser, "_availableDates")
-        .of(3)
-        .remove()
+        .relation(Canvasser, "_results")
+        .of(1)
+        .add(1)
+
+    // await getManager()
+    //     .createQueryBuilder()
+    //     .relation(Campaign, "_results")
+    //     .of(1)
+    //     .add(1)
     res.send("done")
 });
 
