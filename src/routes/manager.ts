@@ -66,8 +66,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 
     // This is causing app to restart
     let newTasks = await managerTools.launchORT(data);
-    console.log("Routes from OR-Tools - check order with canvassing routes: ")
-    console.log(newTasks);
+
     /**
      * Create tasks and assign campaignID & assignment
      */
@@ -82,7 +81,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     canvassers = managerTools.assignTasks(canvassers, tasks);
     assignment.tasks = tasks;
     campaign.assignment = assignment;
-
     /**
      * Save new assignment and update campaign
      */

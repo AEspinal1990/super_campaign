@@ -10,15 +10,15 @@ const authLogger = logger.getLogger('authLogger');
  * GET and POST routes for Log In / Authentications
  */
 router.get('/', (req: Request, res: Response) => {
-    res.render('login', {message: ""});
+    // res.render('login', {message: ""});
+    res.render('login');
 });
 
 
 router.post('/', passport.authenticate(
     'local', {
-        successRedirect: '/main',
-        failureRedirect: '/',
-        failureFlash: true
+        successRedirect: '/home',
+        failureRedirect: '/'
     }
 ));
 
@@ -33,12 +33,15 @@ router.get('/logout', (req: Request, res: Response) => {
     res.redirect('/');
 });
 
-router.get('/main',(req: Request, res: Response) => {
+router.get('/home',(req: Request, res: Response) => {
     authLogger.info(`/login -${req.user[0]._username}`);
     if (req.user[0]._permission === 1) {
         return res.redirect('/campaign/home');
+    } else if (req.user[0]._permission === 2) {
+        return res.redirect('/canvasser/home');
+    }else {
+        return res.redirect('/admin/home');
     }
-    res.render('main-screen');
 });
  
 export {router as authRouter}

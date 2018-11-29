@@ -30,22 +30,11 @@ middlewareObj.isManager = (req: Request, res: Response, next: NextFunction) => {
 }
 
 middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('id', req.params.id)
     let thing = await isManagerOf(req.user[0]._employeeID, req.params.id);
-    console.log('The user that logged in', thing)
     if (req.isAuthenticated() && thing) {
         return next()
     } else {
         console.log('Does not manage')
-        res.redirect('/');
-    }
-}
-
-middlewareObj.isCanvasser = async (req: Request, res: Response, next: NextFunction) => {
-
-    if (req.isAuthenticated() && (req.user[0]._employeeID == req.params.id)) {
-        return next()
-    } else {
         res.redirect('/');
     }
 }

@@ -65,12 +65,16 @@ router.post('/globals', middleware.isAdmin, async (req: Request, res: Response) 
  * Create/Edit/Delete User 
  */
 router.get('/new', async (req: Request, res: Response) => {
-    res.status(200).render('create-user');
+    res.status(200).render('create-user', {message: ""});
 });
 
-router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    res.render('SysAdminScreen');
+router.get('/home', middleware.isAuthenticated, async (req: Request, res: Response) => {
+    let users = await getManager()
+        .createQueryBuilder(User, "userscampaigns")
+        .getMany();
 
+    console.log(users) 
+    res.render('SysAdminScreen', {users});
 });
 
 router.post('/', [
@@ -79,6 +83,13 @@ router.post('/', [
     check('password').isLength({ min: 5, max: 50 })
 ]
     , async (req: Request, res: Response) => {
+
+        const userRepository = getRepository(User); 
+        const user = await userRepository.find({ where: { "_username": req.body.user.username } })  
+            .catch(e => adminLogger.error(`Could not find user in ${req.body.user.username} in database, ${e}`)); 
+        if (user.length > 0) { 
+            return res.render('create-user', {message: `${req.body.user.username} already exist`});  
+        } 
 
         /** TODO: Finish validation
          * Ensure data from user is valid.
@@ -205,11 +216,13 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
 
 router.delete('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
 
+    console.log('Deleting', req.params.username)
     // EmployeeID is required to remove user from roled table
     const userRepository = getRepository(User);
     const user = await userRepository.find({ where: { "_username": req.params.username } })
         .catch(e => adminLogger.error(`Could not find ${req.params.username} in database, ${e}`));
 
+    console.log('Found', user)
     /**
      * Delete User from Specific Role Table
      * This record must be deleted first due
