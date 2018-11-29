@@ -7,7 +7,8 @@ import { CampaignManager } from "../backend/entity/CampaignManager";
 import { User } from "../backend/entity/User";
 import { Canvasser } from "../backend/entity/Canvasser";
 import * as campaignParser      from './campaignParser';
-
+const logger = require('../util/logger');
+const campaignLogger = logger.getLogger('campaignLogger');
 const googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
 });
@@ -105,6 +106,91 @@ export const updateTalkingPoints = async (campaign, talkingPoints) => {
     });
 }
 
-export const updateQuestionnaire = (originalCampaign, updatedQuestionnaire) => {
-    
+export const updateQuestionnaire = async (campaign, questionaire) => {
+    questionaire = campaignParser.getQuestionnaire(campaign, questionaire);
+
+    /**
+     * Delete original questions
+     */
+    await getRepository(Questionaire)
+        .createQueryBuilder()
+        .delete()
+        .where("_campaign = :ID", { ID: campaign._ID })
+        .execute();
+
+    /**
+     * Update the questions in the DB.
+     */
+    questionaire.forEach(async question => {
+        await getManager().save(question).catch(e => console.log(e));
+    });
+}
+
+
+export const updateManagers = async (campaign, managers) => {
+    let usr;
+    let cm;
+    managers = campaignParser.getManagers(managers);
+    campaign.managers = [];
+    for (let i in managers) {
+        if (managers[i] != "") {
+            usr = await getManager()
+                .findOne(User, { where: { "_employeeID": managers[i] } });
+
+            // If user exist
+            if (usr !== undefined) {
+                cm = await getManager()
+                    .findOne(CampaignManager, { where: { "_ID": usr } });
+
+                // If user is a campaign manager
+                if (cm !== undefined) {
+                    campaign.managers.push(cm);
+                } else {
+                    
+                    campaignLogger.warn(`${usr._username} is not a campaign manager, not added`);
+                }
+
+            } else {
+                campaignLogger.warn(`${managers[i]} does not exist`);
+            }
+
+        }
+    }
+    console.log('Saving', campaign._ID, campaign._name)
+    await getManager().save(campaign).catch(e => console.log(e));
+}
+
+
+export const updateCanvassers = async (campaign, canvassers) => {
+
+
+    let usr;
+    let canvass;
+    canvassers = campaignParser.getCanvassers(canvassers);
+
+    campaign.canvassers = [];
+    for (let i in canvassers) {
+        if (canvassers[i] != "") {
+            usr = await getManager()
+                .findOne(User, { where: { "_employeeID": canvassers[i] } });
+            // If user exist
+            if (usr !== undefined) {
+                canvass = await getManager()
+                    .findOne(Canvasser, { where: { "_ID": usr } });
+                // If user is a canvasser
+                if (canvass !== undefined) {
+                    campaign.canvassers.push(canvass);
+                    canvass.campaigns.push(campaign);
+                } else {
+                    campaignLogger.warn(`${usr._username} is not a canvasser`);
+                }
+
+            } else {
+                campaignLogger.warn(`${canvassers[i]} does not exist`);
+            }
+
+        }
+    }
+    await getManager().save(campaign.canvassers)
+        .catch(e => console.log('Error', e));
 }
