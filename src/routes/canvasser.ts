@@ -311,7 +311,7 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
             .then(res => console.log("after task save"))
             .catch(e => console.log(e));
         task = await getTaskByID(task.ID);
-        // console.log(task)
+
         // fill the new results
         completedLocation.results = fillResults(results, rating, campaign, null);
     } else {
@@ -322,16 +322,16 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         var oldRes = await getResults(task, campaign.ID).then(res => {
             return res;
         });
-        
+
+        // update completed location with the new location
+        await getManager().save(task.completedLocation)
+            .then(res => console.log("after completed location with new location save"))
+            .catch(e => console.log(e));
+
         completedLocation.results = fillResults(results, rating, campaign, oldRes);
     }
 
-    console.log(task)
     completedLocation.ID = task.completedLocation.ID;
-
-    // await getManager().save(completedLocation)
-    //     .then(res => console.log("saved completed location"))
-    //     .catch(e => console.log(e));
 
     // assign the completed location for every results
     for (let l in completedLocation.results) {
@@ -374,5 +374,33 @@ router.get("/test-task-save/:id", async (req:Request, res:Response) => {
     res.send("done");
 });
 
+router.get('/canvasser-save-test', async (req:Request, res:Response) => {
+    var canvasser = await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._availableDates", "avail")
+        .leftJoinAndSelect("canvasser._assignedDates", "assigned")
+        .leftJoinAndSelect("canvasser._results", "result")
+        .leftJoinAndSelect("canvasser._task", "task")
+        .leftJoinAndSelect("result._completedLocation", "CL")
+        .where("user._employeeID = :id", {id: req.user[0]._employeeID})
+        .getOne();
+    console.log(canvasser);
+    // var results = await getManager()
+    //     .createQueryBuilder(Results, "results")
+    //     .leftJoinAndSelect("results._completedLocation", "CL")
+    //     .leftJoinAndSelect("results._campaign", "campaign")
+    //     .where("campaign._ID = :id", { id: 1 })
+    //     .getMany();
+    //@ts-ignore
+    // canvasser.results = results;
+    await getManager()
+        .createQueryBuilder()
+        .relation(Canvasser, "_availableDates")
+        .of(3)
+        .remove()
+    res.send("done")
+});
 
 export { router as canvasserRouter }
