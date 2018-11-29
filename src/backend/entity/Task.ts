@@ -26,7 +26,7 @@ export class Task{
     private _assignment!:Assignment;
     @Column({ name: "duration" })
     private _duration!: number;
-    @Column({ name: "canvasserName" })
+    @Column({ name: "canvasserName", nullable: true })
     private _canvasser!: string;
     @Column({ name: "numLocations" })
     private _numLocations!: number;

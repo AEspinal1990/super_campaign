@@ -9,6 +9,7 @@ import * as managerTools from '../util/managerTools';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
 import { Canvasser } from '../backend/entity/Canvasser';
+import { Task } from '../backend/entity/Task';
 
 const router: Router = Router();
 const logger = require('../util/logger');
@@ -31,6 +32,11 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     if (campaign === undefined) {
         return res.status(404).send('Campaign not found');
     }
+
+    /**
+     * Check if a assignment already exists for this campaign
+     */
+    let oldAssignment = await managerTools.getOldAssignment(campaign.ID);
 
     /**
      * Create Assignment
@@ -78,21 +84,37 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     // console.log('Before remove busy', canvassers)
     canvassers = managerTools.removeBusy(canvassers);
 
-    canvassers = managerTools.assignTasks(canvassers, tasks);
+    var ret = managerTools.assignTasks(canvassers, tasks);
+    if (ret.status == 3){
+        // no available dates
+        canvassers = null;
+    } else {
+        // all or some tasks are assigned
+        canvassers = ret.canvasser;
+    }
+
+    var status = ret.status;
     assignment.tasks = tasks;
     campaign.assignment = assignment;
     /**
      * Save new assignment and update campaign
      */
-    await getManager().save(assignment);
-    await getManager().save(campaign);
+    await getManager().save(assignment).then(res => console.log("Assingment Saved"));
+    await getManager().save(campaign).then(res => console.log("campaign saved"));
     /**
      * Save canvassers with their assigned task
      */
-    canvassers = await managerTools.loadCanvasserCampaigns(canvassers);
-    await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
-    res.status(200).send('Create Assignment');
-
+    if (status != 3){
+        canvassers = await managerTools.loadCanvasserCampaigns(canvassers);
+        await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
+    } else {
+        return res.send("Warning!!! No canvassers are available to assign task(s) to!");
+    }
+    if (status == 2){
+        // warn: only some tasks were assigned
+        return res.send("Warning!!! Not enough canvassers are available to be assigned for all tasks!")
+    }
+    res.status(200).send('Successfully Created An Assignment!');
 });
 
 router.get('/view-assignment/:id', async (req: Request, res: Response) => {
