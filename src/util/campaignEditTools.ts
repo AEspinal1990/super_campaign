@@ -162,37 +162,143 @@ export const updateManagers = async (campaign, managers) => {
 }
 
 
-export const updateCanvassers = async (campaign, canvassers) => {
+export const updateCanvassers = async (campaign, updatedCanvassers) => {
 
+
+    // Remove current canvassers from campaign
+    
+    let canvassers = await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._ID", "user")
+        .where("campaign._ID = :ID", { ID: campaign._ID })
+        .getMany();
+    canvassers.forEach( async canvasser => {
+        await getManager()
+            .createQueryBuilder()
+            .relation(Canvasser, "_campaigns")
+            .of(canvasser.ID.employeeID)
+            .remove(campaign._ID)
+            .then(res => console.log(res))
+            .catch(e => console.log(e))
+    });
+    
 
     let usr;
     let canvass;
-    canvassers = campaignParser.getCanvassers(canvassers);
-
+    canvassers = campaignParser.getCanvassers(updatedCanvassers);
     campaign.canvassers = [];
+    
     for (let i in canvassers) {
-        if (canvassers[i] != "") {
-            usr = await getManager()
-                .findOne(User, { where: { "_employeeID": canvassers[i] } });
-            // If user exist
-            if (usr !== undefined) {
-                canvass = await getManager()
-                    .findOne(Canvasser, { where: { "_ID": usr } });
-                // If user is a canvasser
-                if (canvass !== undefined) {
-                    campaign.canvassers.push(canvass);
-                    canvass.campaigns.push(campaign);
-                } else {
-                    campaignLogger.warn(`${usr._username} is not a canvasser`);
-                }
-
-            } else {
-                campaignLogger.warn(`${canvassers[i]} does not exist`);
-            }
-
+        
+        usr = await getManager().findOne(User, { where: { "_employeeID": canvassers[i] } });
+        canvass = await getManager().findOne(Canvasser, { where: { "_ID": usr } });
+        if (usr === undefined) {
+            campaignLogger.warn(`User with id ${canvassers[i]} does not exist`);
+            
+        } else if (canvass === undefined) {
+            campaignLogger.warn(`${usr._username} is not a canvasser`);
+        } else {
+            campaign.canvassers.push(canvass);
+            canvass.campaigns.push(campaign);
         }
     }
-    console.log(campaign.canvassers)
+    campaignLogger.info(`Updating Canvassers for ${campaign.name}`);
     await getManager().save(campaign.canvassers)
         .catch(e => console.log('Error', e));
+}
+
+export const updateLocations = (campaign, updatedLocations) => {
+    let places = [];
+    let removals = [];
+    let insertions = [];
+    let originalLocations = campaign.locations;
+
+    
+    // Parse the updated list of locations
+    updatedLocations = updatedLocations.trim().split('\n');    
+    updatedLocations.forEach(location => {
+        places.push(createLocation(location))
+    })
+    
+    // Check which locations need to be inserted
+    // If place is not found in originalLocations it must
+    // be new therefore add into array of locations to insert
+    for(let i in places) {
+        if(!locationFound(places[i], originalLocations)) {
+            insertions.push(places[i])
+        }
+    }
+    console.log('Inserting the locations:', insertions)
+    // Check which locations need to be deleted
+    // If original locations are not found in updated list then
+    // they must have been removed therefore add to array of locations
+    // to delete
+    for(let i in originalLocations) {
+        if(!locationFound(originalLocations[i], places)) {
+            removals.push(originalLocations[i])
+        }
+    }
+    
+    console.log('Removing the locations', removals)
+       
+
+}
+
+function locationFound(targetLocation, listOfLocations) {
+
+
+    for(let i in listOfLocations) {
+        if(locationsMatch(targetLocation, listOfLocations[i])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function locationsMatch(targetLocation, location) {
+
+    // Compare street numbers
+   
+    if (targetLocation._streetNumber !== location._streetNumber) {
+        return false;
+    } 
+    
+    // compare streets
+    if (targetLocation._street !== location._street) {
+        return false;
+    }
+    
+    // compare unit
+    if (targetLocation._unit !== location._unit) {
+        return false;
+    }
+    
+    // compare city
+    if (targetLocation._city !== location._city) {
+        return false;
+    }
+    
+    // // compare state
+    if (targetLocation._state !== location._state) {
+        return false;
+    }
+    
+    // compare zipcode
+    if (targetLocation._zipcode != location._zipcode) {
+        return false;
+    }
+    return true;
+}
+
+function createLocation(location) {
+    let places = new Locations();
+    places.streetNumber = campaignParser.getStreetNumber(location);
+    places.street = campaignParser.getStreet(location);
+    places.unit = campaignParser.getUnit(location);
+    places.city = campaignParser.getCity(location);
+    places.state = campaignParser.getState(location);
+    places.zipcode = campaignParser.getZip(location);
+    return places;
 }

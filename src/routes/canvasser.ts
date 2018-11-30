@@ -74,6 +74,7 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
     if (req.body.editAvailability.dates === '') {
         return;
     }
+    console.log(req.body.editAvailability.dates)
     var newDates = req.body.editAvailability.dates.split(",");
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")

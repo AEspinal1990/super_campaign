@@ -43,7 +43,7 @@ router.get('/home', async (req: Request, res: Response) => {
             }
         }
     }
-    res.render('manager-campaign-home',{campaigns:c});
+    res.render('CampaignManagerHome', {campaigns:c});
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
@@ -193,40 +193,35 @@ router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response)
     }
 });
 
-router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
-    campaignEditor.editCampaign(req.body.campaign, req.params.id);
-    campaignLogger.info(`Updated campaign with id: ${req.params.id}`);
-    if (res.status(200))
-        res.redirect('/campaign/home');
-    else
-        res.send("Error!");
-});
-
 router.post('/replacement/:id',middleware.manages, async (req: Request, res: Response) => {
     let updatedCampaign = req.body.campaign;
     let originalCampaign: Campaign = await getManager().findOne(Campaign, { 
         where: { "_ID": req.params.id } 
     });
 
-    // Update campaign attributes
-    originalCampaign.name = updatedCampaign.campaignName;
-    originalCampaign.startDate = editTools.updatedDate(updatedCampaign.startDate);
-    originalCampaign.endDate = editTools.updatedDate(updatedCampaign.endDate);
-    originalCampaign.avgDuration = updatedCampaign.averageExpectedDuration;
-    await getManager().save(originalCampaign).catch(e => console.log(e));
+    // // Update campaign attributes
+    // originalCampaign.name = updatedCampaign.campaignName;
+    // originalCampaign.startDate = editTools.updatedDate(updatedCampaign.startDate);
+    // originalCampaign.endDate = editTools.updatedDate(updatedCampaign.endDate);
+    // originalCampaign.avgDuration = updatedCampaign.averageExpectedDuration;
+    // await getManager().save(originalCampaign).catch(e => console.log(e));
 
-    // Update Talking Points
-    await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
+    // // Update Talking Points
+    // await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
 
-    // Update Questions
-    await editTools.updateQuestionnaire(originalCampaign, req.body.campaign.questionaire);
+    // // Update Questions
+    // await editTools.updateQuestionnaire(originalCampaign, req.body.campaign.questionaire);
 
-    // Update Managers
-    await editTools.updateManagers(originalCampaign, req.body.campaign.managers)
+    // // Update Managers
+    // await editTools.updateManagers(originalCampaign, req.body.campaign.managers)
 
 
-    // Update Canvassers
-    await editTools.updateCanvassers(originalCampaign, req.body.campaign.canvassers);
+    // // Update Canvassers
+    // await editTools.updateCanvassers(originalCampaign, req.body.campaign.canvassers);
+
+
+    // Update Locations
+    await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
 
     res.redirect('/campaign/home')
