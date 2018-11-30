@@ -26,7 +26,7 @@
 <script>
     var map;
     var markers = [];
-    var infoContent;
+    // var infoContent;
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -64,7 +64,7 @@
         } else {
             getIcon = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green.png";
         }
-console.log(location)
+
         var marker = new google.maps.Marker({
             position: location,
             map: map,
@@ -74,7 +74,7 @@ console.log(location)
         
         });
 
-        infoContent = ('<div id="content">'+
+        var infoContent = ('<div id="content">'+
             '<form action="/canvasser/canvassing/enter-results" method="POST">'+
                 '<input type="hidden" name="campaignID" value="'+campaignID+'">'+
                 '<input type="hidden" name="locationID" value="'+loc._ID+'">'+
@@ -98,13 +98,13 @@ console.log(location)
     $(document).ready(function () {
         socket.on('route', function (route) {
             deleteMarkers();
-            if (route.route != undefined){
+            if (route.route != undefined || route.route != null){
                 for (i in route.route) {
                     parsedGeocode = { lat: parseFloat(route.route[i].lat), lng: parseFloat(route.route[i].lng) };
                     addRouteNum(route.locations[i], parsedGeocode, Number(i)+1, route.campaignID, route.taskID, true);
                 }
             }
-            if (route.completed != undefined){
+            if (route.completed != undefined || route.route != null){
                 for (i in route.completed) {
                     parsedGeocode = { lat: parseFloat(route.completed[i].lat), lng: parseFloat(route.completed[i].lng) };
                     addRouteNum(route.cLocations[i], parsedGeocode, Number(i)+1, route.campaignID, route.taskID, false);

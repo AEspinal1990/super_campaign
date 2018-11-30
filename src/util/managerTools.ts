@@ -292,10 +292,22 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
             availableDates.push(date);
         }
     });
+    console.log("Canvassers : ", canvassers)
+    console.log("avaiableDates : ", availableDates)
+    // check if there are no available dates
+    if (availableDates.length == 0){
+        console.log("inside")
+        return {
+            canvasser: null, 
+            status: 3
+        };
+    }
+
     // From all canvassers find the earliest date and insert task
     let earliestDate;
     let canvasserIndex;
-    tasks.forEach(task => {
+    let status;
+    for (let l in tasks) {
         // Since dates are already sorted,
         // earliest date will be at a canvassers first available date.
         for (let i in canvassers) {
@@ -305,20 +317,37 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
                 continue;
             }
             let date = canvassersEarliestDates(availableDates[i]);
-            if (earliestDate === undefined || date < earliestDate) {
-                canvasserIndex = Number(i);
-                earliestDate = date;
+            if (date != null){
+                if (earliestDate === undefined || date < earliestDate) {
+                    canvasserIndex = Number(i);
+                    earliestDate = date;
+                }
+            }
+            if (Number(i) == canvassers.length -1){
+                status = 2;
             }
         }
-
+        if (status == 2){
+            earliestDate = undefined;
+            continue;
+        }
         // Insert into datesAssigned
-        canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], task);
-        task.canvasser = canvassers[canvasserIndex].ID.name;
-        task.scheduledOn = earliestDate;
+        canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], tasks[l]);
+        tasks[l].canvasser = canvassers[canvasserIndex].ID.name;
+        tasks[l].scheduledOn = earliestDate;
         earliestDate = undefined;
-    });
+    };
+    if (status == 2){
+        return {
+            canvasser: canvassers,
+            status: 2
+        };
+    }
 
-    return canvassers;
+    return {
+        canvasser: canvassers,
+        status: 1
+    };
 };
 
 function assignTask(canvasser: Canvasser, task: Task) {
@@ -334,8 +363,11 @@ function assignTask(canvasser: Canvasser, task: Task) {
     return canvasser;
 }
 
-function canvassersEarliestDates(availbleDates) {
-    return availbleDates[0].availableDate;
+function canvassersEarliestDates(availableDates) {
+    if (availableDates == undefined || availableDates == null){
+        return null;
+    }
+    return availableDates[0].availableDate;
 }
 
 function sortDates(availableDates) {
@@ -421,4 +453,8 @@ export const loadCanvasserCampaigns = async (canvassers) => {
         }
     }
     return canvassers;
+};
+
+export const getOldAssignment = async (campaignID) => {
+    
 };

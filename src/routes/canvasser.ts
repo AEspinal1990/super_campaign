@@ -349,8 +349,8 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         .then(res => console.log("after results save for canvassers"))
         .catch(e => console.log(e));
     
-    await getTaskByID(req.body.taskID)
-        .then(res => sendToMap(res, req.body.campaignID));
+    var resu = await getTaskByID(req.body.taskID);
+    sendToMap(resu, req.body.campaignID);
 
     // go to success message and redirect to '/canvassing/map'
     res.render("canvassing-return-map", {
@@ -398,17 +398,17 @@ router.get('/canvasser-save-test', async (req:Request, res:Response) => {
     //     .getMany();
     //@ts-ignore
     // canvasser.results = results;
-    await getManager()
-        .createQueryBuilder()
-        .relation(Canvasser, "_results")
-        .of(1)
-        .add(1)
-
     // await getManager()
     //     .createQueryBuilder()
-    //     .relation(Campaign, "_results")
+    //     .relation(Canvasser, "_results")
     //     .of(1)
     //     .add(1)
+
+    await getManager()
+        .createQueryBuilder()
+        .relation(Canvasser, "_campaigns")
+        .of(3)
+        .remove(1)
     res.send("done")
 });
 
