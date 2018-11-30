@@ -224,34 +224,35 @@ export const updateLocations = (campaign, updatedLocations) => {
     // Check which locations need to be inserted
     // If place is not found in originalLocations it must
     // be new therefore add into array of locations to insert
-    places.forEach(location => {
-        if(!locationFound(location, originalLocations)) {
-            // push into insert[]
-            insertions.push(location)
+    for(let i in places) {
+        if(!locationFound(places[i], originalLocations)) {
+            insertions.push(places[i])
         }
-    });
-
+    }
+    console.log('Inserting the locations:', insertions)
     // Check which locations need to be deleted
     // If original locations are not found in updated list then
     // they must have been removed therefore add to array of locations
     // to delete
-    originalLocations.forEach(location => {
-        if(!locationFound(location, places)){
-            removals.push(location)
+    for(let i in originalLocations) {
+        if(!locationFound(originalLocations[i], places)) {
+            removals.push(originalLocations[i])
         }
-    })
-    console.log('insertions', insertions)
+    }
+    
+    console.log('Removing the locations', removals)
        
 
 }
 
 function locationFound(targetLocation, listOfLocations) {
 
-    listOfLocations.forEach(location => {
-        if(locationsMatch(targetLocation, location)){
+
+    for(let i in listOfLocations) {
+        if(locationsMatch(targetLocation, listOfLocations[i])) {
             return true;
         }
-    })
+    }
 
     return false;
 }
@@ -259,6 +260,7 @@ function locationFound(targetLocation, listOfLocations) {
 function locationsMatch(targetLocation, location) {
 
     // Compare street numbers
+   
     if (targetLocation._streetNumber !== location._streetNumber) {
         return false;
     } 

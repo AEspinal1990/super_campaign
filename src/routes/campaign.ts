@@ -43,7 +43,7 @@ router.get('/home', async (req: Request, res: Response) => {
             }
         }
     }
-    res.render('manager-campaign-home', {campaigns:c});
+    res.render('CampaignManagerHome', {campaigns:c});
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
@@ -193,15 +193,6 @@ router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response)
     }
 });
 
-router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
-    campaignEditor.editCampaign(req.body.campaign, req.params.id);
-    campaignLogger.info(`Updated campaign with id: ${req.params.id}`);
-    if (res.status(200))
-        res.redirect('/campaign/home');
-    else
-        res.send("Error!");
-});
-
 router.post('/replacement/:id',middleware.manages, async (req: Request, res: Response) => {
     let updatedCampaign = req.body.campaign;
     let originalCampaign: Campaign = await getManager().findOne(Campaign, { 
@@ -230,10 +221,11 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
 
 
     // Update Locations
+    //@ts-ignore
     await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
 
-    res.redirect('/campaign/home')
+    res.status(200).redirect(`/manager/new-assignment/${req.params.id}`);
 });
 
 /**

@@ -8,7 +8,8 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import { Results } from '../backend/entity/Results';
 import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { Locations } from '../backend/entity/Locations';
-import { getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign, getTaskByID, fillCampaign, getResults } from '../util/canvasserTools';
+// import { getTalk, fillResults, removeLocation, sendToMap, findTask, getTasksByCampaign, getTaskByID, fillCampaign, getResults } from '../util/canvasserTools';
+import * as canvasserTools from '../util/canvasserTools';
 import { Task } from '../backend/entity/Task';
 import { Result } from 'range-parser';
 
@@ -23,11 +24,23 @@ router.get('/calendar', middleware.isAuthenticated, async (req: Request, res: Re
 });
 
 router.get('/home', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    res.render('canvasserScreen');
+    
+    // Get all the task for this canvasser
+    // Organize by assignment id    
+    // Each element in assignments is 1 assignment with
+    // all the task for this canvasser
+    // Then in front end render each assignment in its
+    // own accordian.
+    let tasks;
+    let assignments = [];
+
+    tasks = await canvasserTools.getCanvassersTask(req.user[0]._name)
+    assignments = canvasserTools.organizeByAssignment(tasks);
+    console.log(assignments)
+
+    res.render('CanvasserHome');
 
 });
-
-
 
 /**
  * GET and POST for Edit Availability
@@ -37,6 +50,7 @@ router.get('/availability', middleware.isAuthenticated, async (req: Request, res
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
         .leftJoinAndSelect("canvasser._availableDates", "avaDate")
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: req.user[0]._employeeID })
@@ -70,11 +84,10 @@ router.get('/availability', middleware.isAuthenticated, async (req: Request, res
 });
 
 router.post('/availability', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
     }
-    console.log(req.body.editAvailability.dates)
+    // console.log(req.body.editAvailability.dates)
     var newDates = req.body.editAvailability.dates.split(",");
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -84,6 +97,7 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: req.user[0]._employeeID })
         .getOne();
+
     // copy canvasser's old available dates
     var availCopy = [];
     while (canv.availableDates.length > 0) {
@@ -100,16 +114,6 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
             canv.availableDates.push(avail);
         }
     }
-    // we can assume that canvassers cannot change availability if assigned
-    // however leaving this logic just in case
-    /**     Handling edited available dates for tasks
-     * if a tasked date is removed
-     *      if edited dates are still within campaign start&end dates
-     *          assign a new date the task
-     *      else
-     *          delete assignedDates for tasked-canvassers in campaign
-     *          re direst to new assignment
-    */
 
     // delete old available dates that are unused
     for (let i in availCopy) {
@@ -149,6 +153,7 @@ router.get('/:id/view-tasks', async (req: Request, res: Response) => {
         res.send('You have no tasks assigned.');
     } else {
         res.render("view-tasks", {
+            role: req.user[0]._permission,
             tasks: canv.task,
             id: canv.ID.employeeID,
             campaignID: req.params.id
@@ -235,17 +240,17 @@ router.get('/canvassing', async (req: Request, res: Response) => {
  * along with talking points, questionaire, and option for entering results
  */
 router.post('/canvassing/map', async (req: Request, res: Response) => {
-    var task = await getTaskByID(req.body.taskID);
+    var task = await canvasserTools.getTaskByID(req.body.taskID);
     // create a list of talking points withou the campaign object
-    var talkingPoints = await getTalk(req.body.campaignID);
+    var talkingPoints = await canvasserTools.getTalk(req.body.campaignID);
     var points = [];
     talkingPoints.forEach(tp => {
         points.push(tp.talk);
     });
 
-    var task = await getTaskByID(req.body.taskID);
+    var task = await canvasserTools.getTaskByID(req.body.taskID);
     // console.log('The task:', task);
-    sendToMap(task, req.body.campaignID);
+    canvasserTools.sendToMap(task, req.body.campaignID);
 
     res.render("canvassing-map", {
         // res.send({
@@ -287,10 +292,10 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
     campaign.results = await getManager().find(Results, { where: { "_campaign": campaign.ID } });
 
     // delete this location from remaining locations
-    var tasks = await getTasksByCampaign(req.body.campaignID);
-    var task = await findTask(tasks, req.body.locationID);
+    var tasks = await canvasserTools.getTasksByCampaign(req.body.campaignID);
+    var task = await canvasserTools.findTask(tasks, req.body.locationID);
     console.log("before removelocation task: ",task)
-    var location = removeLocation(task.remainingLocation.locations, req.body.locationID);
+    var location = canvasserTools.removeLocation(task.remainingLocation.locations, req.body.locationID);
 
     // save the remainingLocation without this completed location
     await getManager().save(task.remainingLocation)
@@ -309,16 +314,16 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         await getManager().save(task)
             .then(res => console.log("after task save"))
             .catch(e => console.log(e));
-        task = await getTaskByID(task.ID);
+        task = await canvasserTools.getTaskByID(task.ID);
 
         // fill the new results
-        completedLocation.results = fillResults(results, rating, campaign, null);
+        completedLocation.results = canvasserTools.fillResults(results, rating, campaign, null);
     } else {
         task.completedLocation.locations.push(location);
         pushed = true;
 
         // fill the new and old results
-        var oldRes = await getResults(task, campaign.ID).then(res => {
+        var oldRes = await canvasserTools.getResults(task, campaign.ID).then(res => {
             return res;
         });
 
@@ -327,7 +332,7 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
             .then(res => console.log("after completed location with new location save"))
             .catch(e => console.log(e));
 
-        completedLocation.results = fillResults(results, rating, campaign, oldRes);
+        completedLocation.results = canvasserTools.fillResults(results, rating, campaign, oldRes);
     }
 
     completedLocation.ID = task.completedLocation.ID;
@@ -350,8 +355,8 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
         .then(res => console.log("after results save for canvassers"))
         .catch(e => console.log(e));
     
-    var resu = await getTaskByID(req.body.taskID);
-    sendToMap(resu, req.body.campaignID);
+    var resu = await canvasserTools.getTaskByID(req.body.taskID);
+    canvasserTools.sendToMap(resu, req.body.campaignID);
 
     // go to success message and redirect to '/canvassing/map'
     res.render("canvassing-return-map", {
@@ -361,11 +366,11 @@ router.post('/canvassing/results', async (req: Request, res: Response) => {
 });
 
 router.get("/test-task-save/:id", async (req:Request, res:Response) => {
-    var task = await getTaskByID(req.params.id);
+    var task = await canvasserTools.getTaskByID(req.params.id);
     console.log(task)
     //@ts-ignore
     task.completedLocation.locations.push(await getManager().findOne(Locations, {where: {"_ID": 4}}));
-    var result = await getResults(task, 1);
+    var result = await canvasserTools.getResults(task, 1);
     console.log(result)
     //@ts-ignore
     await getManager().save(task.completedLocation).then(res => console.log("after CL save"));
