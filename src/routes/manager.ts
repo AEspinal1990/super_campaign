@@ -135,7 +135,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     }
 
     if (req.user[0]._permission === 1) {
-        res.status(200).render('CampaignManagerHome')
+        res.status(200).render('CampaignManagerHome', {campaigns: campaign})
     } 
     else if (req.user[0]._permission === 2) {  
         res.status(200).render('CanvasserHome')
@@ -285,7 +285,6 @@ router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
         }
         await getManager().save(results);
     }
-    res.send('ITs done');
 });
 
 
