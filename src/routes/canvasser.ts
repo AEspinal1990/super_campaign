@@ -36,9 +36,9 @@ router.get('/home', middleware.isAuthenticated, async (req: Request, res: Respon
 
     tasks = await canvasserTools.getCanvassersTask(req.user[0]._name)
     assignments = canvasserTools.organizeByAssignment(tasks);
-    console.log(assignments)
+    console.log(assignments[0].assignment[0])
 
-    res.render('CanvasserHome');
+    res.render('CanvasserHome', {assignments});
 
 });
 

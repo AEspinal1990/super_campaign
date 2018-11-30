@@ -1,7 +1,7 @@
 {
 	"locations": [
 		{
-			"_ID": 27,
+			"_ID": 13,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -12,7 +12,7 @@
 			"_long": -73.113434
 		},
 		{
-			"_ID": 27,
+			"_ID": 13,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -23,7 +23,7 @@
 			"_long": -73.113434
 		},
 		{
-			"_ID": 28,
+			"_ID": 14,
 			"_streetNumber": 1,
 			"_street": "Education Dr",
 			"_unit": "0",
@@ -34,7 +34,7 @@
 			"_long": -73.591287
 		},
 		{
-			"_ID": 29,
+			"_ID": 15,
 			"_streetNumber": 1000,
 			"_street": "Hempstead Turnpike",
 			"_unit": "0",
@@ -45,20 +45,97 @@
 			"_long": -73.599404
 		},
 		{
-			"_ID": 30,
+			"_ID": 16,
 			"_streetNumber": 77,
 			"_street": "Massachusetts Ave",
 			"_unit": "0",
 			"_city": "Cambridge",
 			"_state": "MA",
 			"_zipcode": 2139,
-			"_lat": 42.363672,
-			"_long": -71.101502
+			"_lat": 42.360091,
+			"_long": -71.09416
 		},
 		{
-			"_ID": 31,
-			"_streetNumber": 1148,
-			"_street": "5 AVE",
+			"_ID": 17,
+			"_streetNumber": 1,
+			"_street": "South Ave",
+			"_unit": "0",
+			"_city": "Garden City",
+			"_state": "NY",
+			"_zipcode": 11530,
+			"_lat": 40.722221,
+			"_long": -73.651099
+		},
+		{
+			"_ID": 18,
+			"_streetNumber": 188,
+			"_street": "Merritts Rd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.724216,
+			"_long": -73.459155
+		},
+		{
+			"_ID": 19,
+			"_streetNumber": 234,
+			"_street": "Main St",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.722987,
+			"_long": -73.442116
+		},
+		{
+			"_ID": 20,
+			"_streetNumber": 202,
+			"_street": "Airport Plaza Blvd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.739139,
+			"_long": -73.419253
+		},
+		{
+			"_ID": 21,
+			"_streetNumber": 2245,
+			"_street": "Broadhollow Rd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.725064,
+			"_long": -73.423329
+		},
+		{
+			"_ID": 22,
+			"_streetNumber": 5316,
+			"_street": "Nesconset highway",
+			"_unit": "0",
+			"_city": "Port Jefferson Station",
+			"_state": "NY",
+			"_zipcode": 11776,
+			"_lat": 40.921377,
+			"_long": -73.05201
+		},
+		{
+			"_ID": 23,
+			"_streetNumber": 75,
+			"_street": "Merritts Rd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.724216,
+			"_long": -73.459155
+		},
+		{
+			"_ID": 24,
+			"_streetNumber": 213,
+			"_street": "Broadway Mall",
 			"_unit": "0",
 			"_city": "New York",
 			"_state": "NY",
@@ -67,8 +144,8 @@
 			"_long": -73.957351
 		}
 	],
-	"num_canvassers": 30,
-	"estimated_visit_time": 60,
+	"num_canvassers": 14,
+	"estimated_visit_time": 15,
 	"workday_limit": 360,
 	"avg_travel_speed": 804
 }
