@@ -240,14 +240,12 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
                     }
                 }
             }
-            // console.log(geocodes)
-            io.on('connection', function (socket) {
-                socket.emit('assignment-geocodes', geocodes);
-            });
+
             // console.log(cindex)
             res.render("view-task-detail", {
                 task: canv[cindex].task[index],
-                canvasserID: req.body.canvasserID
+                canvasserID: req.body.canvasserID,
+                geocodes: geocodes
             });
         }
     } else {
