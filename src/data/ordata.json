@@ -12,6 +12,17 @@
 			"_long": -73.113434
 		},
 		{
+			"_ID": 1,
+			"_streetNumber": 100,
+			"_street": "Nicolls Rd",
+			"_unit": "0",
+			"_city": "Stony Brook",
+			"_state": "NY",
+			"_zipcode": 11794,
+			"_lat": 40.909696,
+			"_long": -73.113434
+		},
+		{
 			"_ID": 2,
 			"_streetNumber": 1,
 			"_street": "Education Dr",
@@ -101,17 +112,6 @@
 		},
 		{
 			"_ID": 10,
-			"_streetNumber": 5316,
-			"_street": "Nesconset highway",
-			"_unit": "0",
-			"_city": "Port Jefferson Station",
-			"_state": "NY",
-			"_zipcode": 11776,
-			"_lat": 40.921377,
-			"_long": -73.05201
-		},
-		{
-			"_ID": 11,
 			"_streetNumber": 75,
 			"_street": "Merritts Rd",
 			"_unit": "0",
@@ -122,7 +122,7 @@
 			"_long": -73.459155
 		},
 		{
-			"_ID": 12,
+			"_ID": 11,
 			"_streetNumber": 213,
 			"_street": "Broadway Mall",
 			"_unit": "0",
