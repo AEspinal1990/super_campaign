@@ -54,7 +54,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     } else {
         assignment = new Assignment();
     }
-    console.log("continuing~~~~~")
     /**
      * Grab global parameters from globals.json
      */

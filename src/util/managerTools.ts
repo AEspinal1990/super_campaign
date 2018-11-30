@@ -60,7 +60,13 @@ export const getWorkdayLimit = () => {
  * @param campaign 
  */
 export const getCampaignLocations = campaign => {
-    let locations = [];
+    // create a new depot location
+    var depot = campaign.locations[0];
+    depot.lat = Number(depot.lat);
+    depot.long = Number(depot.long);
+    
+    let locations = [depot];
+
     campaign.locations.forEach(location => {
         location.lat = Number(location.lat);
         location.long = Number(location.long);
@@ -459,7 +465,6 @@ export const loadCanvasserCampaigns = async (canvassers) => {
 };
 
 export const getOldAssignment = async (campaignID) => {
-    console.log("Inside getOldAssignment")
     var task = await getManager()
         .createQueryBuilder(Task, "task")
         .leftJoinAndSelect("task._assignment", "assignment")
@@ -489,10 +494,8 @@ export const getOldAssignment = async (campaignID) => {
 };
 
 export const clearAssignment = async (assignment) => {
-    console.log("inside clearAssignment: ", assignment)
     // remove locations for each remaining locations
     for (let l in assignment.tasks){
-        // console.log(assignment.tasks[l].remainingLocation)
         await removeRLocations(assignment.tasks[l]);
         console.log("After removeRLocations")
         await getManager()
@@ -507,7 +510,6 @@ export const clearAssignment = async (assignment) => {
             .where("_ID = :id", {id: assignment.tasks[l].ID})
             .execute();
     }
-    console.log("exiting clearassignment")
     assignment.task = [];
     return assignment;
 };
@@ -515,7 +517,6 @@ export const clearAssignment = async (assignment) => {
 
 async function removeRLocations(task){
     for (let l in task.remainingLocation.locations){
-        // console.log("inside removeRL: ", task.remainingLocation.locations)
         await getManager()
             .createQueryBuilder()
             .relation(RemainingLocation, "_locations")

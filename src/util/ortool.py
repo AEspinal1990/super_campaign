@@ -144,7 +144,8 @@ for vehicle_id in range(data["num_canvassers"]):
         while not routing.IsEnd(index):
             index = assignment.Value(routing.NextVar(index))
             location_index = routing.IndexToNode(index)
-            route["locations"].append(data["locations"][location_index])
+            if location_index != 0:
+                route["locations"].append(data["locations"][location_index])
         # add route to tasks
         tasks["routes"].append(route)
 
@@ -160,6 +161,8 @@ for vehicle_id in range(data["num_canvassers"]):
     plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
     distance = 0
     while not routing.IsEnd(index):
+        print(routing.IndexToNode(index))
+        # if routing.IndexToNode(index) != '0'):
         plan_output += ' {} ->'.format(routing.IndexToNode(index))
         previous_index = index
         index = assignment.Value(routing.NextVar(index))
