@@ -1,36 +1,42 @@
 <% include ./partials/managerNav %>
+<head>
+    <style>
+        form {
+            display: inline;
+        }
+    </style>
+</head>
 
-<div>
-    <table>
-        <tr>
-            <th>Task ID</th>
-            <th>Canvasser</th>
-            <th>Scheduled On</th>
-            <th>Task Status</th>
-            <th>Number of Locations</th>
-            <th>Duration</th>
-        </tr>
-        <% for (var i=0; i < tasks.length; i++ ) { %>
-
-        <div style="border: 5px;margin: auto;">
-            <form id='forms<%= tasks[i]._ID %>' action='/manager/view-assignment-detail' method='POST'>
-                <tr onclick="document.getElementById('forms<%= tasks[i]._ID %>').submit()">
-
+<body>
+<div class="container">
+    <div class="table-responsive">
+        <h3>View Assignment</h3>
+        <h5>Assignment Tasks</h3>
+        <table class="table table-hover table-striped">
+            <thead class="thead-light text-center">
+                <th>Task ID</th>
+                <th>Canvasser</th>
+                <th>Scheduled On</th>
+                <th>Task Status</th>
+                <th>Number of Locations</th>
+                <th>Duration</th>
+                <th>View Details</th>
+            </thead>
+            <tbody>
+                <% for (var i=0; i < tasks.length; i++ ) { %>
+                <tr class="text-center">
                     <td>
-                        <input type="text" name="taskID" value="<%= tasks[i]._ID %>">
+                        <%= tasks[i]._ID %>
                     </td>
-                    <input type="hidden" name="campaignID" value="<%= campaignID %>">
-                    <input type="hidden" name="canvasserID" value="<%= id %>">
-
-                    <td>
+                    <td class="text-center">
                         <%= tasks[i]._canvasser %>
                     </td>
 
-                    <td>
+                    <td class="text-center">
                         <%= tasks[i]._scheduledOn %>
                     </td>
 
-                    <td>
+                    <td class="text-center">
                         <% if (tasks[i]._status == true) { %>
                         Completed
                         <% } else { %>
@@ -38,19 +44,33 @@
                         <% } %>
                     </td>
 
-                    <td>
+                    <td class="text-center">
                         <%= tasks[i]._numLocations %>
                     </td>
 
-                    <td>
+                    <td class="text-center">
                         <%= tasks[i]._duration %>
                     </td>
+                    <td class>
+                        <span data-placement="top" data-toggle="tooltip" title="View Detail">
+                            <form id='forms<%= tasks[i]._ID %>' action='/manager/view-assignment-detail' method='POST'>
+                                <button class="btn btn-primary btn-xs" data-title="View Detail" data-toggle="modal" data-target="#viewDetail"
+                                onclick="document.getElementById('forms<%= tasks[i]._ID %>').submit()">  
+                                    <span class="far fa-eye"></span>
+                                </button>
+                                <input type="hidden" name="taskID" value="<%= tasks[i]._ID %>">
+                                <input type="hidden" name="campaignID" value="<%= campaignID %>">
+                                <input type="hidden" name="canvasserID" value="<%= id %>">
+                            </form>
+                        </span>
+                    </td>
                 </tr>
-                <!-- <input type="submit" value="Details"> -->
-            </form>
-        </div>
-        <% } %>
-    </table>
-</div>
+                <% } %>
+            </tbody>
+        </table>
+
+    </div> <!-- div.table-responsive -->
+</div><!-- div.container -->
+</body>
 
 <% include ./partials/footer %>

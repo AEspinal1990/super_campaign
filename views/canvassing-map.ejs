@@ -110,8 +110,10 @@
                     addRouteNum(route.cLocations[i], parsedGeocode, Number(i)+1, route.campaignID, route.taskID, false);
                 }
             }
-            map.setZoom(5);
-            map.setCenter(new google.maps.LatLng(parseFloat(route[0].lat), parseFloat(route[0].lng)));
+            if(route.route != undefined) {
+                map.setZoom(5);
+                map.setCenter(new google.maps.LatLng(parseFloat(route.route[0].lat), parseFloat(route.route[0].lng)));
+            }
             // socket.close();
         });
     });

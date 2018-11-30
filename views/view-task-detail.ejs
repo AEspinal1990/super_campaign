@@ -51,8 +51,10 @@
             <% } %>
         </table>
         <% } %>
+        <% var geocodes = geocodes; %>
     </div>
-
+    
+    <% if(geocodes) { %>
     <script>
         var map;
         var usa = { lat: 37.09024, lng: -95.7129 };
@@ -98,22 +100,18 @@
             markers = [];
         }
 
-        var socket = io();
         $(document).ready(function () {
-            socket.on('task-geocodes', function (geocodes) {
-                deleteMarkers();
-                for (i in geocodes) {
-                    parsedGeocode = { lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng) };
-                    console.log(parsedGeocode);
-                    addMarker(parsedGeocode);
-                }
-                map.setZoom(5);
-                map.setCenter(new google.maps.LatLng(parseFloat(geocodes[0].lat), parseFloat(geocodes[0].lng)));
-
-            });
+            geocodes = JSON.parse('<%- JSON.stringify(geocodes) %>');
+            deleteMarkers();
+            for (i in geocodes) {
+                parsedGeocode = { lat: parseFloat(geocodes[i].lat), lng: parseFloat(geocodes[i].lng) };
+                addMarker(parsedGeocode);
+            }
+            map.setZoom(5);
+            map.setCenter(new google.maps.LatLng(parseFloat(geocodes[0].lat), parseFloat(geocodes[0].lng)));
         });
-
     </script>
+    <% } %>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
 </body>
 </html>
