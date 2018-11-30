@@ -34,7 +34,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     }
     // check if the campaign has already started
     var currentDate = new Date();
-    if (+campaign.startDate >= +currentDate){
+    if (+campaign.startDate <= +currentDate){
         return res.send("This Campaign has already started. You cannot create a new assignemnt!");
     }
 
