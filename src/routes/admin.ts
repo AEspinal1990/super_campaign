@@ -176,7 +176,7 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
     let name = user.name;
     let username = user.username;
     let role = user.role;
-    console.log("here");
+
     /**
      * Update the user on the database
      */
@@ -211,6 +211,9 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
     }
 
     // TODO: Find a better place to route to
+    // if(req.user[0]._permission === 2) {
+    //     res.redirect('/manager/new-assignment')
+    // }
     res.send('hello');
 });
 
