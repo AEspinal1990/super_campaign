@@ -500,7 +500,12 @@ export const clearAssignment = async (assignment) => {
             .relation(Task, "_remainingLocation")
             .of(assignment.tasks[l].ID)
             .set(null);
-            
+        await getManager()
+            .createQueryBuilder()
+            .delete()
+            .from(Task)
+            .where("_ID = :id", {id: assignment.tasks[l].ID})
+            .execute();
     }
     console.log("exiting clearassignment")
     assignment.task = [];

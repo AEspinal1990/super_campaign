@@ -221,6 +221,7 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
 
 
     // Update Locations
+    //@ts-ignore
     await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
 
