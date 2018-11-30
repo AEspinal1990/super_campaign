@@ -31,12 +31,12 @@ router.get('/home', middleware.isAuthenticated, async (req: Request, res: Respon
     // all the task for this canvasser
     // Then in front end render each assignment in its
     // own accordian.
-    
-    
-    let tasks = await canvasserTools.getCanvassersTask(req.user[0]._name)
-    
-    console.log(tasks)
-    // let assignments = [];
+    let tasks;
+    let assignments = [];
+
+    tasks = await canvasserTools.getCanvassersTask(req.user[0]._name)
+    assignments = canvasserTools.organizeByAssignment(tasks);
+    console.log(assignments)
 
     res.render('CanvasserHome');
 

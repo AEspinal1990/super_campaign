@@ -176,3 +176,62 @@ function convertGeocodes(locations) {
     }
     return codes;
 };
+
+
+/**
+ * Returns an array of tasks of the same assignment ID
+ * @param id 
+ * @param tasks 
+ */
+function getTasksOfId(id, tasks) {
+    let assignment = [];
+    tasks.forEach(task => {
+        if (task._assignment._ID === id) {
+            assignment.push(task)
+        }
+    });
+    console.log(assignment)
+
+    return assignment;
+}
+
+/**
+ * Returns an array where each element is another
+ * array that represents 1 assignment. Each assignment
+ * element contains tasks that belong to it.
+ * @param tasks 
+ */
+export const organizeByAssignment = (tasks) => {
+    let ids = [];
+    let single_assignment =[];
+    let assignments = [];
+    
+    // Grab all the assignment Ids
+    tasks.forEach(task => {
+        ids.push(task._assignment._ID)
+    });
+    // Remove duplicates
+    ids = ids.filter(onlyUnique)
+    
+    // With the ids organize tasks by Assignment id
+    ids.forEach(id => {
+        single_assignment = getTasksOfId(id, tasks);
+        assignments.push({
+            id,
+            assignment: single_assignment
+        })
+    });
+
+    return assignments;
+}
+
+/**
+ * Used alongside filter to return an array
+ * with only unique elements
+ * @param value 
+ * @param index 
+ * @param self 
+ */
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
