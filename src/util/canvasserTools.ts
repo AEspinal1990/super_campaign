@@ -190,7 +190,6 @@ function getTasksOfId(id, tasks) {
             assignment.push(task)
         }
     });
-    console.log(assignment)
 
     return assignment;
 }
