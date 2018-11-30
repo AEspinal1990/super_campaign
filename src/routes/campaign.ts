@@ -43,7 +43,7 @@ router.get('/home', async (req: Request, res: Response) => {
             }
         }
     }
-    res.render('manager-campaign-home', {campaigns:c});
+    res.render('CampaignManagerHome', {campaigns:c});
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
@@ -191,15 +191,6 @@ router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response)
             campaignID: req.params.id
         });
     }
-});
-
-router.post('/:id', middleware.manages, async (req: Request, res: Response) => {
-    campaignEditor.editCampaign(req.body.campaign, req.params.id);
-    campaignLogger.info(`Updated campaign with id: ${req.params.id}`);
-    if (res.status(200))
-        res.redirect('/campaign/home');
-    else
-        res.send("Error!");
 });
 
 router.post('/replacement/:id',middleware.manages, async (req: Request, res: Response) => {
