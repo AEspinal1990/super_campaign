@@ -145,6 +145,7 @@ export const saveLocations = async (campaign, locations) => {
 };
 
 
+
 export const saveCanavaser = async (campaign, canvassers) => {
     let usr;
     let canvass;

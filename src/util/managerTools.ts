@@ -5,6 +5,7 @@ import { Task } from '../backend/entity/Task';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { AssignedDate } from '../backend/entity/AssignedDate';
 import { Locations } from '../backend/entity/Locations';
+import { Assignment } from '../backend/entity/Assignment';
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -75,6 +76,7 @@ export const getCampaignLocations = campaign => {
  * @param campaignID 
  */
 export const getAvailableCanvassers = async campaignID => {
+    console.log("inside getAvailablecanvasser")
     return await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -292,8 +294,8 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
             availableDates.push(date);
         }
     });
-    console.log("Canvassers : ", canvassers)
-    console.log("avaiableDates : ", availableDates)
+    // console.log("Canvassers : ", canvassers)
+    // console.log("avaiableDates : ", availableDates)
     // check if there are no available dates
     if (availableDates.length == 0){
         console.log("inside")
@@ -321,9 +323,10 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
                 if (earliestDate === undefined || date < earliestDate) {
                     canvasserIndex = Number(i);
                     earliestDate = date;
+                    status = 4;
                 }
             }
-            if (Number(i) == canvassers.length -1){
+            if (Number(i) == canvassers.length -1 && status != 4){
                 status = 2;
             }
         }
@@ -456,5 +459,62 @@ export const loadCanvasserCampaigns = async (canvassers) => {
 };
 
 export const getOldAssignment = async (campaignID) => {
-    
+    console.log("Inside getOldAssignment")
+    var task = await getManager()
+        .createQueryBuilder(Task, "task")
+        .leftJoinAndSelect("task._assignment", "assignment")
+        .where("task._campaignID = :id", {id: campaignID})
+        .getOne()
+        .then(res => {
+            return res;});
+    var assignment;
+    if (task != undefined && task != null){
+        assignment = await getManager()
+            .createQueryBuilder(Assignment, "assignment")
+            .where("assignment._ID = :id", {id: task.assignment.ID})
+            .getOne()
+            .then(res => {
+                return res;});
+        assignment.tasks = await getManager()
+            .createQueryBuilder(Task, "task")
+            .leftJoinAndSelect("task._assignment", "assignment")
+            .leftJoinAndSelect("task._remainingLocation", "RL")
+            .leftJoinAndSelect("RL._locations", "RLocation")
+            .where("assignment._ID = :id", {id: assignment.ID})
+            .getMany()
+            .then(res => {
+                return res;});
+    }
+    return assignment;
 };
+
+export const clearAssignment = async (assignment) => {
+    console.log("inside clearAssignment: ", assignment)
+    // remove locations for each remaining locations
+    for (let l in assignment.tasks){
+        // console.log(assignment.tasks[l].remainingLocation)
+        await removeRLocations(assignment.tasks[l]);
+        console.log("After removeRLocations")
+        await getManager()
+            .createQueryBuilder()
+            .relation(Task, "_remainingLocation")
+            .of(assignment.tasks[l].ID)
+            .set(null);
+            
+    }
+    console.log("exiting clearassignment")
+    assignment.task = [];
+    return assignment;
+};
+
+
+async function removeRLocations(task){
+    for (let l in task.remainingLocation.locations){
+        // console.log("inside removeRL: ", task.remainingLocation.locations)
+        await getManager()
+            .createQueryBuilder()
+            .relation(RemainingLocation, "_locations")
+            .of(task.remainingLocation.ID)
+            .remove(task.remainingLocation.locations[l].ID)
+    }
+}
