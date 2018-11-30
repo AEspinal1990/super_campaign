@@ -34,7 +34,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     }
     // check if the campaign has already started
     var currentDate = new Date();
-    if (+campaign.startDate >= +currentDate){
+    if (+campaign.startDate <= +currentDate){
         return res.send("This Campaign has already started. You cannot create a new assignemnt!");
     }
 
@@ -122,9 +122,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save canvassers with their assigned task
      */
-    if (replaced){
-        
-    }
     if (status != 3){
         console.log("before loadCanvasserCampaigns")
         canvassers = await managerTools.loadCanvasserCampaigns(canvassers);

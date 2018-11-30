@@ -27,8 +27,6 @@ router.get('/home', middleware.isAuthenticated, async (req: Request, res: Respon
 
 });
 
-
-
 /**
  * GET and POST for Edit Availability
  */
@@ -37,6 +35,7 @@ router.get('/availability', middleware.isAuthenticated, async (req: Request, res
     const canvas = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._ID", "user")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
         .leftJoinAndSelect("canvasser._availableDates", "avaDate")
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: req.user[0]._employeeID })
@@ -70,11 +69,10 @@ router.get('/availability', middleware.isAuthenticated, async (req: Request, res
 });
 
 router.post('/availability', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    //new dates passed in from frontend
     if (req.body.editAvailability.dates === '') {
         return;
     }
-    console.log(req.body.editAvailability.dates)
+    // console.log(req.body.editAvailability.dates)
     var newDates = req.body.editAvailability.dates.split(",");
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
@@ -84,6 +82,7 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
         .leftJoinAndSelect("canvasser._assignedDates", "assDate")
         .where("canvasser._ID = :ID", { ID: req.user[0]._employeeID })
         .getOne();
+
     // copy canvasser's old available dates
     var availCopy = [];
     while (canv.availableDates.length > 0) {
@@ -100,16 +99,6 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
             canv.availableDates.push(avail);
         }
     }
-    // we can assume that canvassers cannot change availability if assigned
-    // however leaving this logic just in case
-    /**     Handling edited available dates for tasks
-     * if a tasked date is removed
-     *      if edited dates are still within campaign start&end dates
-     *          assign a new date the task
-     *      else
-     *          delete assignedDates for tasked-canvassers in campaign
-     *          re direst to new assignment
-    */
 
     // delete old available dates that are unused
     for (let i in availCopy) {
