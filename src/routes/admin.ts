@@ -74,7 +74,7 @@ router.get('/home', middleware.isAuthenticated, async (req: Request, res: Respon
         .getMany();
 
     console.log(users) 
-    res.render('SysAdminScreen', {users});
+    res.render('AdminHome', {users});
 });
 
 router.post('/', [
