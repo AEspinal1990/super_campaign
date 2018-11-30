@@ -321,9 +321,10 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
                 if (earliestDate === undefined || date < earliestDate) {
                     canvasserIndex = Number(i);
                     earliestDate = date;
+                    status = 4;
                 }
             }
-            if (Number(i) == canvassers.length -1){
+            if (Number(i) == canvassers.length -1 && status != 4){
                 status = 2;
             }
         }
