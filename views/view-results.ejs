@@ -1,4 +1,8 @@
-<% include ./partials/header %>
+<% if (role === 1) { %>
+    <% include ./partials/managerNav %> 
+<% } else { %> 
+    <% include ./partials/canvasserNav %> 
+<% } %> 
 <head>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>

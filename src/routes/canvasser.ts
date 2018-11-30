@@ -149,6 +149,7 @@ router.get('/:id/view-tasks', async (req: Request, res: Response) => {
         res.send('You have no tasks assigned.');
     } else {
         res.render("view-tasks", {
+            role: req.user[0]._permission,
             tasks: canv.task,
             id: canv.ID.employeeID,
             campaignID: req.params.id

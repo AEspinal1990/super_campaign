@@ -341,6 +341,7 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
         res.status(404).send("No results were found for this campaign.");
     } else {
         res.render('view-results', {
+            role: req.user[0]._permission,
             resultsTableView: resultsTable,
             id: req.params.id,
             resultsSummary: questionaireResults,
