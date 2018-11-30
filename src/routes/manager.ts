@@ -32,6 +32,11 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     if (campaign === undefined) {
         return res.status(404).send('Campaign not found');
     }
+    // check if the campaign has already started
+    var currentDate = new Date();
+    if (+campaign.startDate >= +currentDate){
+        return res.send("This Campaign has already started. You cannot create a new assignemnt!");
+    }
 
     /**
      * Check if a assignment already exists for this campaign
