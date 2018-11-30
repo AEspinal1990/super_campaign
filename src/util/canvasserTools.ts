@@ -23,6 +23,24 @@ export const getTaskByID = async (taskID) => {
     return task;
 };
 
+export const getCanvassersTask = async (canvasserName) => {
+    var task = await getManager()
+        .createQueryBuilder(Task, "task")
+        .leftJoinAndSelect("task._remainingLocation", "RL")
+        .leftJoinAndSelect("RL._locations", "locations")
+        .leftJoinAndSelect("task._completedLocation", "CL")
+        .leftJoinAndSelect("CL._locations", "CLocations")
+        .leftJoinAndSelect("task._assignment", "assignment")
+        // .leftJoinAndSelect("CL._results", "results")
+        .where("task._canvasser = :canvasserName", { canvasserName })
+        .getMany()
+        .then(res => {
+            return res;
+        })
+        .catch(e => console.log(e));
+    return task;
+}
+
 export const getTasksByCampaign = async (campaignID) => {
     var task = await getManager()
         .createQueryBuilder(Task, "task")
