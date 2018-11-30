@@ -23,8 +23,8 @@ router.get('/calendar', middleware.isAuthenticated, async (req: Request, res: Re
 });
 
 router.get('/home', middleware.isAuthenticated, async (req: Request, res: Response) => {
-    res.render('canvasserScreen');
-
+    res.render('CanvasserHome');
+req.params.id
 });
 
 /**

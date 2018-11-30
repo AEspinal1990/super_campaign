@@ -225,7 +225,7 @@ router.post('/replacement/:id',middleware.manages, async (req: Request, res: Res
     await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
 
-    res.redirect('/campaign/home')
+    res.status(200).redirect(`/manager/new-assignment/${req.params.id}`);
 });
 
 /**

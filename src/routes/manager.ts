@@ -133,7 +133,16 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         // warn: only some tasks were assigned
         return res.send("Warning!!! Not enough canvassers are available to be assigned for all tasks!")
     }
-    res.status(200).send('Successfully Created An Assignment!');
+
+    if (req.user[0]._permission === 1) {
+        res.status(200).render('CampaignManagerHome')
+    } 
+    else if (req.user[0]._permission === 2) {  
+        res.status(200).render('CanvasserHome')
+    }
+    else {
+        res.status(200).render('AdminHome')
+    }
 });
 
 router.get('/view-assignment/:id', async (req: Request, res: Response) => {
