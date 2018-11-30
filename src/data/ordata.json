@@ -98,10 +98,43 @@
 			"_zipcode": 11776,
 			"_lat": 40.921377,
 			"_long": -73.05201
+		},
+		{
+			"_ID": 10,
+			"_streetNumber": 5316,
+			"_street": "Nesconset highway",
+			"_unit": "0",
+			"_city": "Port Jefferson Station",
+			"_state": "NY",
+			"_zipcode": 11776,
+			"_lat": 40.921377,
+			"_long": -73.05201
+		},
+		{
+			"_ID": 11,
+			"_streetNumber": 75,
+			"_street": "Merritts Rd",
+			"_unit": "0",
+			"_city": "Farmingdale",
+			"_state": "NY",
+			"_zipcode": 11735,
+			"_lat": 40.724216,
+			"_long": -73.459155
+		},
+		{
+			"_ID": 12,
+			"_streetNumber": 213,
+			"_street": "Broadway Mall",
+			"_unit": "0",
+			"_city": "Hicksville",
+			"_state": "NY",
+			"_zipcode": 11801,
+			"_lat": 40.773099,
+			"_long": -73.531413
 		}
 	],
-	"num_canvassers": 6,
-	"estimated_visit_time": 10,
+	"num_canvassers": 7,
+	"estimated_visit_time": 15,
 	"workday_limit": 360,
 	"avg_travel_speed": 804
 }

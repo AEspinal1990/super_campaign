@@ -1,168 +1,192 @@
-<% include ./partials/header %>
+<% if (role === 1) { %>
+<% include ./partials/managerNav %>
+<% } else { %>
+<% include ./partials/canvasserNav %>
+<% } %>
+
 <head>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-        
+
 </head>
 <style>
     .content {
-            max-width: 500px;
-            margin: auto;
-            background: white;
-            padding: 10px;
-        }
-        table,
-        th,
-        td {
-            border: 1px solid black;
-        }
-        /* Set the size of the div element that contains the map */
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 10px;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    /* Set the size of the div element that contains the map */
     #map {
-        height: 400px;  /* The height is 400 pixels */
-        width: 100%;  /* The width is the width of the web page */
+        height: 400px;
+        /* The height is 400 pixels */
+        width: 100%;
+        /* The width is the width of the web page */
         background-color: grey;
     }
 </style>
+
 <body>
-    <h1>Campaign <%= id %></h1>
+
+    <% if (empty === true) { %>
+    <h1>No Results Available</h1>
+    <% } else { %>
+
+
+
+    <h1>Campaign
+        <%= id %>
+    </h1>
     <div>
         <h2>Results Table View</h1>
-        <table>
-            <tr>
-                <td>Location</td>
-                <td>Question</td>
-                <td>Answer</td>
-                <td>Rating</td>
-            </tr>
-            <% for (var i = 0; i < resultsTableView.length; i++) { %>
+            <table>
+                <tr>
+                    <td>Location</td>
+                    <td>Question</td>
+                    <td>Answer</td>
+                    <td>Rating</td>
+                </tr>
+                <% for (var i = 0; i < resultsTableView.length; i++) { %>
                 <tr>
                     <td>
                         <%= resultsTableView[i].location %>
                     </td>
                     <td>
                         <%= resultsTableView[i].question %>
-                    </td>    
+                    </td>
                     <td>
                         <%= resultsTableView[i].answer %>
                     </td>
                     <td>
                         <%= resultsTableView[i].rating %>
-                    </td>          
+                    </td>
                 </tr>
-            <% } %>
-        </table>
+                <% } %>
+            </table>
     </div>
     <div>
         <h2>Statistical Summary</h1>
-        <p>Average: <%= ratingStatistics.average %>
-            Standard Deviation: <%= ratingStatistics.std %>
-        </p>
-        <% for (var i = 0; i < resultsSummary.length; i++) { %>
-            <div>Question: <%= resultsSummary[i].question %>
+            <p>Average:
+                <%= ratingStatistics.average %>
+                Standard Deviation:
+                <%= ratingStatistics.std %>
+            </p>
+            <% for (var i = 0; i < resultsSummary.length; i++) { %>
+            <div>Question:
+                <%= resultsSummary[i].question %>
             </div>
-            <div>True: <%= resultsSummary[i].percentYes %>%  False: <%= resultsSummary[i].percentNo %>%</div>
+            <div>True:
+                <%= resultsSummary[i].percentYes %>% False:
+                <%= resultsSummary[i].percentNo %>%</div>
             <p></p>
-        <% } %>
+            <% } %>
     </div>
     <div>
         <h2>Results Map View</h1>
-        <div id="map"></div>
+            <div id="map"></div>
     </div>
-    
+    <% } %>
 </body>
 <!--<script src="/scripts/map-view.js"></script>-->
 <script>
-        var map;
-        var usa = { lat: 37.09024, lng: -95.7129 };
-        var markers = [];
+    var map;
+    var usa = { lat: 37.09024, lng: -95.7129 };
+    var markers = [];
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: usa,
-                zoom: 2
-            });
-        }
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: usa,
+            zoom: 2
+        });
+    }
 
-        var markers = [];
-        var getMarkerUniqueId = function (lat, lng) {
-            return lat + '_' + lng;
-        }
-        //Adds marker to map and push to the array
-        function addMarker(location) {
-            var markerId = getMarkerUniqueId(location.lat, location.lng);
-            var marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                animation: google.maps.Animation.DROP,
-                id: markerId
-            });
-            markers[markerId] = marker;
-        }
+    var markers = [];
+    var getMarkerUniqueId = function (lat, lng) {
+        return lat + '_' + lng;
+    }
+    //Adds marker to map and push to the array
+    function addMarker(location) {
+        var markerId = getMarkerUniqueId(location.lat, location.lng);
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            id: markerId
+        });
+        markers[markerId] = marker;
+    }
 
-        //function to add a specific color marker based on the rating
-        function addRatingMarker(location, rating) {
-            var color;
-            if(rating == 1) {
-                color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red1.png";
-            } else if (rating == 2) {
-                color ="https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_orange2.png";
-            } else if (rating == 3) {
-                color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_yellow3.png";
-            } else if (rating == 4) {
-                color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green4.png";
-            } else if (rating == 5) {
-                color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blue5.png";
-            } else {
-                color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_black!.png";
-            }
-            var markerId = getMarkerUniqueId(location.lat, location.lng);
-            var marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                animation: google.maps.Animation.DROP,
-                id: markerId,
-                icon: color
-            });            
-            markers[markerId] = marker;
+    //function to add a specific color marker based on the rating
+    function addRatingMarker(location, rating) {
+        var color;
+        if (rating == 1) {
+            color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red1.png";
+        } else if (rating == 2) {
+            color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_orange2.png";
+        } else if (rating == 3) {
+            color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_yellow3.png";
+        } else if (rating == 4) {
+            color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green4.png";
+        } else if (rating == 5) {
+            color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blue5.png";
+        } else {
+            color = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_black!.png";
         }
+        var markerId = getMarkerUniqueId(location.lat, location.lng);
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            id: markerId,
+            icon: color
+        });
+        markers[markerId] = marker;
+    }
 
-        //** sets the map on all markers in the array
-        function setMapOnAll(map) {
-            for (marker in markers) {
-                markers[marker].setMap(map);
-            }
+    //** sets the map on all markers in the array
+    function setMapOnAll(map) {
+        for (marker in markers) {
+            markers[marker].setMap(map);
         }
+    }
 
-        // Removes the markers from the map, but keeps them in the array.
-        function clearMarkers() {
-            setMapOnAll(null);
-        }
-        // Deletes all markers in the array by removing references to them.
-        function deleteMarkers() {
-            clearMarkers();
-            markers = [];
-        }
+    // Removes the markers from the map, but keeps them in the array.
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+    // Deletes all markers in the array by removing references to them.
+    function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+    }
 
 </script>
 <script>
     var socket = io();
-    $(document).ready(function() {
-        socket.on('result-details', function(campaignResDet) {
+    $(document).ready(function () {
+        socket.on('result-details', function (campaignResDet) {
             // console.log(campaignResDet[0].coord.lat);
             // console.log("SPACE");
             // console.log(campaignResDet[1].coord.lat);
 
             deleteMarkers();
-            for(i in campaignResDet) {
+            for (i in campaignResDet) {
                 //campaign.getLocationsResults()    [1].completedLocation._locations[0]._lat
                 //parsedCoord = {lat: campaignResDet[i].coord.lat, lng: campaignResDet[i].coord.lng} ;
-                parsedCoord = {lat: parseFloat(campaignResDet[i].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[i].completedLocation._locations[0]._long)};
+                parsedCoord = { lat: parseFloat(campaignResDet[i].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[i].completedLocation._locations[0]._long) };
                 //parsedCoord = campaignResDet[i].coord;
                 rating = campaignResDet[i].rating;
                 addRatingMarker(parsedCoord, rating);
             }
             map.setZoom(5);
-            map.setCenter(new google.maps.LatLng({lat: parseFloat(campaignResDet[0].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[0].completedLocation._locations[0]._long)}));
+            map.setCenter(new google.maps.LatLng({ lat: parseFloat(campaignResDet[0].completedLocation._locations[0]._lat), lng: parseFloat(campaignResDet[0].completedLocation._locations[0]._long) }));
         });
     });
 </script>

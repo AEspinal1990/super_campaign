@@ -74,7 +74,7 @@ router.get('/home', middleware.isAuthenticated, async (req: Request, res: Respon
         .getMany();
 
     console.log(users) 
-    res.render('SysAdminScreen', {users});
+    res.render('AdminHome', {users});
 });
 
 router.post('/', [
@@ -211,6 +211,9 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
     }
 
     // TODO: Find a better place to route to
+    // if(req.user[0]._permission === 2) {
+    //     res.redirect('/manager/new-assignment')
+    // }
     res.send('hello');
 });
 
