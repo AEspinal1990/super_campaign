@@ -292,16 +292,28 @@ router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
 router.get('/results/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id } });
-    var question = await getManager().find(Questionaire,
-        { where: { "_campaign": campaign } });
+    
 
-    var resul = await getManager().find(Results,
-        {
+    var resul = await getManager().find(Results, {
             where: { "_campaign": campaign },
             relations: ["_completedLocation", "_completedLocation._locations"]
         });
+
+    if(resul.length === 0 ) {
+        return res.render('view-results', {
+            empty: true,
+            role: req.user[0]._permission,
+            resultsTableView: "",
+            id: req.params.id,
+            resultsSummary: "",
+            ratingStatistics: ""
+        });
+    }
+    var question = await getManager().find(Questionaire,
+        { where: { "_campaign": campaign } });
     campaign.results = resul;
 
+    console.log('The results', resul)
     function ResultDetails(location_Id, rating, coord) {
         this.location_Id = location_Id;
         this.rating = rating;
@@ -341,6 +353,7 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
         res.status(404).send("No results were found for this campaign.");
     } else {
         res.render('view-results', {
+            empty: false,
             role: req.user[0]._permission,
             resultsTableView: resultsTable,
             id: req.params.id,
