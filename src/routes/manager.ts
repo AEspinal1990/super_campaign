@@ -34,7 +34,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     }
     // check if the campaign has already started
     var currentDate = new Date();
-    if (+campaign.startDate <= +currentDate){
+    if (+campaign.startDate <= +currentDate) {
         return res.send("This Campaign has already started. You cannot create a new assignemnt!");
     }
 
@@ -46,7 +46,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         .then(res => {
             return res;
         });
-    if (assignment != undefined){
+    if (assignment != undefined) {
         console.log(assignment)
         // delete all tasks and their relations
         assignment = await managerTools.clearAssignment(assignment);
@@ -94,7 +94,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     // console.log('Before remove busy', canvassers)
     canvassers = managerTools.removeBusy(canvassers);
     var ret = managerTools.assignTasks(canvassers, tasks);
-    if (ret.status == 3){
+    if (ret.status == 3) {
         // no available dates
         canvassers = null;
     } else {
@@ -108,8 +108,8 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save new assignment and update campaign
      */
-    if (replaced){
-        for (let l in assignment.tasks){
+    if (replaced) {
+        for (let l in assignment.tasks) {
             assignment.tasks[l].assignment = assignment;
         }
         await getManager().save(assignment.tasks)
@@ -121,22 +121,22 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Save canvassers with their assigned task
      */
-    if (status != 3){
+    if (status != 3) {
         console.log("before loadCanvasserCampaigns")
         canvassers = await managerTools.loadCanvasserCampaigns(canvassers);
         await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
     } else {
         return res.send("Warning!!! No canvassers are available to assign task(s) to!");
     }
-    if (status == 2){
+    if (status == 2) {
         // warn: only some tasks were assigned
         return res.send("Warning!!! Not enough canvassers are available to be assigned for all tasks!")
     }
 
     if (req.user[0]._permission === 1) {
-        res.status(200).render('CampaignManagerHome', {campaigns: campaign})
-    } 
-    else if (req.user[0]._permission === 2) {  
+        res.status(200).render('CampaignManagerHome', { campaigns: campaign })
+    }
+    else if (req.user[0]._permission === 2) {
         res.status(200).render('CanvasserHome')
     }
     else {
@@ -216,7 +216,7 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
         .leftJoinAndSelect("rmL._locations", "fmLs")
         .where("campaign._ID = :ID", { ID: req.body.campaignID })
         .getMany();
-// console.log(canv)
+    // console.log(canv)
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);
@@ -288,14 +288,14 @@ router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
 router.get('/results/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id } });
-    
+
 
     var resul = await getManager().find(Results, {
-            where: { "_campaign": campaign },
-            relations: ["_completedLocation", "_completedLocation._locations"]
-        });
+        where: { "_campaign": campaign },
+        relations: ["_completedLocation", "_completedLocation._locations"]
+    });
 
-    if(resul.length === 0 ) {
+    if (resul.length === 0) {
         return res.render('view-results', {
             empty: true,
             role: req.user[0]._permission,

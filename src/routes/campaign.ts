@@ -8,7 +8,7 @@ import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
 import { Canvasser } from '../backend/entity/Canvasser';
 import server, { io } from '../server';
-import { CampaignManager }      from '../backend/entity/CampaignManager';
+import { CampaignManager } from '../backend/entity/CampaignManager';
 
 const middleware = require('../middleware');
 const router: Router = Router();
@@ -23,27 +23,27 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
     //retrieve canvassers that can be chosen for the new campaign
     const canvasserRepository = getRepository(Canvasser);
     const canvasser = await canvasserRepository.find().catch(e => console.log(e));
-    res.render('create-campaign', {canvassers: canvasser});
+    res.render('create-campaign', { canvassers: canvasser });
 });
 
 //Removed authentication for now
 router.get('/home', async (req: Request, res: Response) => {
 
     let campaigns = await getManager()
-            .createQueryBuilder(Campaign, "campaigns")
-            .leftJoinAndSelect("campaigns._managers", "managers")
-            .leftJoinAndSelect("managers._ID", "ids")
-            .getMany();
+        .createQueryBuilder(Campaign, "campaigns")
+        .leftJoinAndSelect("campaigns._managers", "managers")
+        .leftJoinAndSelect("managers._ID", "ids")
+        .getMany();
 
-    let c = [];    
-    for (let i = 0; i < campaigns.length; i++) {         
+    let c = [];
+    for (let i = 0; i < campaigns.length; i++) {
         for (let j = 0; j < campaigns[i].managers.length; j++) {
             if (req.user[0]._employeeID === campaigns[i].managers[j].ID.employeeID) {
                 c.push(campaigns[i]);
             }
         }
     }
-    res.render('CampaignManagerHome', {campaigns:c});
+    res.render('CampaignManagerHome', { campaigns: c });
 });
 
 router.post('/', middleware.isManager, async (req: Request, res: Response) => {
@@ -51,7 +51,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
     let endDate;
     let avgDuration;
     let campaign;
-    
+
     // Grab dates needed to create campaign object 
     startDate = campaignCreator.getDate(req.body.campaign.startDate);
     endDate = campaignCreator.getDate(req.body.campaign.endDate);
@@ -95,7 +95,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
 /**
  * GET and POST for edit Campaign
  */
-router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response) => {
+router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) => {
     const campaignRepository = getRepository(Campaign);
     const campaignID = req.params.id;
     const campaign = await campaignRepository
@@ -193,10 +193,10 @@ router.get('/edit/:id', middleware.manages,  async (req: Request, res: Response)
     }
 });
 
-router.post('/replacement/:id',middleware.manages, async (req: Request, res: Response) => {
+router.post('/edit/:id', middleware.manages, async (req: Request, res: Response) => {
     let updatedCampaign = req.body.campaign;
-    let originalCampaign: Campaign = await getManager().findOne(Campaign, { 
-        where: { "_ID": req.params.id } 
+    let originalCampaign: Campaign = await getManager().findOne(Campaign, {
+        where: { "_ID": req.params.id }
     });
 
     // // Update campaign attributes
