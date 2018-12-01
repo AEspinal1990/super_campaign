@@ -233,8 +233,11 @@ export const createTasks = (routes, campaign, assignment) => {
             location.zipcode = routes[l].locations[j]._zipcode;
             location.lat = routes[l].locations[j]._lat;
             location.long = routes[l].locations[j]._long;
+            location.route = Number(j);
+
             task.remainingLocation.locations.push(location);
         }
+
         task.numLocations = task.remainingLocation.locations.length;
         task.status = false;
         task.campaignID = campaign.ID;
@@ -300,8 +303,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
             availableDates.push(date);
         }
     });
-    // console.log("Canvassers : ", canvassers)
-    // console.log("avaiableDates : ", availableDates)
+
     // check if there are no available dates
     if (availableDates.length == 0){
         console.log("inside")
@@ -514,7 +516,6 @@ export const clearAssignment = async (assignment) => {
     return assignment;
 };
 
-
 async function removeRLocations(task){
     for (let l in task.remainingLocation.locations){
         await getManager()
@@ -523,4 +524,4 @@ async function removeRLocations(task){
             .of(task.remainingLocation.ID)
             .remove(task.remainingLocation.locations[l].ID)
     }
-}
+};
