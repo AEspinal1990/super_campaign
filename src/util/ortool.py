@@ -16,7 +16,7 @@ def readFile():
 def fillData():
     file = readFile()
     locations = file["locations"]
-
+    # print(locations)
     data = {}
     data["locations"] = locations
     data["geocodes"] = [(l["_lat"], l["_long"]) for l in locations]
@@ -34,7 +34,7 @@ def fillData():
     data["capacities"] = []
     for y in range(file["num_canvassers"]): #pylint: disable=unused-variable
         data["capacities"].append(file["workday_limit"])
-
+    # print(data)
     return data
 
 
@@ -107,70 +107,71 @@ def add_capacity_constraints(routing, data, demand_callback):
         True,
         capacity)
 
+def main():
+    # receive data from json file  
+    data = fillData()
+    # print(data)
+    # Create routing model
+    routing = pywrapcp.RoutingModel(data["num_locations"], data["num_canvassers"], data["depot"])
+    distance_callback = create_distance_callback(data)
+    routing.SetArcCostEvaluatorOfAllVehicles(distance_callback)
 
-# receive data from json file  
-data = fillData()
+    '''Add specifications/limitations with dimensions'''
+    # distance dimension
+    # time dimension
+    demand_callback = create_demand_callback(data)
+    add_capacity_constraints(routing, data, demand_callback)
 
-# Create routing model
-routing = pywrapcp.RoutingModel(data["num_locations"], data["num_canvassers"], data["depot"])
-distance_callback = create_distance_callback(data)
-routing.SetArcCostEvaluatorOfAllVehicles(distance_callback)
+    # Search options - set to first solution heuristic
+    search_parameters = pywrapcp.RoutingModel.DefaultSearchParameters()
+    search_parameters.first_solution_strategy = (
+        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC) # pylint: disable=no-member
+    assignment = routing.SolveWithParameters(search_parameters)
+    # print(assignment)
 
-'''Add specifications/limitations with dimensions'''
-# distance dimension
-# time dimension
-demand_callback = create_demand_callback(data)
-add_capacity_constraints(routing, data, demand_callback)
+    tasks = {}
+    tasks["routes"] = []
+    for vehicle_id in range(data["num_canvassers"]):
+        index = routing.Start(vehicle_id)
 
-# Search options - set to first solution heuristic
-search_parameters = pywrapcp.RoutingModel.DefaultSearchParameters()
-search_parameters.first_solution_strategy = (
-    routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC) # pylint: disable=no-member
-assignment = routing.SolveWithParameters(search_parameters)
-# print(assignment)
+        # check if there is no locations for this task
+        if routing.IndexToNode(assignment.Value(routing.NextVar(index))) == 0:
+            continue
+        else:
+            route = {}
+            route["locations"] = []
+            # create the route for this task
+            while not routing.IsEnd(index):
+                index = assignment.Value(routing.NextVar(index))
+                location_index = routing.IndexToNode(index)
+                if location_index != 0:
+                    route["locations"].append(data["locations"][location_index])
+            # add route to tasks
+            tasks["routes"].append(route)
 
-tasks = {}
-tasks["routes"] = []
-for vehicle_id in range(data["num_canvassers"]):
-    index = routing.Start(vehicle_id)
+    # open new json file - if problems occur in different enviornments use with io and encode as utf 8
+    with open('../data/result_tasks.json', 'w') as outfile:
+        # write lists of tasks into json file
+        json.dump(tasks, outfile, indent=4, ensure_ascii=False)
 
-    # check if there is no locations for this task
-    if routing.IndexToNode(assignment.Value(routing.NextVar(index))) == 0:
-        continue
-    else:
-        route = {}
-        route["locations"] = []
-        # create the route for this task
+    '''print solution - for testing'''
+    total_distance = 0
+    for vehicle_id in range(data["num_canvassers"]):
+        index = routing.Start(vehicle_id)
+        plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
+        distance = 0
         while not routing.IsEnd(index):
+            # print(routing.IndexToNode(index))
+            # if routing.IndexToNode(index) != '0'):
+            plan_output += ' {} ->'.format(routing.IndexToNode(index))
+            previous_index = index
             index = assignment.Value(routing.NextVar(index))
-            location_index = routing.IndexToNode(index)
-            if location_index != 0:
-                route["locations"].append(data["locations"][location_index])
-        # add route to tasks
-        tasks["routes"].append(route)
+            distance += routing.GetArcCostForVehicle(previous_index, index, vehicle_id)
+        plan_output += ' {}\n'.format(routing.IndexToNode(index))
+        plan_output += 'Distance of route: {}m\n'.format(distance)
+        # print(plan_output)
+        total_distance += distance
+    # print('Total distance of all routes: {}m'.format(total_distance))
 
-# open new json file - if problems occur in different enviornments use with io and encode as utf 8
-with open('../data/result_tasks.json', 'w') as outfile:
-    # write lists of tasks into json file
-    json.dump(tasks, outfile, indent=4, ensure_ascii=False)
-
-'''print solution - for testing'''
-total_distance = 0
-for vehicle_id in range(data["num_canvassers"]):
-    index = routing.Start(vehicle_id)
-    plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
-    distance = 0
-    while not routing.IsEnd(index):
-        print(routing.IndexToNode(index))
-        # if routing.IndexToNode(index) != '0'):
-        plan_output += ' {} ->'.format(routing.IndexToNode(index))
-        previous_index = index
-        index = assignment.Value(routing.NextVar(index))
-        distance += routing.GetArcCostForVehicle(previous_index, index, vehicle_id)
-    plan_output += ' {}\n'.format(routing.IndexToNode(index))
-    plan_output += 'Distance of route: {}m\n'.format(distance)
-    print(plan_output)
-    total_distance += distance
-print('Total distance of all routes: {}m'.format(total_distance))
-
-sys.stdout.flush()
+    sys.stdout.flush()
+main()

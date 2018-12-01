@@ -47,7 +47,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
             return res;
         });
     if (assignment != undefined) {
-        console.log(assignment)
         // delete all tasks and their relations
         assignment = await managerTools.clearAssignment(assignment);
         replaced = true;
@@ -80,8 +79,9 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         avg_travel_speed: AVG_TRAVEL_SPEED
     };
 
-    // This is causing app to restart
+    
     let OResults = await managerTools.launchORT(data);
+
     /**
      * Create tasks and assign campaignID & assignment
      */
@@ -100,7 +100,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         // all or some tasks are assigned
         canvassers = ret.canvasser;
     }
-    console.log("after assignTasks")
     var status = ret.status;
     assignment.tasks = tasks;
     campaign.assignment = assignment;
@@ -112,16 +111,15 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
             assignment.tasks[l].assignment = assignment;
         }
         await getManager().save(assignment.tasks)
-        console.log("after asignment's tasks saves")
     } else {        
         await getManager().save(assignment).then(res => console.log("Assingment Saved"));
         await getManager().save(campaign).then(res => console.log("campaign saved"));
     }
+
     /**
      * Save canvassers with their assigned task
      */
     if (status != 3) {
-        console.log("before loadCanvasserCampaigns")
         canvassers = await managerTools.loadCanvasserCampaigns(canvassers);
         await getManager().save(canvassers).then(res => console.log("Canvassers saved"));
     } else {
@@ -132,7 +130,10 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         return res.send("Warning!!! Not enough canvassers are available to be assigned for all tasks!")
     }
 
-    if (req.user[0]._permission === 1) {
+    /**
+     * Redirect to correct home page
+     */
+    if(req.user[0]._permission === 1) {
         res.status(200).render('CampaignManagerHome', { campaigns: campaign })
     }
     else if (req.user[0]._permission === 2) {

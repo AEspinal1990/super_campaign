@@ -6,7 +6,7 @@ import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { AssignedDate } from '../backend/entity/AssignedDate';
 import { Locations } from '../backend/entity/Locations';
 import { Assignment } from '../backend/entity/Assignment';
-
+import { spawnSync } from 'child_process';
 var _ = require('lodash');
 var moment = require('moment');
 moment().format();
@@ -82,7 +82,6 @@ export const getCampaignLocations = campaign => {
  * @param campaignID 
  */
 export const getAvailableCanvassers = async campaignID => {
-    console.log("inside getAvailablecanvasser")
     return await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -306,7 +305,6 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
 
     // check if there are no available dates
     if (availableDates.length == 0){
-        console.log("inside")
         return {
             canvasser: null, 
             status: 3
@@ -423,20 +421,54 @@ export const updateTasks = async (tasks, campaignID, canvassers) => {
  * Launches and handles the response of OR-Tools from our python file
  * @param data 
  */
-export const launchORT = (data) => {
+export const launchORT = async (data) => {
     fs.writeFile("src/data/ordata.json", JSON.stringify(data, null, "\t"), function (err) {
         if (err) throw err;
     });
 
+    //console.log('Creating task with', data)
     // start up OR-Tools from child process
-    const { spawn } = require('child_process');
-    const pyORT = spawn('python', ['src/util/ortool.py']);
+    // const { spawn } = require('child_process');
+    // const pyORT = spawn('python', ['src/util/ortool.py']);
+    let myPromise = new Promise((resolve, reject) => {
+        var sys = require('sys')
+    var exec = require('child_process').exec;
+        let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
+            if (err) {
+              reject(err);
+            }
+            console.log('Output', stdout);
+        });
 
-    // take a look at ../data/result-tasks.json for structure
-    // result from OR-Tools is only a list of new tasks and its' route. no canavassers are assigned
-    let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
+        dir.on('exit', function (code) {
+            // exit code is code
+            let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
+            console.log(newTasks)
+            resolve(newTasks);
+        });
+    })
+    // var sys = require('sys')
+    // var exec = require('child_process').exec;
 
-    return newTasks;
+    // let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
+    //     if (err) {
+    //       // should have err.code here?  
+    //     }
+    //     console.log(stdout);
+    // });
+      
+    // dir.on('exit', function (code) {
+    // // exit code is code
+    // });
+    // let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
+    
+    //console.log(newTasks)
+    let task;
+    await myPromise
+    .then(res => console.log('The results are:', task = res))
+    .catch(e => console.log('Fuck!', e))   
+    console.log('The promise returned', task) 
+    return task;
 };
 
 
@@ -499,7 +531,6 @@ export const clearAssignment = async (assignment) => {
     // remove locations for each remaining locations
     for (let l in assignment.tasks){
         await removeRLocations(assignment.tasks[l]);
-        console.log("After removeRLocations")
         await getManager()
             .createQueryBuilder()
             .relation(Task, "_remainingLocation")
