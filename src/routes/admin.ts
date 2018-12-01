@@ -1,5 +1,5 @@
 import { Request, Response, Router }    from 'express';
-import { getManager, getRepository }    from "typeorm";
+import { getManager, getRepository, AdvancedConsoleLogger }    from "typeorm";
 import { check, validationResult }      from 'express-validator/check';
 import { CampaignManager }              from '../backend/entity/CampaignManager';
 import { Canvasser }                    from '../backend/entity/Canvasser';
@@ -73,7 +73,6 @@ router.get('/home', middleware.isAuthenticated, async (req: Request, res: Respon
         .createQueryBuilder(User, "userscampaigns")
         .getMany();
 
-    console.log(users) 
     res.render('AdminHome', {users});
 });
 
@@ -152,7 +151,6 @@ router.get('/:username', middleware.isAdmin, async (req: Request, res: Response)
             id: 0
         });
     } else {
-        console.log(req.user)
         adminLogger.info(`/user/${username} - ${req.user[0]._username} accessed ${username}s profile`);
         res.status(200).render('view-user', {
             username,
@@ -214,7 +212,7 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
     // if(req.user[0]._permission === 2) {
     //     res.redirect('/manager/new-assignment')
     // }
-    res.send('hello');
+    res.redirect('/home')
 });
 
 router.delete('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
@@ -246,7 +244,8 @@ router.delete('/:username', middleware.isAdmin, async (req: Request, res: Respon
      * If page loads with user, user was not deleted from the DB
      * else it was successfull.
      */
-    res.status(200).redirect('/user/' + req.params.username);
+    console.log('here')
+    res.redirect('/home');
 });
 
 export { router as adminRouter }

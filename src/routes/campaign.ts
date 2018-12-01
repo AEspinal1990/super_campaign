@@ -72,7 +72,6 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
 
     // Parse the questionaire then save it.     
     await campaignCreator.saveQuestionnaire(campaign, req.body.campaign.questionaire);
-    console.log(req.body.campaign.questionaire);
     campaignLogger.info(`Saved questionaire for: ${campaign._name}`);
 
 
