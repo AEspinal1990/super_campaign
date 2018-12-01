@@ -124,7 +124,6 @@ export const saveLocations = async (campaign, locations) => {
     let address;
     let coord;
     campaign.locations = [];
-    console.log('ABout to save locations entering geocode block\n')
     for (let i in locations) {
         places.push(createLocation(locations[i]));
         address = campaignParser.constructAddress(places[i]);
@@ -140,7 +139,6 @@ export const saveLocations = async (campaign, locations) => {
 
         campaign.locations.push(places[i]);
     }
-    console.log('Finished geocode block\n');
     await Manager.save(campaign.locations);
 };
 

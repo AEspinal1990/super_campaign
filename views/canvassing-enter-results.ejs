@@ -1,7 +1,9 @@
 <% include ./partials/header %>
 
-<div id="enter-forms">
+<div id="enter-forms" class ="mtb-3">
     <form id="results-form" action="/canvasser/canvassing/results" method="POST">
+        <h1>Questionnaire</h1>
+
         <% for (var i = 0; i < questions.length; i++) { %>
             <h3>
                 <%= questions[i] %>
@@ -22,7 +24,7 @@
         <input type="radio" name="rating" value="4"> 4<br>
         <input type="radio" name="rating" value="5"> 5<br>
         
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button class = "btn btn-lg" type="submit" class="btn btn-default">Submit</button>
     </form>
 </div>
 
