@@ -1,7 +1,7 @@
 {
 	"locations": [
 		{
-			"_ID": 13,
+			"_ID": 1,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -10,10 +10,10 @@
 			"_zipcode": 11794,
 			"_lat": 40.909696,
 			"_long": -73.113434,
-			"_route": 0
+			"_route": null
 		},
 		{
-			"_ID": 13,
+			"_ID": 1,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -22,10 +22,10 @@
 			"_zipcode": 11794,
 			"_lat": 40.909696,
 			"_long": -73.113434,
-			"_route": 0
+			"_route": null
 		},
 		{
-			"_ID": 14,
+			"_ID": 2,
 			"_streetNumber": 1,
 			"_street": "Education Dr",
 			"_unit": "0",
@@ -34,10 +34,10 @@
 			"_zipcode": 11530,
 			"_lat": 40.730794,
 			"_long": -73.591287,
-			"_route": 2
+			"_route": null
 		},
 		{
-			"_ID": 15,
+			"_ID": 3,
 			"_streetNumber": 1000,
 			"_street": "Hempstead Turnpike",
 			"_unit": "0",
@@ -46,21 +46,10 @@
 			"_zipcode": 11549,
 			"_lat": 40.716792,
 			"_long": -73.599404,
-			"_route": 3
+			"_route": null
 		},
 		{
-			"_ID": 16,
-			"_streetNumber": 77,
-			"_street": "Massachusetts Ave",
-			"_unit": "0",
-			"_city": "Cambridge",
-			"_state": "MA",
-			"_zipcode": 2139,
-			"_lat": 42.360091,
-			"_long": -71.09416
-		},
-		{
-			"_ID": 17,
+			"_ID": 4,
 			"_streetNumber": 1,
 			"_street": "South Ave",
 			"_unit": "0",
@@ -69,10 +58,10 @@
 			"_zipcode": 11530,
 			"_lat": 40.722221,
 			"_long": -73.651099,
-			"_route": 4
+			"_route": null
 		},
 		{
-			"_ID": 18,
+			"_ID": 5,
 			"_streetNumber": 188,
 			"_street": "Merritts Rd",
 			"_unit": "0",
@@ -81,10 +70,10 @@
 			"_zipcode": 11735,
 			"_lat": 40.724216,
 			"_long": -73.459155,
-			"_route": 7
+			"_route": null
 		},
 		{
-			"_ID": 19,
+			"_ID": 6,
 			"_streetNumber": 234,
 			"_street": "Main St",
 			"_unit": "0",
@@ -93,10 +82,10 @@
 			"_zipcode": 11735,
 			"_lat": 40.722987,
 			"_long": -73.442116,
-			"_route": 5
+			"_route": null
 		},
 		{
-			"_ID": 20,
+			"_ID": 7,
 			"_streetNumber": 202,
 			"_street": "Airport Plaza Blvd",
 			"_unit": "0",
@@ -105,10 +94,10 @@
 			"_zipcode": 11735,
 			"_lat": 40.739139,
 			"_long": -73.419253,
-			"_route": 9
+			"_route": null
 		},
 		{
-			"_ID": 21,
+			"_ID": 8,
 			"_streetNumber": 2245,
 			"_street": "Broadhollow Rd",
 			"_unit": "0",
@@ -117,10 +106,10 @@
 			"_zipcode": 11735,
 			"_lat": 40.725064,
 			"_long": -73.423329,
-			"_route": 8
+			"_route": null
 		},
 		{
-			"_ID": 22,
+			"_ID": 9,
 			"_streetNumber": 5316,
 			"_street": "Nesconset highway",
 			"_unit": "0",
@@ -129,10 +118,10 @@
 			"_zipcode": 11776,
 			"_lat": 40.921377,
 			"_long": -73.05201,
-			"_route": 0
+			"_route": null
 		},
 		{
-			"_ID": 23,
+			"_ID": 10,
 			"_streetNumber": 75,
 			"_street": "Merritts Rd",
 			"_unit": "0",
@@ -141,22 +130,22 @@
 			"_zipcode": 11735,
 			"_lat": 40.724216,
 			"_long": -73.459155,
-			"_route": 6
+			"_route": null
 		},
 		{
-			"_ID": 24,
+			"_ID": 11,
 			"_streetNumber": 213,
 			"_street": "Broadway Mall",
 			"_unit": "0",
-			"_city": "New York",
+			"_city": "Hicksville",
 			"_state": "NY",
 			"_zipcode": 11801,
 			"_lat": 40.773099,
 			"_long": -73.531413,
-			"_route": 1
+			"_route": null
 		}
 	],
-	"num_canvassers": 14,
+	"num_canvassers": 7,
 	"estimated_visit_time": 15,
 	"workday_limit": 360,
 	"avg_travel_speed": 804
