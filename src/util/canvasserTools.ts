@@ -138,11 +138,16 @@ export const removeLocation = (locations, locationID) => {
 };
 
 export const sendToMap = (task, campaignID) => {
-    // console.log(task)
+    console.log("SendToMap: ", task)
     var route = [];
-    var rlocations;
+    var rlocations = [];
     if (task.remainingLocation !== null) {
-        rlocations = task.remainingLocation.locations;
+        // order the locations for route
+        for (let m in task.remainingLocation.locations){
+            if (task.remainingLocation.locations[m].route == Number(m)){
+                rlocations.push(task.remainingLocation.locations[m]);
+            }
+        }
         route = convertGeocodes(rlocations);
     }
 
@@ -152,6 +157,10 @@ export const sendToMap = (task, campaignID) => {
         clocations = task.completedLocation.locations;
         completed = convertGeocodes(clocations);
     }
+
+    console.log("RLocations: ", rlocations)
+    console.log("CLocations: ", clocations)
+
     io.on('connection', function (socket) {
         socket.emit('route', {
             route: route,

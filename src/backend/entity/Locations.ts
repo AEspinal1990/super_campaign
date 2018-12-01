@@ -20,6 +20,14 @@ export class Locations {
     private _lat!: number;
     @Column("decimal", {precision: 10, scale: 6, name: "long", nullable: true, default: null})
     private _long!: number;
+    @Column({ name: "route", nullable: true })
+    private _route!: number;
+    public get route(): number {
+        return this._route;
+    }
+    public set route(value: number) {
+        this._route = value;
+    }
 
     public get ID(): number {
         return this._ID;

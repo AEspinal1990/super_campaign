@@ -17,7 +17,6 @@ export class Task{
     private _completedLocation!:CompletedLocation;
     @Column({name: "currentLocation", nullable: true})
     private _currentLocation!:number;
-    private _recommendedRoute!:number[];
     @Column({name: "ofDate"})
     private _scheduledOn!:Date;
     @Column({name: "taskStatus"})
@@ -45,9 +44,6 @@ export class Task{
     }
     public get currentLocation():number{
         return this._currentLocation;
-    }
-    public get recommendedRoute():number[]{
-        return this._recommendedRoute;
     }
     public get scheduledOn():Date{
         return this._scheduledOn;
@@ -91,9 +87,6 @@ export class Task{
     public set currentLocation(location:number){
         this._currentLocation = location;
     }
-    public set recommendedRoute(route:number[]){
-        this._recommendedRoute = route;
-    }
     public set scheduledOn(date:Date){
         this._scheduledOn = date;
     }
@@ -103,24 +96,4 @@ export class Task{
     public set assignment(value:Assignment){
         this._assignment = value;
     }
-
-    /*
-        returns: -1 for invalid locationID, 0 for successfully marking complete, 1 for completed task
-    */
-    // public markCompleted(locationID:Locations):number{
-    //     var index = this._remainingLocation.indexOf(locationID);
-    //     if (index != -1){
-    //         this._remainingLocation.splice(index, 1);
-    //         this._completedLocation.push(locationID);
-    //     }else {
-    //         return -1;
-    //     }
-
-    //     if (this._remainingLocation.length == 0){
-    //         this._status = true;
-    //         return 1;
-    //     }
-
-    //     return 0;
-    // }
 }

@@ -81,13 +81,12 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     };
 
     // This is causing app to restart
-    let newTasks = await managerTools.launchORT(data);
-
+    let OResults = await managerTools.launchORT(data);
     /**
      * Create tasks and assign campaignID & assignment
      */
-    let tasks = managerTools.createTasks(JSON.parse(newTasks).routes, campaign, assignment);
-
+    let tasks = managerTools.createTasks(JSON.parse(OResults).routes, campaign, assignment);
+    
     /**
      * Remove canvassers with no openings in schedule
      */
@@ -114,7 +113,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         }
         await getManager().save(assignment.tasks)
         console.log("after asignment's tasks saves")
-    } else {
+    } else {        
         await getManager().save(assignment).then(res => console.log("Assingment Saved"));
         await getManager().save(campaign).then(res => console.log("campaign saved"));
     }
