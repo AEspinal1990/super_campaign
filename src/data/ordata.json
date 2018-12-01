@@ -137,11 +137,11 @@
 			"_streetNumber": 213,
 			"_street": "Broadway Mall",
 			"_unit": "0",
-			"_city": "Hicksville",
+			"_city": "New York",
 			"_state": "NY",
-			"_zipcode": 11801,
-			"_lat": 40.773099,
-			"_long": -73.531413
+			"_zipcode": 10128,
+			"_lat": 40.785334,
+			"_long": -73.957351
 		}
 	],
 	"num_canvassers": 14,
