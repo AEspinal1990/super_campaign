@@ -1,28 +1,34 @@
 <% include ./partials/canvasserNav %>
+
 <head>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>     
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 </head>
 <style>
     /* Set the size of the div element that contains the map */
     #map {
-    height: 400px;  /* The height is 400 pixels */
-    width: 100%;  /* The width is the width of the web page */
-    background-color: grey;
+        height: 400px;
+        /* The height is 400 pixels */
+        width: 100%;
+        /* The width is the width of the web page */
+        background-color: grey;
     }
 </style>
-<div id="map"></div>
+<div class="container">
 
-<div id="talking-points">
-    <h1>Talking Points</h1>
-    
-    <% for (var i=0; i < talkingPoints.length; i++) { %>
-        <h3>
-            <%= talkingPoints[i] %>
-        </h3>
-    <% } %>
+    <div id="map"></div>
+
+    <div id="talking-points" class="text-center">
+        <h1>Talking Points</h1>
+        <ol>
+            <% for (var i=0; i < talkingPoints.length; i++) { %>
+            <li>
+                <%= talkingPoints[i] %>
+            </li>
+            <% } %>
+        </ol>
+    </div>
 </div>
-
 <script>
     var map;
     var markers = [];
@@ -59,7 +65,7 @@
     function addRouteNum(loc, location, num, campaignID, taskID, rorc) {
         var markerId = getMarkerUniqueId(location.lat, location.lng);
         var getIcon;
-        if (rorc){
+        if (rorc) {
             getIcon = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red" + num + ".png";
         } else {
             getIcon = "https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green.png";
@@ -73,19 +79,19 @@
             icon: getIcon
         });
 
-        var infoContent = ('<div id="content">'+
-            '<form action="/canvasser/canvassing/enter-results" method="POST">'+
-                '<input type="hidden" name="campaignID" value="'+campaignID+'">'+
-                '<input type="hidden" name="locationID" value="'+loc._ID+'">'+
-                '<input type="hidden" name="taskID" value="'+taskID+'">'+
-                '<input type="submit" value="Enter Results">'+
-            '</form>'+
+        var infoContent = ('<div id="content">' +
+            '<form action="/canvasser/canvassing/enter-results" method="POST">' +
+            '<input type="hidden" name="campaignID" value="' + campaignID + '">' +
+            '<input type="hidden" name="locationID" value="' + loc._ID + '">' +
+            '<input type="hidden" name="taskID" value="' + taskID + '">' +
+            '<input type="submit" value="Enter Results">' +
+            '</form>' +
             '</div>');
-            
+
         var infoWindow = new google.maps.InfoWindow({
             content: infoContent
         });
-        marker.addListener('click', function() {
+        marker.addListener('click', function () {
             infoWindow.open(map, marker);
         });
 
@@ -97,19 +103,19 @@
     $(document).ready(function () {
         socket.on('route', function (route) {
             deleteMarkers();
-            if (route.route != undefined || route.route != null){
+            if (route.route != undefined || route.route != null) {
                 for (i in route.route) {
                     parsedGeocode = { lat: parseFloat(route.route[i].lat), lng: parseFloat(route.route[i].lng) };
-                    addRouteNum(route.locations[i], parsedGeocode, Number(i)+1, route.campaignID, route.taskID, true);
+                    addRouteNum(route.locations[i], parsedGeocode, Number(i) + 1, route.campaignID, route.taskID, true);
                 }
             }
-            if (route.completed != undefined || route.route != null){
+            if (route.completed != undefined || route.route != null) {
                 for (i in route.completed) {
                     parsedGeocode = { lat: parseFloat(route.completed[i].lat), lng: parseFloat(route.completed[i].lng) };
-                    addRouteNum(route.cLocations[i], parsedGeocode, Number(i)+1, route.campaignID, route.taskID, false);
+                    addRouteNum(route.cLocations[i], parsedGeocode, Number(i) + 1, route.campaignID, route.taskID, false);
                 }
             }
-            if(route.route != undefined) {
+            if (route.route != undefined) {
                 map.setZoom(5);
                 map.setCenter(new google.maps.LatLng(parseFloat(route.route[0].lat), parseFloat(route.route[0].lng)));
             }
