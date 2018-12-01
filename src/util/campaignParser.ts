@@ -37,7 +37,6 @@ export function getZip(location) {
 };
 
 export function constructAddress(location){
-    console.log('StreetNumber', location)
     var address =
         location.streetNumber + " " +
         location.street + ", " +

@@ -82,7 +82,6 @@ export const getCampaignLocations = campaign => {
  * @param campaignID 
  */
 export const getAvailableCanvassers = async campaignID => {
-    console.log("inside getAvailablecanvasser")
     return await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._campaigns", "campaign")
@@ -306,7 +305,6 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
 
     // check if there are no available dates
     if (availableDates.length == 0){
-        console.log("inside")
         return {
             canvasser: null, 
             status: 3
@@ -428,6 +426,7 @@ export const launchORT = (data) => {
         if (err) throw err;
     });
 
+    //console.log('Creating task with', data)
     // start up OR-Tools from child process
     const { spawn } = require('child_process');
     const pyORT = spawn('python', ['src/util/ortool.py']);
@@ -499,7 +498,6 @@ export const clearAssignment = async (assignment) => {
     // remove locations for each remaining locations
     for (let l in assignment.tasks){
         await removeRLocations(assignment.tasks[l]);
-        console.log("After removeRLocations")
         await getManager()
             .createQueryBuilder()
             .relation(Task, "_remainingLocation")

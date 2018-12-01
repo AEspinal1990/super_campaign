@@ -267,7 +267,6 @@ router.get('/view/:id', async (req: Request, res: Response) => {
         // lets make a new connection socket for the view url and change the path from client
         io.on('connection', function (socket) {
             socket.emit('geocodes', geocodes);
-            console.log('someone CONNECTED:');
             // console.log(geocodes);            
         });
         // console.log(campaign[0]);
