@@ -430,34 +430,45 @@ export const launchORT = async (data) => {
     // start up OR-Tools from child process
     // const { spawn } = require('child_process');
     // const pyORT = spawn('python', ['src/util/ortool.py']);
-    // pyORT.on('close', code => {
-    //     console.log('Child process exited with code ',code)
-    // })
-    // let pathToScript = 'src/ortools/ortool.py';
-    // let {PythonShell} = require('python-shell')
-    // PythonShell.run(pathToScript, null, function (err) {
-    //     if (err) throw err;
-    //     console.log('finished');
-    //   });
-    var sys = require('sys')
+    let myPromise = new Promise((resolve, reject) => {
+        var sys = require('sys')
     var exec = require('child_process').exec;
+        let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
+            if (err) {
+              reject(err);
+            }
+            console.log('Output', stdout);
+        });
 
-    let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
-        if (err) {
-          // should have err.code here?  
-        }
-        console.log(stdout);
-      });
+        dir.on('exit', function (code) {
+            // exit code is code
+            let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
+            console.log(newTasks)
+            resolve(newTasks);
+        });
+    })
+    // var sys = require('sys')
+    // var exec = require('child_process').exec;
+
+    // let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
+    //     if (err) {
+    //       // should have err.code here?  
+    //     }
+    //     console.log(stdout);
+    // });
       
-      dir.on('exit', function (code) {
-        // exit code is code
-      });
-
-    // take a look at ../data/result-tasks.json for structure
-    // result from OR-Tools is only a list of new tasks and its' route. no canavassers are assigned
-    let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
-    console.log(newTasks)
-    return newTasks;
+    // dir.on('exit', function (code) {
+    // // exit code is code
+    // });
+    // let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
+    
+    //console.log(newTasks)
+    let task;
+    await myPromise
+    .then(res => console.log('The results are:', task = res))
+    .catch(e => console.log('Fuck!', e))   
+    console.log('The promise returned', task) 
+    return task;
 };
 
 
