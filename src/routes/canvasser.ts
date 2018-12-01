@@ -133,10 +133,9 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
     }
 
     await getManager().save(canv);
-    //redirect after finish posting
     canvasserLogger.info(`Editted availability for canvasser with id: ${req.user[0]._employeeID}`);
 
-    res.send("Done Editing Availability");
+    res.redirect("/home");
 });
 
 router.get('/view-tasks/:id', async (req: Request, res: Response) => {

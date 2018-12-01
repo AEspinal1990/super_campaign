@@ -2,16 +2,17 @@
 <style>
     /* Set the size of the div element that contains the map */
     #map {
-    height: 400px;  /* The height is 400 pixels */
-    width: 100%;  /* The width is the width of the web page */
-    background-color: grey;
+        height: 400px;
+        /* The height is 400 pixels */
+        width: 100%;
+        /* The width is the width of the web page */
+        background-color: grey;
     }
 </style>
 <html>
+
 <body>
-    <form action="/canvasser/<%= canvasserID %>/view-tasks/" method="GET">
-        <input type="submit" value="Back">
-    </form>
+    <button onclick="goBack()">Go Back</button>
 
     <div id="map"></div>
     <div>
@@ -53,7 +54,7 @@
         <% } %>
         <% var geocodes = geocodes; %>
     </div>
-    
+
     <% if(geocodes) { %>
     <script>
         var map;
@@ -100,6 +101,8 @@
             markers = [];
         }
 
+
+
         $(document).ready(function () {
             geocodes = JSON.parse('<%- JSON.stringify(geocodes) %>');
             deleteMarkers();
@@ -113,6 +116,12 @@
     </script>
     <% } %>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk&callback=initMap"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 </body>
+
 </html>
 <% include ./partials/footer %>
