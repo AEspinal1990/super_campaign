@@ -10,7 +10,8 @@ import * as campaignParser      from './campaignParser';
 const logger = require('../util/logger');
 const campaignLogger = logger.getLogger('campaignLogger');
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk'
+    key: 'AIzaSyAkzTbqwM75PSyw0vwMqiVb9eP6NjnClFk',
+    Promise: Promise
 });
 
 export const initCampaign = updatedCampaign => {
@@ -208,13 +209,15 @@ export const updateCanvassers = async (campaign, updatedCanvassers) => {
         .catch(e => console.log('Error', e));
 }
 
-export const updateLocations = (campaign, updatedLocations) => {
+export const updateLocations = async (campaign, updatedLocations) => {
+    let address;
+    let coord;
     let places = [];
     let removals = [];
     let insertions = [];
     let originalLocations = campaign.locations;
 
-    
+    //console.log(campaign.locations)
     // Parse the updated list of locations
     updatedLocations = updatedLocations.trim().split('\n');    
     updatedLocations.forEach(location => {
@@ -229,7 +232,7 @@ export const updateLocations = (campaign, updatedLocations) => {
             insertions.push(places[i])
         }
     }
-    console.log('Inserting the locations:', insertions)
+    
     // Check which locations need to be deleted
     // If original locations are not found in updated list then
     // they must have been removed therefore add to array of locations
@@ -240,8 +243,44 @@ export const updateLocations = (campaign, updatedLocations) => {
         }
     }
     
+    //console.log('Inserting the locations:', insertions)
     console.log('Removing the locations', removals)
        
+    removals.forEach( async location => {
+        await getManager()
+            .createQueryBuilder()
+            .delete()
+            .from(Locations)
+            .where("_ID = :id", {id: location._ID})
+            .execute()
+            .then(res => console.log(res))
+            .catch(e => console.log(e))        
+    });
+
+    let addresses = [];
+    for (let i in insertions) {
+        address =
+            insertions[i]._streetNumber + " " +
+            insertions[i].street + ", " +
+            insertions[i].city + ", " +
+            insertions[i].state + " " +
+            insertions[i].zipcode;
+        addresses.push(address);
+        await googleMapsClient.geocode({address})
+        .asPromise()
+        .then(res => {
+            coord = res.json.results[0].geometry.location;
+            insertions[i].lat = Number(coord.lat);
+            insertions[i].long = Number(coord.lng);
+        })
+        .catch(e => console.log('Locations error', e));
+    }
+
+    insertions.forEach(location => {
+        campaign.locations.push(location);
+    })
+    console.log('Locations should be', campaign.locations)
+    await getManager().save(campaign);
 
 }
 

@@ -88,7 +88,7 @@ router.post('/', middleware.isManager, async (req: Request, res: Response) => {
 
     //Save canavassers    
     await campaignCreator.saveCanavaser(campaign, req.body.campaign.canvassers);
-    res.send('Campaign Created Succesfully');
+    res.redirect('/home');
 });
 
 
@@ -224,8 +224,8 @@ router.post('/edit/:id', middleware.manages, async (req: Request, res: Response)
     //@ts-ignore
     await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
-
-    res.status(200).redirect(`/manager/new-assignment/${req.params.id}`);
+    res.send('ok')
+    //res.redirect(307, `/manager/new-assignment/${req.params.id}`);
 });
 
 /**
