@@ -4,7 +4,7 @@
             "locations": [
                 {
                     "_city": "Port Jefferson Station", 
-                    "_route": null, 
+                    "_route": 0, 
                     "_street": "Nesconset highway", 
                     "_lat": 40.921377, 
                     "_streetNumber": 5316, 
@@ -16,7 +16,7 @@
                 }, 
                 {
                     "_city": "Cambridge", 
-                    "_route": null, 
+                    "_route": 1, 
                     "_street": "Massachusetts Ave", 
                     "_lat": 42.363672, 
                     "_streetNumber": 77, 
@@ -32,7 +32,7 @@
             "locations": [
                 {
                     "_city": "Farmingdale", 
-                    "_route": null, 
+                    "_route": 0, 
                     "_street": "Merritts Rd", 
                     "_lat": 40.724216, 
                     "_streetNumber": 188, 
@@ -44,7 +44,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 1, 
                     "_street": "E 7th St", 
                     "_lat": 40.724676, 
                     "_streetNumber": 127, 
@@ -56,7 +56,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 2, 
                     "_street": "Avenue A", 
                     "_lat": 40.729152, 
                     "_streetNumber": 203, 
@@ -68,7 +68,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 3, 
                     "_street": "Downing St", 
                     "_lat": 40.729222, 
                     "_streetNumber": 13, 
@@ -80,7 +80,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 4, 
                     "_street": "W 11th St", 
                     "_lat": 40.735848, 
                     "_streetNumber": 352, 
@@ -92,7 +92,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 5, 
                     "_street": "E 7th St", 
                     "_lat": 40.728496, 
                     "_streetNumber": 80, 
@@ -104,7 +104,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 6, 
                     "_street": "Meserole Ave", 
                     "_lat": 40.726938, 
                     "_streetNumber": 150, 
@@ -116,7 +116,7 @@
                 }, 
                 {
                     "_city": "Farmingdale", 
-                    "_route": null, 
+                    "_route": 7, 
                     "_street": "Broadhollow Rd", 
                     "_lat": 40.725064, 
                     "_streetNumber": 2245, 
@@ -128,7 +128,7 @@
                 }, 
                 {
                     "_city": "Farmingdale", 
-                    "_route": null, 
+                    "_route": 8, 
                     "_street": "Airport Plaza Blvd", 
                     "_lat": 40.739139, 
                     "_streetNumber": 202, 
@@ -144,7 +144,7 @@
             "locations": [
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 0, 
                     "_street": "Oakley St", 
                     "_lat": 40.87976, 
                     "_streetNumber": 1496, 
@@ -156,7 +156,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 1, 
                     "_street": "Claflin Ave", 
                     "_lat": 40.872144, 
                     "_streetNumber": 2762, 
@@ -168,7 +168,7 @@
                 }, 
                 {
                     "_city": "Ridgewood", 
-                    "_route": null, 
+                    "_route": 2, 
                     "_street": "Woodward Ave", 
                     "_lat": 40.703148, 
                     "_streetNumber": 610, 
@@ -180,7 +180,7 @@
                 }, 
                 {
                     "_city": "Ridgewood", 
-                    "_route": null, 
+                    "_route": 3, 
                     "_street": "Onderdonk Ave", 
                     "_lat": 40.702233, 
                     "_streetNumber": 682, 
@@ -192,7 +192,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 4, 
                     "_street": "Wyona St", 
                     "_lat": 40.669792, 
                     "_streetNumber": 593, 
@@ -204,7 +204,7 @@
                 }, 
                 {
                     "_city": "Breezy Point", 
-                    "_route": null, 
+                    "_route": 5, 
                     "_street": "State Rd", 
                     "_lat": 40.567291, 
                     "_streetNumber": 12, 
@@ -216,7 +216,7 @@
                 }, 
                 {
                     "_city": "Breezy Point", 
-                    "_route": null, 
+                    "_route": 6, 
                     "_street": "Marion Walk", 
                     "_lat": 40.557554, 
                     "_streetNumber": 17, 
@@ -228,7 +228,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 7, 
                     "_street": "Colonial Rd", 
                     "_lat": 40.629833, 
                     "_streetNumber": 7923, 
@@ -240,7 +240,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 8, 
                     "_street": "Albemarle Rd", 
                     "_lat": 40.648193, 
                     "_streetNumber": 1423, 
@@ -252,7 +252,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 9, 
                     "_street": "BEVERLEY RD", 
                     "_lat": 40.64614, 
                     "_streetNumber": 5602, 
@@ -264,7 +264,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 10, 
                     "_street": "Linden Blvd", 
                     "_lat": 40.653501, 
                     "_streetNumber": 623, 
@@ -276,7 +276,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 11, 
                     "_street": "Fenimore St", 
                     "_lat": 40.658691, 
                     "_streetNumber": 401, 
@@ -288,7 +288,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 12, 
                     "_street": "18th St", 
                     "_lat": 40.660776, 
                     "_streetNumber": 140, 
@@ -300,7 +300,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 13, 
                     "_street": "17th St", 
                     "_lat": 40.660936, 
                     "_streetNumber": 286, 
@@ -312,7 +312,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 14, 
                     "_street": "4th Ave", 
                     "_lat": 40.662727, 
                     "_streetNumber": 801, 
@@ -324,7 +324,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 15, 
                     "_street": "Church St", 
                     "_lat": 40.719682, 
                     "_streetNumber": 313, 
@@ -336,7 +336,7 @@
                 }, 
                 {
                     "_city": "Garden City", 
-                    "_route": null, 
+                    "_route": 16, 
                     "_street": "South Ave", 
                     "_lat": 40.722221, 
                     "_streetNumber": 1, 
@@ -348,7 +348,7 @@
                 }, 
                 {
                     "_city": "Farmingdale", 
-                    "_route": null, 
+                    "_route": 17, 
                     "_street": "Main St", 
                     "_lat": 40.722987, 
                     "_streetNumber": 234, 
@@ -364,7 +364,7 @@
             "locations": [
                 {
                     "_city": "Hicksville", 
-                    "_route": null, 
+                    "_route": 0, 
                     "_street": "Broadway Mall", 
                     "_lat": 40.773099, 
                     "_streetNumber": 213, 
@@ -376,7 +376,7 @@
                 }, 
                 {
                     "_city": "Garden City", 
-                    "_route": null, 
+                    "_route": 1, 
                     "_street": "Education Dr", 
                     "_lat": 40.730794, 
                     "_streetNumber": 1, 
@@ -388,7 +388,7 @@
                 }, 
                 {
                     "_city": "Hempstead", 
-                    "_route": null, 
+                    "_route": 2, 
                     "_street": "Hempstead Turnpike", 
                     "_lat": 40.716792, 
                     "_streetNumber": 1000, 
@@ -400,7 +400,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 3, 
                     "_street": "Rivington St", 
                     "_lat": 40.719364, 
                     "_streetNumber": 168, 
@@ -412,7 +412,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 4, 
                     "_street": "Fayette St", 
                     "_lat": 40.700315, 
                     "_streetNumber": 14, 
@@ -424,7 +424,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 5, 
                     "_street": "Greene Ave", 
                     "_lat": 40.697634, 
                     "_streetNumber": 1405, 
@@ -436,7 +436,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 6, 
                     "_street": "Woodbine St", 
                     "_lat": 40.694497, 
                     "_streetNumber": 41, 
@@ -448,7 +448,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 7, 
                     "_street": "Spencer St", 
                     "_lat": 40.694486, 
                     "_streetNumber": 213, 
@@ -460,7 +460,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 8, 
                     "_street": "Franklin Ave", 
                     "_lat": 40.69337, 
                     "_streetNumber": 215, 
@@ -472,7 +472,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 9, 
                     "_street": "Monroe St", 
                     "_lat": 40.685757, 
                     "_streetNumber": 307, 
@@ -484,7 +484,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 10, 
                     "_street": "Jefferson Ave", 
                     "_lat": 40.685972, 
                     "_streetNumber": 1179, 
@@ -496,7 +496,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 11, 
                     "_street": "President St", 
                     "_lat": 40.667468, 
                     "_streetNumber": 1295, 
@@ -508,7 +508,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 12, 
                     "_street": "Prospect Pl", 
                     "_lat": 40.673566, 
                     "_streetNumber": 1124, 
@@ -520,7 +520,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 13, 
                     "_street": "AUTUMN AVE", 
                     "_lat": 40.676824, 
                     "_streetNumber": 432, 
@@ -532,7 +532,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 14, 
                     "_street": "Huntington St", 
                     "_lat": 40.676344, 
                     "_streetNumber": 189, 
@@ -544,7 +544,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 15, 
                     "_street": "Sackett St", 
                     "_lat": 40.683624, 
                     "_streetNumber": 114, 
@@ -556,7 +556,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 16, 
                     "_street": "Cambridge Pl", 
                     "_lat": 40.68478, 
                     "_streetNumber": 15, 
@@ -568,7 +568,7 @@
                 }, 
                 {
                     "_city": "Brooklyn", 
-                    "_route": null, 
+                    "_route": 17, 
                     "_street": "Washington Park", 
                     "_lat": 40.689798, 
                     "_streetNumber": 168, 
@@ -580,7 +580,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 18, 
                     "_street": "E 3rd St", 
                     "_lat": 40.723575, 
                     "_streetNumber": 114, 
@@ -592,7 +592,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 19, 
                     "_street": "E 3rd St", 
                     "_lat": 40.723575, 
                     "_streetNumber": 138, 
@@ -604,7 +604,7 @@
                 }, 
                 {
                     "_city": "Farmingdale", 
-                    "_route": null, 
+                    "_route": 20, 
                     "_street": "Merritts Rd", 
                     "_lat": 40.724216, 
                     "_streetNumber": 75, 
@@ -620,7 +620,7 @@
             "locations": [
                 {
                     "_city": "Stony Brook", 
-                    "_route": null, 
+                    "_route": 0, 
                     "_street": "Nicolls Rd", 
                     "_lat": 40.909696, 
                     "_streetNumber": 100, 
@@ -632,7 +632,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 1, 
                     "_street": "Carpenter Ave", 
                     "_lat": 40.90237, 
                     "_streetNumber": 4445, 
@@ -644,7 +644,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 2, 
                     "_street": "Wilson Ave", 
                     "_lat": 40.866916, 
                     "_streetNumber": 2305, 
@@ -656,7 +656,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 3, 
                     "_street": "Lurting Ave", 
                     "_lat": 40.848129, 
                     "_streetNumber": 1524, 
@@ -668,7 +668,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 4, 
                     "_street": "Lurting Ave", 
                     "_lat": 40.848129, 
                     "_streetNumber": 1912, 
@@ -680,7 +680,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 5, 
                     "_street": "Noble Ave", 
                     "_lat": 40.830833, 
                     "_streetNumber": 1427, 
@@ -692,7 +692,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 6, 
                     "_street": "Anderson Ave", 
                     "_lat": 40.832616, 
                     "_streetNumber": 946, 
@@ -704,7 +704,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 7, 
                     "_street": "5 AVE", 
                     "_lat": 40.785334, 
                     "_streetNumber": 1148, 
@@ -716,7 +716,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 8, 
                     "_street": "3 AVE", 
                     "_lat": 40.754715, 
                     "_streetNumber": 675, 
@@ -728,7 +728,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 9, 
                     "_street": "E 51st St", 
                     "_lat": 40.756351, 
                     "_streetNumber": 229, 
@@ -740,7 +740,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 10, 
                     "_street": "E 88th St", 
                     "_lat": 40.780178, 
                     "_streetNumber": 504, 
@@ -752,7 +752,7 @@
                 }, 
                 {
                     "_city": "New York", 
-                    "_route": null, 
+                    "_route": 11, 
                     "_street": "5 AVE", 
                     "_lat": 40.791455, 
                     "_streetNumber": 1150, 
@@ -764,7 +764,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 12, 
                     "_street": "Revere Ave", 
                     "_lat": 40.824288, 
                     "_streetNumber": 511, 
@@ -776,7 +776,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 13, 
                     "_street": "Quincy Ave", 
                     "_lat": 40.825158, 
                     "_streetNumber": 927, 
@@ -788,7 +788,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 14, 
                     "_street": "Randall Ave", 
                     "_lat": 40.826129, 
                     "_streetNumber": 2871, 
@@ -800,7 +800,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 15, 
                     "_street": "VINCENT AVE", 
                     "_lat": 40.830551, 
                     "_streetNumber": 637, 
@@ -812,7 +812,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 16, 
                     "_street": "STADIUM AVE", 
                     "_lat": 40.841598, 
                     "_streetNumber": 1277, 
@@ -824,7 +824,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 17, 
                     "_street": "Mayflower Ave", 
                     "_lat": 40.851313, 
                     "_streetNumber": 1827, 
@@ -836,7 +836,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 18, 
                     "_street": "Mace Ave", 
                     "_lat": 40.862536, 
                     "_streetNumber": 1500, 
@@ -848,7 +848,7 @@
                 }, 
                 {
                     "_city": "Bronx", 
-                    "_route": null, 
+                    "_route": 19, 
                     "_street": "Grace Ave", 
                     "_lat": 40.880633, 
                     "_streetNumber": 3532, 

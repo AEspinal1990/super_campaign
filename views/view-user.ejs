@@ -11,18 +11,18 @@
     <form action="/user/<%= username %>" method="POST">
         <div class="form-group">
             <label>Username</label>
-            <input type="text" name="user[username]" class="form-control" value="<%= username %>">
+            <input type="text" name="user[username]" class="form-control" value="<%= username %>" disabled>
         </div>
         <div class="form-group">
             <label>Name</label>
-            <input type="text" name="user[name]" class="form-control" value="<%= name %>">
+            <input type="text" name="user[name]" class="form-control" value="<%= name %>" disabled>
         </div>
 
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="inputGroupSelect01">Role</label>
             </div>
-            <select name="user[role]" class="custom-select" id="inputGroupSelect01">
+            <select name="user[role]" class="custom-select" id="inputGroupSelect01" disabled>
                 <option value="1" <% if (role===1){ %>
                     selected="selected"
                     <% } else {} %>
@@ -37,13 +37,8 @@
                     >System Administrator</option>
             </select>
         </div>
-
-        <button type="submit" class="btn btn-warning">Update</button>
     </form>
 
-    <form class="delete-form" action="/user/<%= username %>?_method=DELETE" method="POST">
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
 
 </div><!-- Close container -->
 
