@@ -139,7 +139,7 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
     res.send("Done Editing Availability");
 });
 
-router.get('/:id/view-tasks', async (req: Request, res: Response) => {
+router.get('/view-tasks/:id', async (req: Request, res: Response) => {
     const canv = await getManager()
         .createQueryBuilder(Canvasser, "canvasser")
         .leftJoinAndSelect("canvasser._task", "task")
@@ -240,6 +240,8 @@ router.get('/canvassing', async (req: Request, res: Response) => {
  * along with talking points, questionaire, and option for entering results
  */
 router.post('/canvassing/map', async (req: Request, res: Response) => {
+    console.log('task',req.body.taskID)
+    console.log('campaign',req.body.campaignID)
     var task = await canvasserTools.getTaskByID(req.body.taskID);
     // create a list of talking points withou the campaign object
     var talkingPoints = await canvasserTools.getTalk(req.body.campaignID);
