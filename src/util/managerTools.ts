@@ -344,6 +344,14 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], tasks[l]);
         tasks[l].canvasser = canvassers[canvasserIndex].ID.name;
         tasks[l].scheduledOn = earliestDate;
+        for (let m in availableDates[l]){
+            // console.log("availDates: ", availableDates[l][m], " earliestDate: ", earliestDate)
+            if (+availableDates[l][m].availableDate == +earliestDate){
+                console.log("replaced earliestDate: ", availableDates[l][m])
+                availableDates[l].splice(m, 1);
+                console.log("the dates: ", availableDates[l])
+            }
+        }
         earliestDate = undefined;
     };
     if (status == 2){
@@ -426,7 +434,6 @@ export const launchORT = async (data) => {
         if (err) throw err;
     });
 
-    //console.log('Creating task with', data)
     // start up OR-Tools from child process
     // const { spawn } = require('child_process');
     // const pyORT = spawn('python', ['src/util/ortool.py']);
@@ -437,13 +444,11 @@ export const launchORT = async (data) => {
             if (err) {
               reject(err);
             }
-            console.log('Output', stdout);
         });
 
         dir.on('exit', function (code) {
             // exit code is code
             let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
-            console.log(newTasks)
             resolve(newTasks);
         });
     })
@@ -454,7 +459,6 @@ export const launchORT = async (data) => {
     //     if (err) {
     //       // should have err.code here?  
     //     }
-    //     console.log(stdout);
     // });
       
     // dir.on('exit', function (code) {
@@ -462,12 +466,10 @@ export const launchORT = async (data) => {
     // });
     // let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
     
-    //console.log(newTasks)
     let task;
     await myPromise
-    .then(res => console.log('The results are:', task = res))
+    .then(res =>  task = res)
     .catch(e => console.log('Fuck!', e))   
-    console.log('The promise returned', task) 
     return task;
 };
 
