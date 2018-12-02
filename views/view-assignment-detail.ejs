@@ -17,22 +17,21 @@
     <input type="submit" value="Back">
 </form>
 
-<div id="map"></div>
-<div>
+<div class="container" id="map">
     <% if (task._remainingLocation != undefined) { %>
 
     <h3>Remaining Locations</h3>
-    <table>
-        <tr>
+    <table class="table table-hover table-striped">
+        <thead class="thead-light text-center">
             <th>Street Number</th>
             <th>Street</th>
             <th>Unit</th>
             <th>City</th>
             <th>State</th>
             <th>Zipcode</th>
-        </tr>
+        </thead>
         <% for(var j=0; j < task._remainingLocation._locations.length; j++) { %>
-        <tr>
+        <tr class="text-center">
             <td>
                 <%= task._remainingLocation._locations[j]._streetNumber %>
             </td>

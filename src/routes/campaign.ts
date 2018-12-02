@@ -162,7 +162,7 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
         let campaignManagers = campaign[0].managers;
         let campaignManagersString = "";
         for (let i in campaignManagers) {
-            campaignManagersString += campaignManagers[i].ID.employeeID + "\n";
+            campaignManagersString += campaignManagers[i].ID.username + "\n";
         }
 
         //parse canvassers back to input form
@@ -175,7 +175,7 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
 
         let campaignCanvassersString = "";
         for (let i in campaignCanvasser) {
-            campaignCanvassersString += campaignCanvasser[i].ID.employeeID + "\n";
+            campaignCanvassersString += campaignCanvasser[i].ID.username + "\n";
         }
         res.status(200).render('edit-campaign', {
             campaignName: campaign[0].name,
@@ -198,32 +198,32 @@ router.post('/edit/:id', middleware.manages, async (req: Request, res: Response)
         where: { "_ID": req.params.id }
     });
 
-    // // Update campaign attributes
-    // originalCampaign.name = updatedCampaign.campaignName;
-    // originalCampaign.startDate = editTools.updatedDate(updatedCampaign.startDate);
-    // originalCampaign.endDate = editTools.updatedDate(updatedCampaign.endDate);
-    // originalCampaign.avgDuration = updatedCampaign.averageExpectedDuration;
-    // await getManager().save(originalCampaign).catch(e => console.log(e));
+    // Update campaign attributes
+    originalCampaign.name = updatedCampaign.campaignName;
+    originalCampaign.startDate = editTools.updatedDate(updatedCampaign.startDate);
+    originalCampaign.endDate = editTools.updatedDate(updatedCampaign.endDate);
+    originalCampaign.avgDuration = updatedCampaign.averageExpectedDuration;
+    await getManager().save(originalCampaign).catch(e => console.log(e));
 
-    // // Update Talking Points
-    // await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
+    // Update Talking Points
+    await editTools.updateTalkingPoints(originalCampaign, req.body.campaign.talkingPoints);
 
-    // // Update Questions
-    // await editTools.updateQuestionnaire(originalCampaign, req.body.campaign.questionaire);
+    // Update Questions
+    await editTools.updateQuestionnaire(originalCampaign, req.body.campaign.questionaire);
 
-    // // Update Managers
-    // await editTools.updateManagers(originalCampaign, req.body.campaign.managers)
+    // Update Managers
+    await editTools.updateManagers(originalCampaign, req.body.campaign.managers)
 
 
-    // // Update Canvassers
-    // await editTools.updateCanvassers(originalCampaign, req.body.campaign.canvassers);
+    // Update Canvassers
+    await editTools.updateCanvassers(originalCampaign, req.body.campaign.canvassers);
 
 
     // Update Locations
     //@ts-ignore
     await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
-    res.send('ok')
+    res.redirect('/home')
     //res.redirect(307, `/manager/new-assignment/${req.params.id}`);
 });
 

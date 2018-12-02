@@ -105,6 +105,7 @@ export const updateTalkingPoints = async (campaign, talkingPoints) => {
     talkingPoints.forEach(async point => {
         await getManager().save(point).catch(e => console.log(e));
     });
+    campaignLogger.info(`Updated Talking Points for ${campaign.name}`);
 }
 
 export const updateQuestionnaire = async (campaign, questionaire) => {
@@ -125,6 +126,7 @@ export const updateQuestionnaire = async (campaign, questionaire) => {
     questionaire.forEach(async question => {
         await getManager().save(question).catch(e => console.log(e));
     });
+    campaignLogger.info(`Updated Questionairre for ${campaign.name}`);
 }
 
 
@@ -136,7 +138,7 @@ export const updateManagers = async (campaign, managers) => {
     for (let i in managers) {
         if (managers[i] != "") {
             usr = await getManager()
-                .findOne(User, { where: { "_employeeID": managers[i] } });
+                .findOne(User, { where: { "_username": managers[i] } });
 
             // If user exist
             if (usr !== undefined) {
@@ -158,7 +160,7 @@ export const updateManagers = async (campaign, managers) => {
 
         }
     }
-    campaignLogger.info(`Updating managers for: ${campaign.name}`);
+    campaignLogger.info(`Updated managers for: ${campaign.name}`);
     await getManager().save(campaign).catch(e => console.log(e));
 }
 
@@ -180,7 +182,6 @@ export const updateCanvassers = async (campaign, updatedCanvassers) => {
             .relation(Canvasser, "_campaigns")
             .of(canvasser.ID.employeeID)
             .remove(campaign._ID)
-            .then(res => console.log(res))
             .catch(e => console.log(e))
     });
     
@@ -192,7 +193,7 @@ export const updateCanvassers = async (campaign, updatedCanvassers) => {
     
     for (let i in canvassers) {
         
-        usr = await getManager().findOne(User, { where: { "_employeeID": canvassers[i] } });
+        usr = await getManager().findOne(User, { where: { "_username": canvassers[i] } });
         canvass = await getManager().findOne(Canvasser, { where: { "_ID": usr } });
         if (usr === undefined) {
             campaignLogger.warn(`User with id ${canvassers[i]} does not exist`);
@@ -204,7 +205,7 @@ export const updateCanvassers = async (campaign, updatedCanvassers) => {
             canvass.campaigns.push(campaign);
         }
     }
-    campaignLogger.info(`Updating Canvassers for ${campaign.name}`);
+    campaignLogger.info(`Updated Canvassers for ${campaign.name}`);
     await getManager().save(campaign.canvassers)
         .catch(e => console.log('Error', e));
 }
@@ -242,10 +243,7 @@ export const updateLocations = async (campaign, updatedLocations) => {
             removals.push(originalLocations[i])
         }
     }
-    
-    //console.log('Inserting the locations:', insertions)
-    console.log('Removing the locations', removals)
-       
+           
     removals.forEach( async location => {
         await getManager()
             .createQueryBuilder()
@@ -279,7 +277,7 @@ export const updateLocations = async (campaign, updatedLocations) => {
     insertions.forEach(location => {
         campaign.locations.push(location);
     })
-    console.log('Locations should be', campaign.locations)
+    campaignLogger.info(`Updated locations for ${campaign.name}`);
     await getManager().save(campaign);
 
 }

@@ -78,14 +78,14 @@ export const saveManagers = async (campaign, managers) => {
     campaign.managers = [];
     for (let i in managers) {
         if (managers[i] != "") {
+            
             usr = await getManager()
-                .findOne(User, { where: { "_employeeID": managers[i] } });
-
+                .findOne(User, { where: { "_username": managers[i] } });
             // If user exist
             if (usr !== undefined) {
                 cm = await getManager()
                     .findOne(CampaignManager, { where: { "_ID": usr } });
-
+                console.log('The campaign manager is,', cm)
                 // If user is a campaign manager
                 if (cm !== undefined) {
                     campaign.managers.push(cm);
@@ -153,7 +153,7 @@ export const saveCanavaser = async (campaign, canvassers) => {
     for (let i in canvassers) {
         if (canvassers[i] != "") {
             usr = await getManager()
-                .findOne(User, { where: { "_employeeID": canvassers[i] } });
+                .findOne(User, { where: { "_username": canvassers[i] } });
             // If user exist
             if (usr !== undefined) {
                 canvass = await getManager()
