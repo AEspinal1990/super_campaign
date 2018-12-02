@@ -526,6 +526,7 @@ export const getOldAssignment = async (campaignID) => {
             .then(res => {
                 return res;});
     }
+    
     return assignment;
 };
 

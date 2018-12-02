@@ -5,6 +5,7 @@ import json
 import math
 import sys
 
+
 def readFile():
     # read json file from path
     with open("../data/ordata.json") as file:
