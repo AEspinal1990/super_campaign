@@ -64,7 +64,8 @@ router.post('/globals', middleware.isAdmin, async (req: Request, res: Response) 
 /**
  * Create/Edit/Delete User 
  */
-router.get('/new', async (req: Request, res: Response) => {
+
+router.get('/new', middleware.isAdmin,async (req: Request, res: Response) => {
     res.status(200).render('create-user', {message: ""});
 });
 
