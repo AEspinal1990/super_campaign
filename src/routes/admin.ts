@@ -133,7 +133,7 @@ router.post('/', [
     });
 
 
-router.get('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
+router.get('/edit/:username', middleware.isAdmin, async (req: Request, res: Response) => {
 
     const userRepository = getRepository(User);
     const username = req.params.username;
@@ -153,6 +153,34 @@ router.get('/:username', middleware.isAdmin, async (req: Request, res: Response)
     } else {
         adminLogger.info(`/user/${username} - ${req.user[0]._username} accessed ${username}s profile`);
         res.status(200).render('edit-user', {
+            username,
+            name: user[0]._name,
+            role: user[0]._permission,
+            id: user[0]._employeeID,
+        });
+    }
+});
+
+router.get('/view/:username', middleware.isAdmin, async (req: Request, res: Response) => {
+
+    const userRepository = getRepository(User);
+    const username = req.params.username;
+
+    const user = await userRepository.find({ where: { "_username": username } })
+        .catch(e => adminLogger.error(`Could not find user in ${username} in database, ${e}`));
+
+    if (user[0] === undefined) {
+        adminLogger.info(`/user/${username} - Could not find ${username}s profile`);
+        res.status(404).render('view-user', {
+            missing: username,
+            username: "",
+            name: "",
+            role: "",
+            id: 0
+        });
+    } else {
+        adminLogger.info(`/user/${username} - ${req.user[0]._username} accessed ${username}s profile`);
+        res.status(200).render('view-user', {
             username,
             name: user[0]._name,
             role: user[0]._permission,
