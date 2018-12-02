@@ -1,0 +1,46 @@
+<% include ./partials/adminNav %>
+
+<div class="container">
+
+    <h1>View User</h1>
+    <% if (username === "") { %>
+    <h2>
+        <%= missing %> not found</h2>
+    <% } %>
+
+    <form action="/user/<%= username %>" method="POST">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="user[username]" class="form-control" value="<%= username %>" >
+        </div>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="user[name]" class="form-control" value="<%= name %>" >
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Role</label>
+            </div>
+            <select name="user[role]" class="custom-select" id="inputGroupSelect01" >
+                <option value="1" <% if (role===1){ %>
+                    selected="selected"
+                    <% } else {} %>
+                    >Campaign Manager</option>
+                <option value="2" <% if (role===2){ %>
+                    selected ="selected"
+                    <% } else {} %>
+                    >Canvasser</option>
+                <option value="3" <% if (role===3){ %>
+                    selected ="selected"
+                    <% } else {} %>
+                    >System Administrator</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-warning">Update</button>
+    </form>
+
+
+</div><!-- Close container -->
+
+<% include ./partials/footer %>
