@@ -27,7 +27,7 @@ router.get('/new', middleware.isManager, async (req: Request, res: Response) => 
 });
 
 //Removed authentication for now
-router.get('/home', async (req: Request, res: Response) => {
+router.get('/home', middleware.isManager, async (req: Request, res: Response) => {
 
     let campaigns = await getManager()
         .createQueryBuilder(Campaign, "campaigns")
@@ -230,7 +230,7 @@ router.post('/edit/:id', middleware.manages, async (req: Request, res: Response)
 /**
  * GET for view campaign
  */
-router.get('/view/:id', async (req: Request, res: Response) => {
+router.get('/view/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().find(Campaign,
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
