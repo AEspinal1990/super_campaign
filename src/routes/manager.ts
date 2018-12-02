@@ -90,7 +90,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Remove canvassers with no openings in schedule
      */
-    // console.log('Before remove busy', canvassers)
     canvassers = managerTools.removeBusy(canvassers);
     var ret = managerTools.assignTasks(canvassers, tasks);
     if (ret.status == 3) {
@@ -192,7 +191,6 @@ router.get('/view-assignment/:id', async (req: Request, res: Response) => {
     for (let i in remainingLocations) {
         for (let j in remainingLocations[i]) {
             remainingLocations[i][j].locations.forEach(location => {
-                //console.log(location)
                 locations.push(location)
                 numLocations++;
             });
@@ -216,7 +214,6 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
         .leftJoinAndSelect("rmL._locations", "fmLs")
         .where("campaign._ID = :ID", { ID: req.body.campaignID })
         .getMany();
-    // console.log(canv)
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);
@@ -225,9 +222,7 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
             var geocodes = [];
             for (let j in canv) {
                 for (let i in canv[j].task) {
-                    // console.log(canv[j].task[i].ID + " - " + req.body.taskID)
                     if (canv[j].task[i].ID == req.body.taskID) {
-                        // console.log("inside")
                         cindex = j;
                         index = i;
                         for (let h in canv[j].task[i].remainingLocation.locations) {
@@ -240,7 +235,6 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
                 }
             }
 
-            // console.log(cindex)
             res.render("view-task-detail", {
                 task: canv[cindex].task[index],
                 canvasserID: req.body.canvasserID,
@@ -309,7 +303,6 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
         { where: { "_campaign": campaign } });
     campaign.results = resul;
 
-    console.log('The results', resul)
     function ResultDetails(location_Id, rating, coord) {
         this.location_Id = location_Id;
         this.rating = rating;
