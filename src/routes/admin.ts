@@ -153,7 +153,7 @@ router.get('/:username', middleware.isAdmin, async (req: Request, res: Response)
         });
     } else {
         adminLogger.info(`/user/${username} - ${req.user[0]._username} accessed ${username}s profile`);
-        res.status(200).render('view-user', {
+        res.status(200).render('edit-user', {
             username,
             name: user[0]._name,
             role: user[0]._permission,
