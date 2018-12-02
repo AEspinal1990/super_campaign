@@ -143,9 +143,12 @@ export const sendToMap = (task, campaignID) => {
     var rlocations = [];
     if (task.remainingLocation !== null) {
         // order the locations for route
+        var rte = 0;
         for (let m in task.remainingLocation.locations){
-            if (task.remainingLocation.locations[m].route == Number(m)){
+            if (task.remainingLocation.locations[m].route == rte){
+                console.log("pushing RL")
                 rlocations.push(task.remainingLocation.locations[m]);
+                rte++;
             }
         }
         route = convertGeocodes(rlocations);
