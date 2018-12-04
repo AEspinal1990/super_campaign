@@ -3,13 +3,11 @@ import { getManager } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
 import { Assignment } from '../backend/entity/Assignment';
 import { Results } from '../backend/entity/Results';
-import { CompletedLocation } from '../backend/entity/CompletedLocation';
 import { Questionaire } from '../backend/entity/Questionaire';
 import * as managerTools from '../util/managerTools';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
 import { Canvasser } from '../backend/entity/Canvasser';
-import { Task } from '../backend/entity/Task';
 
 const router: Router = Router();
 const logger = require('../util/logger');
@@ -79,14 +77,14 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
         avg_travel_speed: AVG_TRAVEL_SPEED
     };
 
-    
+
     let OResults = await managerTools.launchORT(data);
 
     /**
      * Create tasks and assign campaignID & assignment
      */
     let tasks = managerTools.createTasks(JSON.parse(OResults).routes, campaign, assignment);
-    
+
     /**
      * Remove canvassers with no openings in schedule
      */
@@ -102,6 +100,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     var status = ret.status;
     assignment.tasks = tasks;
     campaign.assignment = assignment;
+
     /**
      * Save new assignment and update campaign
      */
@@ -110,7 +109,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
             assignment.tasks[l].assignment = assignment;
         }
         await getManager().save(assignment.tasks)
-    } else {        
+    } else {
         await getManager().save(assignment).then(res => console.log("Assingment Saved"));
         await getManager().save(campaign).then(res => console.log("campaign saved"));
     }
@@ -132,7 +131,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Redirect to correct home page
      */
-    if(req.user[0]._permission === 1) {
+    if (req.user[0]._permission === 1) {
         res.status(200).render('CampaignManagerHome', { campaigns: campaign })
     }
     else if (req.user[0]._permission === 2) {
@@ -144,7 +143,6 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
 });
 
 router.get('/view-assignment/:id', async (req: Request, res: Response) => {
-
     let campaign;
     let tasks = [];
     let remainingLocations = [];
@@ -166,6 +164,7 @@ router.get('/view-assignment/:id', async (req: Request, res: Response) => {
     // Grab all task with this campaign id
     tasks = await managerTools.getCampaignTask(campaignID);
     let test = [];
+
     // Grab all remaining locations for the tasks
     for (let i in tasks) {
         let location = await managerTools.getRemainingLocations(tasks[i].ID);
@@ -235,6 +234,10 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
                 }
             }
 
+            io.on("connection", function(socket) {
+                socket.emit("task-geocodes", geocodes);
+            });
+
             res.render("view-task-detail", {
                 task: canv[cindex].task[index],
                 canvasserID: req.body.canvasserID,
@@ -246,43 +249,9 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/createDummyVaried/:id', async (req: Request, res: Response) => {
-    var campaign = await getManager().findOne(Campaign,
-        { where: { "_ID": req.params.id } });
-    var question = await getManager().find(Questionaire,
-        { where: { "_campaign": campaign } });
-    function randomIntFromInterval(min, max) // min and max included
-    {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-    for (let j in campaign.locations) { // delete this loop for only 1 completed location
-        var results = [];
-        var completed = new CompletedLocation();
-        completed.locations = [];
-        for (var i = 0; i < question.length; i++) {
-            var result = new Results();
-            result.campaign = campaign;
-            if (randomIntFromInterval(1, 2) == 1) {
-                result.answer = false;
-            } else {
-                result.answer = true;
-            } result.answerNumber = Number(i);
-            result.rating = randomIntFromInterval(1, 5);
-            result.completedLocation = completed;
-            result.completedLocation.locations.push(campaign.locations[j]);
-            await getManager().save(result.completedLocation);
-            results.push(result);
-        }
-        await getManager().save(results);
-    }
-});
-
-
 router.get('/results/:id', middleware.manages, async (req: Request, res: Response) => {
     var campaign = await getManager().findOne(Campaign,
         { where: { "_ID": req.params.id } });
-
 
     var resul = await getManager().find(Results, {
         where: { "_campaign": campaign },
@@ -323,6 +292,7 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
     var question = await getManager().find(Questionaire,
         { where: { "_campaign": campaign } });
     var resultsTable = [];
+
     //loop through resul to convert the IDs to their actual values into resultsTable
     for (var i = 0; i < resul.length; i++) {
         var resultRow = { answer: true, question: "", rating: 0, location: "" };
@@ -350,8 +320,7 @@ router.get('/results/:id', middleware.manages, async (req: Request, res: Respons
             ratingStatistics: ratingResults
         });
     }
-})
-
+});
 
 
 export { router as managerRouter };

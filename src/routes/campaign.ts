@@ -1,14 +1,12 @@
 import { Request, Response, Router } from 'express';
 import { getManager, getRepository } from 'typeorm';
 import { Campaign } from '../backend/entity/Campaign';
-import * as campaignEditor from '../util/campaignEditor';
 import * as editTools from '../util/campaignEditTools';
 import * as campaignCreator from '../util/campaignCreator';
 import { Questionaire } from '../backend/entity/Questionaire';
 import { TalkPoint } from '../backend/entity/TalkPoint';
 import { Canvasser } from '../backend/entity/Canvasser';
 import server, { io } from '../server';
-import { CampaignManager } from '../backend/entity/CampaignManager';
 
 const middleware = require('../middleware');
 const router: Router = Router();
@@ -102,7 +100,6 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
         .catch(e => console.log(e));
 
     if (campaign === undefined) {
-        console.log('not found')
         return res.status(404).render('edit-campaign', {
             missing: campaignID,
             id: "",
@@ -147,6 +144,7 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
         for (let i in campaign[0].talkingPoint) {
             talkPointInput += campaign[0].talkingPoint[i].talk + "\n";
         }
+
         //parse locations back to input form
         let locationsInput = "";
         for (let i in campaign[0].locations) {
@@ -224,7 +222,6 @@ router.post('/edit/:id', middleware.manages, async (req: Request, res: Response)
     await editTools.updateLocations(originalCampaign, req.body.campaign.locations);
 
     res.redirect('/home')
-    //res.redirect(307, `/manager/new-assignment/${req.params.id}`);
 });
 
 /**
@@ -234,10 +231,8 @@ router.get('/view/:id', middleware.manages, async (req: Request, res: Response) 
     var campaign = await getManager().find(Campaign,
         { where: { "_ID": req.params.id } })
         .catch(e => console.log(e));
-    // console.log(campaign[0]);
 
     if (campaign[0] === undefined) {
-        console.log("NOT FOUND");
         res.status(404).send('Campaign with ID: ' + req.params.id + ' was not found!');
     } else {
         // MANUAL LOAD FROM DB - Questoinaire AND TALKING POINTS
@@ -267,9 +262,8 @@ router.get('/view/:id', middleware.manages, async (req: Request, res: Response) 
         // lets make a new connection socket for the view url and change the path from client
         io.on('connection', function (socket) {
             socket.emit('geocodes', geocodes);
-            // console.log(geocodes);            
         });
-        // console.log(campaign[0]);
+
         res.render('view-campaign', {
             id: campaign[0].ID,
             name: campaign[0].name,

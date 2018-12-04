@@ -17,7 +17,7 @@ def readFile():
 def fillData():
     file = readFile()
     locations = file["locations"]
-    # print(locations)
+    
     data = {}
     data["locations"] = locations
     data["geocodes"] = [(l["_lat"], l["_long"]) for l in locations]
@@ -35,7 +35,7 @@ def fillData():
     data["capacities"] = []
     for y in range(file["num_canvassers"]): #pylint: disable=unused-variable
         data["capacities"].append(file["workday_limit"])
-    # print(data)
+
     return data
 
 
@@ -111,7 +111,7 @@ def add_capacity_constraints(routing, data, demand_callback):
 def main():
     # receive data from json file  
     data = fillData()
-    # print(data)
+
     # Create routing model
     routing = pywrapcp.RoutingModel(data["num_locations"], data["num_canvassers"], data["depot"])
     distance_callback = create_distance_callback(data)
@@ -128,7 +128,6 @@ def main():
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC) # pylint: disable=no-member
     assignment = routing.SolveWithParameters(search_parameters)
-    # print(assignment)
 
     tasks = {}
     tasks["routes"] = []
@@ -162,17 +161,13 @@ def main():
         plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
         distance = 0
         while not routing.IsEnd(index):
-            # print(routing.IndexToNode(index))
-            # if routing.IndexToNode(index) != '0'):
             plan_output += ' {} ->'.format(routing.IndexToNode(index))
             previous_index = index
             index = assignment.Value(routing.NextVar(index))
             distance += routing.GetArcCostForVehicle(previous_index, index, vehicle_id)
         plan_output += ' {}\n'.format(routing.IndexToNode(index))
         plan_output += 'Distance of route: {}m\n'.format(distance)
-        # print(plan_output)
         total_distance += distance
-    # print('Total distance of all routes: {}m'.format(total_distance))
 
     sys.stdout.flush()
 main()

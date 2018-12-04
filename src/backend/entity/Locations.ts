@@ -22,13 +22,13 @@ export class Locations {
     private _long!: number;
     @Column({ name: "route", nullable: true })
     private _route!: number;
+    
     public get route(): number {
         return this._route;
     }
     public set route(value: number) {
         this._route = value;
     }
-
     public get ID(): number {
         return this._ID;
     }

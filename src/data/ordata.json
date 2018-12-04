@@ -1,3 +1,32 @@
 {
-
+	"locations": [
+		{
+			"_ID": 1,
+			"_streetNumber": 100,
+			"_street": "Nicolls Rd",
+			"_unit": "1",
+			"_city": "Stony Brook",
+			"_state": "NY",
+			"_zipcode": 11790,
+			"_lat": 40.90913,
+			"_long": -73.11522,
+			"_route": null
+		},
+		{
+			"_ID": 1,
+			"_streetNumber": 100,
+			"_street": "Nicolls Rd",
+			"_unit": "1",
+			"_city": "Stony Brook",
+			"_state": "NY",
+			"_zipcode": 11790,
+			"_lat": 40.90913,
+			"_long": -73.11522,
+			"_route": null
+		}
+	],
+	"num_canvassers": 2,
+	"estimated_visit_time": 10,
+	"workday_limit": 360,
+	"avg_travel_speed": 804
 }

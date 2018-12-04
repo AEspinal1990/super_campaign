@@ -64,7 +64,7 @@ export const getCampaignLocations = campaign => {
     var depot = campaign.locations[0];
     depot.lat = Number(depot.lat);
     depot.long = Number(depot.long);
-    
+
     let locations = [depot];
 
     campaign.locations.forEach(location => {
@@ -279,7 +279,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
 
         // all available dates for this canvasser will be the actual available dates
-        if (canvasser.assignedDates.length === 0){
+        if (canvasser.assignedDates.length === 0) {
             canvasser.assignedDates = [];
             canvasser.task = [];
             availableDates.push(canvasser.availableDates);
@@ -291,10 +291,10 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
             var date = [];
             canvasser.availableDates.forEach(vdate => {
                 for (let l in canvasser.assignedDates) {
-                    if (vdate.availableDate == canvasser.assignedDates[l].assignedDate){
+                    if (vdate.availableDate == canvasser.assignedDates[l].assignedDate) {
                         break;
                     }
-                    if (Number(l) == canvasser.assignedDates.length-1) {
+                    if (Number(l) == canvasser.assignedDates.length - 1) {
                         date.push(vdate);
                     }
                 }
@@ -304,9 +304,9 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
     });
 
     // check if there are no available dates
-    if (availableDates.length == 0){
+    if (availableDates.length == 0) {
         return {
-            canvasser: null, 
+            canvasser: null,
             status: 3
         };
     }
@@ -321,22 +321,22 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         for (let i in canvassers) {
             if (availableDates[i] === undefined) {
                 continue;
-            } else if (availableDates[i].length === 0){
+            } else if (availableDates[i].length === 0) {
                 continue;
             }
             let date = canvassersEarliestDates(availableDates[i]);
-            if (date != null){
+            if (date != null) {
                 if (earliestDate === undefined || date < earliestDate) {
                     canvasserIndex = Number(i);
                     earliestDate = date;
                     status = 4;
                 }
             }
-            if (Number(i) == canvassers.length -1 && status != 4){
+            if (Number(i) == canvassers.length - 1 && status != 4) {
                 status = 2;
             }
         }
-        if (status == 2){
+        if (status == 2) {
             earliestDate = undefined;
             continue;
         }
@@ -344,17 +344,14 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], tasks[l]);
         tasks[l].canvasser = canvassers[canvasserIndex].ID.name;
         tasks[l].scheduledOn = earliestDate;
-        for (let m in availableDates[l]){
-            // console.log("availDates: ", availableDates[l][m], " earliestDate: ", earliestDate)
-            if (+availableDates[l][m].availableDate == +earliestDate){
-                console.log("replaced earliestDate: ", availableDates[l][m])
+        for (let m in availableDates[l]) {
+            if (+availableDates[l][m].availableDate == +earliestDate) {
                 availableDates[l].splice(m, 1);
-                console.log("the dates: ", availableDates[l])
             }
         }
         earliestDate = undefined;
     };
-    if (status == 2){
+    if (status == 2) {
         return {
             canvasser: canvassers,
             status: 2
@@ -381,7 +378,7 @@ function assignTask(canvasser: Canvasser, task: Task) {
 }
 
 function canvassersEarliestDates(availableDates) {
-    if (availableDates == undefined || availableDates == null){
+    if (availableDates == undefined || availableDates == null) {
         return null;
     }
     return availableDates[0].availableDate;
@@ -435,14 +432,12 @@ export const launchORT = async (data) => {
     });
 
     // start up OR-Tools from child process
-    // const { spawn } = require('child_process');
-    // const pyORT = spawn('python', ['src/util/ortool.py']);
     let myPromise = new Promise((resolve, reject) => {
         var sys = require('sys')
-    var exec = require('child_process').exec;
-        let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
+        var exec = require('child_process').exec;
+        let dir = exec("cd src/util && python ortool.py", function (err, stdout, stderr) {
             if (err) {
-              reject(err);
+                reject(err);
             }
         });
 
@@ -452,24 +447,11 @@ export const launchORT = async (data) => {
             resolve(newTasks);
         });
     })
-    // var sys = require('sys')
-    // var exec = require('child_process').exec;
 
-    // let dir = exec("cd src/util && python ortool.py", function(err, stdout, stderr) {
-    //     if (err) {
-    //       // should have err.code here?  
-    //     }
-    // });
-      
-    // dir.on('exit', function (code) {
-    // // exit code is code
-    // });
-    // let newTasks = fs.readFileSync('src/data/result_tasks.json', 'utf8');
-    
     let task;
     await myPromise
-    .then(res =>  task = res)
-    .catch(e => console.log('Fuck!', e))   
+        .then(res => task = res)
+        .catch(e => console.log(e))
     return task;
 };
 
@@ -480,17 +462,17 @@ export const launchORT = async (data) => {
  * @param canvassers
  */
 export const loadCanvasserCampaigns = async (canvassers) => {
-    for (let l in canvassers){
+    for (let l in canvassers) {
         var canvass = await getManager()
             .createQueryBuilder(Canvasser, "canvasser")
             .leftJoinAndSelect("canvasser._ID", "user")
             .leftJoinAndSelect("canvasser._campaigns", "campaigns")
             .leftJoinAndSelect("campaigns._assignment", "assignment")
-            .where("user._employeeID = :id", {id: canvassers[l].ID.employeeID})
+            .where("user._employeeID = :id", { id: canvassers[l].ID.employeeID })
             .getOne();
 
-        if (canvass != undefined){
-            for (let m in canvass.campaigns){
+        if (canvass != undefined) {
+            for (let m in canvass.campaigns) {
                 if (canvass.campaigns[m].ID == canvassers[l].campaigns[0].ID)
                     continue;
                 canvassers[l].campaigns.push(canvass.campaigns[m]);
@@ -504,35 +486,38 @@ export const getOldAssignment = async (campaignID) => {
     var task = await getManager()
         .createQueryBuilder(Task, "task")
         .leftJoinAndSelect("task._assignment", "assignment")
-        .where("task._campaignID = :id", {id: campaignID})
+        .where("task._campaignID = :id", { id: campaignID })
         .getOne()
         .then(res => {
-            return res;});
+            return res;
+        });
     var assignment;
-    if (task != undefined && task != null){
+    if (task != undefined && task != null) {
         assignment = await getManager()
             .createQueryBuilder(Assignment, "assignment")
-            .where("assignment._ID = :id", {id: task.assignment.ID})
+            .where("assignment._ID = :id", { id: task.assignment.ID })
             .getOne()
             .then(res => {
-                return res;});
+                return res;
+            });
         assignment.tasks = await getManager()
             .createQueryBuilder(Task, "task")
             .leftJoinAndSelect("task._assignment", "assignment")
             .leftJoinAndSelect("task._remainingLocation", "RL")
             .leftJoinAndSelect("RL._locations", "RLocation")
-            .where("assignment._ID = :id", {id: assignment.ID})
+            .where("assignment._ID = :id", { id: assignment.ID })
             .getMany()
             .then(res => {
-                return res;});
+                return res;
+            });
     }
-    
+
     return assignment;
 };
 
 export const clearAssignment = async (assignment) => {
     // remove locations for each remaining locations
-    for (let l in assignment.tasks){
+    for (let l in assignment.tasks) {
         await removeRLocations(assignment.tasks[l]);
         await getManager()
             .createQueryBuilder()
@@ -543,15 +528,15 @@ export const clearAssignment = async (assignment) => {
             .createQueryBuilder()
             .delete()
             .from(Task)
-            .where("_ID = :id", {id: assignment.tasks[l].ID})
+            .where("_ID = :id", { id: assignment.tasks[l].ID })
             .execute();
     }
     assignment.task = [];
     return assignment;
 };
 
-async function removeRLocations(task){
-    for (let l in task.remainingLocation.locations){
+async function removeRLocations(task) {
+    for (let l in task.remainingLocation.locations) {
         await getManager()
             .createQueryBuilder()
             .relation(RemainingLocation, "_locations")

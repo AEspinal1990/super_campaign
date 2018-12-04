@@ -1,4 +1,4 @@
-import {Entity, ManyToMany, OneToOne, JoinColumn, OneToMany, JoinTable} from "typeorm"
+import {Entity, ManyToMany, OneToOne, JoinColumn, JoinTable} from "typeorm"
 import { User } from "./User";
 import { Availability } from "./Availability";
 import { AssignedDate } from "./AssignedDate";

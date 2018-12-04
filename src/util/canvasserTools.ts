@@ -11,15 +11,12 @@ export const getTaskByID = async (taskID) => {
         .leftJoinAndSelect("RL._locations", "RLocations")
         .leftJoinAndSelect("task._completedLocation", "CL")
         .leftJoinAndSelect("CL._locations", "CLocations")
-        // .leftJoinAndSelect("CL._results", "results")
         .where("task._ID = :id", { id: taskID })
         .getOne()
         .then(res => {
             return res;
         })
         .catch(e => console.log(e));
-    // task.completedLocation.results = await getResults(task);
-    // console.log('The task', task)
     return task;
 };
 
@@ -31,7 +28,6 @@ export const getCanvassersTask = async (canvasserName) => {
         .leftJoinAndSelect("task._completedLocation", "CL")
         .leftJoinAndSelect("CL._locations", "CLocations")
         .leftJoinAndSelect("task._assignment", "assignment")
-        // .leftJoinAndSelect("CL._results", "results")
         .where("task._canvasser = :canvasserName", { canvasserName })
         .getMany()
         .then(res => {
@@ -48,7 +44,6 @@ export const getTasksByCampaign = async (campaignID) => {
         .leftJoinAndSelect("RL._locations", "locations")
         .leftJoinAndSelect("task._completedLocation", "CL")
         .leftJoinAndSelect("CL._locations", "CLocations")
-        // .leftJoinAndSelect("CL._results", "results")
         .where("task._campaignID = :cid", { cid: campaignID })
         .getMany()
         .then(res => {
@@ -133,12 +128,10 @@ export const removeLocation = (locations, locationID) => {
         }
     }
 
-    // console.log(locations);
     return locations;
 };
 
 export const sendToMap = (task, campaignID) => {
-    console.log("SendToMap: ", task)
     var route = [];
     var rlocations = [];
     if (task.remainingLocation !== null) {
@@ -146,7 +139,6 @@ export const sendToMap = (task, campaignID) => {
         var rte = 0;
         for (let m in task.remainingLocation.locations){
             if (task.remainingLocation.locations[m].route == rte){
-                console.log("pushing RL")
                 rlocations.push(task.remainingLocation.locations[m]);
                 rte++;
             }
@@ -160,9 +152,6 @@ export const sendToMap = (task, campaignID) => {
         clocations = task.completedLocation.locations;
         completed = convertGeocodes(clocations);
     }
-
-    console.log("RLocations: ", rlocations)
-    console.log("CLocations: ", clocations)
 
     io.on('connection', function (socket) {
         socket.emit('route', {
@@ -180,7 +169,6 @@ export const sendToMap = (task, campaignID) => {
 function convertGeocodes(locations) {
     var codes = []
     for (let l in locations) {
-        // console.log(task.remainingLocation.locations[l])
         codes.push({
             lat: locations[l].lat,
             lng: locations[l].long

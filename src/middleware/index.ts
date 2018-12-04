@@ -2,7 +2,6 @@ import { getManager } from 'typeorm';
 import { Request, Response, NextFunction } from 'express';
 import { Campaign } from '../backend/entity/Campaign';
 
-
 const middlewareObj = <any>{};
 
 middlewareObj.isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
@@ -34,11 +33,9 @@ middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) 
     if (req.isAuthenticated() && thing) {
         return next()
     } else {
-        console.log('Does not manage')
         res.redirect('/');
     }
 }
-
 
 /**
  * Given a campaignID return true if this manager 
@@ -47,7 +44,6 @@ middlewareObj.manages = async (req: Request, res: Response, next: NextFunction) 
  */
 async function isManagerOf(managerID, campaignId) {
     var campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignId } });
-    
 
     for (let i in campaign.managers) {
         if (campaign.managers[i].ID.employeeID === managerID) {
@@ -57,14 +53,5 @@ async function isManagerOf(managerID, campaignId) {
     return false;
 }
 
-/**
- * Given canvasserID check if they can edit the
- * requested calendar.
- * @param canvasserID 
- */
-async function isCanvass(canvasserID) {
-    // query not needed:
-    // check the requesting canvasserID and the stated canvasserID
-}
 
 module.exports = middlewareObj;

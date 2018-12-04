@@ -1,18 +1,18 @@
-import { Request, Response, Router }    from 'express';
-import { getManager, getRepository, AdvancedConsoleLogger }    from "typeorm";
-import { check, validationResult }      from 'express-validator/check';
-import { CampaignManager }              from '../backend/entity/CampaignManager';
-import { Canvasser }                    from '../backend/entity/Canvasser';
-import { SystemAdmin }                  from '../backend/entity/SystemAdmin';
-import { User }                         from '../backend/entity/User';
-import * as fs                          from 'fs';
+import { Request, Response, Router } from 'express';
+import { getManager, getRepository, AdvancedConsoleLogger } from "typeorm";
+import { check, validationResult } from 'express-validator/check';
+import { CampaignManager } from '../backend/entity/CampaignManager';
+import { Canvasser } from '../backend/entity/Canvasser';
+import { SystemAdmin } from '../backend/entity/SystemAdmin';
+import { User } from '../backend/entity/User';
+import * as fs from 'fs';
 
 import * as userManager from '../util/userManagementSystem';
-import * as authSystem  from '../config/auth';
+import * as authSystem from '../config/auth';
 
-const logger            = require('../util/logger');
-const middleware        = require('../middleware');
-let passwordValidator   = require('password-validator');
+const logger = require('../util/logger');
+const middleware = require('../middleware');
+let passwordValidator = require('password-validator');
 
 const router: Router = Router();
 const adminLogger = logger.getLogger('adminLogger');
@@ -65,16 +65,16 @@ router.post('/globals', middleware.isAdmin, async (req: Request, res: Response) 
  * Create/Edit/Delete User 
  */
 
-router.get('/new', middleware.isAdmin,async (req: Request, res: Response) => {
-    res.status(200).render('create-user', {message: ""});
+router.get('/new', async (req: Request, res: Response) => {
+    res.status(200).render('create-user', { message: "" });
 });
 
-router.get('/home', middleware.isAdmin,  async (req: Request, res: Response) => {
+router.get('/home', middleware.isAdmin, async (req: Request, res: Response) => {
     let users = await getManager()
         .createQueryBuilder(User, "userscampaigns")
         .getMany();
 
-    res.render('AdminHome', {users});
+    res.render('AdminHome', { users });
 });
 
 router.post('/', [
@@ -84,17 +84,13 @@ router.post('/', [
 ]
     , async (req: Request, res: Response) => {
 
-        const userRepository = getRepository(User); 
-        const user = await userRepository.find({ where: { "_username": req.body.user.username } })  
-            .catch(e => adminLogger.error(`Could not find user in ${req.body.user.username} in database, ${e}`)); 
-        if (user.length > 0) { 
-            return res.render('create-user', {message: `${req.body.user.username} already exist`});  
-        } 
+        const userRepository = getRepository(User);
+        const user = await userRepository.find({ where: { "_username": req.body.user.username } })
+            .catch(e => adminLogger.error(`Could not find user in ${req.body.user.username} in database, ${e}`));
+        if (user.length > 0) {
+            return res.render('create-user', { message: `${req.body.user.username} already exist` });
+        }
 
-        /** TODO: Finish validation
-         * Ensure data from user is valid.
-         */
-        // const validPassword = !passwordSchema.validate(req.body.password);
         const validationErrors = await validationResult(req);
         if (validationErrors.isEmpty()) {
             adminLogger.error(`Invalid Username or Password during registration`);
@@ -130,7 +126,7 @@ router.post('/', [
                 adminLogger.error(`/user/new Error occured while creating ${newUser.username}, ${e}`);
             });
 
-        res.render('create-user', {message: ""});
+        res.render('create-user', { message: "" });
     });
 
 
@@ -193,7 +189,6 @@ router.get('/view/:username', middleware.isAdmin, async (req: Request, res: Resp
 router.post('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
     let originalUsername = req.params.username;
 
-    // TODO: Error handling needed for when user not found
     const userRepository = getRepository(User);
     const unchangedUser = await userRepository.find({ where: { "_username": req.params.username } })
         .catch(e => adminLogger.error(`Could not find user in ${username} in database, ${e}`));
@@ -237,22 +232,15 @@ router.post('/:username', middleware.isAdmin, async (req: Request, res: Response
             .catch(e => adminLogger.error(`Error occured while updating role tables of${username} in database, ${e}`));
     }
 
-    // TODO: Find a better place to route to
-    // if(req.user[0]._permission === 2) {
-    //     res.redirect('/manager/new-assignment')
-    // }
     res.redirect('/home')
 });
 
 router.delete('/:username', middleware.isAdmin, async (req: Request, res: Response) => {
-
-    console.log('Deleting', req.params.username)
     // EmployeeID is required to remove user from roled table
     const userRepository = getRepository(User);
     const user = await userRepository.find({ where: { "_username": req.params.username } })
         .catch(e => adminLogger.error(`Could not find ${req.params.username} in database, ${e}`));
 
-    console.log('Found', user)
     /**
      * Delete User from Specific Role Table
      * This record must be deleted first due
@@ -267,13 +255,6 @@ router.delete('/:username', middleware.isAdmin, async (req: Request, res: Respon
         .then(() => adminLogger.info(`/${req.params.username} ${req.user[0]._username} deleted ${user[0]._name}`));
 
 
-    // TODO: Find a better palce to route to after a user has been deleted
-    /**
-     * Sanity Check
-     * If page loads with user, user was not deleted from the DB
-     * else it was successfull.
-     */
-    console.log('here')
     res.redirect('/home');
 });
 

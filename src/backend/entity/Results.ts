@@ -1,6 +1,4 @@
-import {Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, ManyToMany, JoinTable} from "typeorm";
-import { Locations } from "./Locations";
-import { Canvasser } from "./Canvasser";
+import {Column, Entity, PrimaryGeneratedColumn, ManyToOne} from "typeorm";
 import { CompletedLocation } from "./CompletedLocation";
 import { Campaign } from "./Campaign";
 
