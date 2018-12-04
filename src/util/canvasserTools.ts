@@ -1,66 +1,11 @@
-import { getManager } from 'typeorm';
-import { TalkPoint } from '../backend/entity/TalkPoint';
-import { Task } from '../backend/entity/Task';
 import { Results } from '../backend/entity/Results';
 import { io } from '../server';
+import * as canvasserRepo from '../repositories/canvasserRepo';
 
-export const getTaskByID = async (taskID) => {
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "RLocations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .where("task._ID = :id", { id: taskID })
-        .getOne()
-        .then(res => {
-            return res;
-        })
-        .catch(e => console.log(e));
-    return task;
-};
-
-export const getCanvassersTask = async (canvasserName) => {
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "locations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .leftJoinAndSelect("task._assignment", "assignment")
-        .where("task._canvasser = :canvasserName", { canvasserName })
-        .getMany()
-        .then(res => {
-            return res;
-        })
-        .catch(e => console.log(e));
-    return task;
-}
-
-export const getTasksByCampaign = async (campaignID) => {
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "locations")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocations")
-        .where("task._campaignID = :cid", { cid: campaignID })
-        .getMany()
-        .then(res => {
-            return res;
-        })
-        .catch(e => console.log(e));
-    return task;
-};
 
 export const getResults = async (task, campaignID) => {
     var res = [];
-    var results = await getManager()
-        .createQueryBuilder(Results, "results")
-        .leftJoinAndSelect("results._completedLocation", "CL")
-        .leftJoinAndSelect("results._campaign", "campaign")
-        .where("campaign._ID = :id", { id: campaignID })
-        .getMany();
+    var results = await canvasserRepo.getResults(campaignID);
 
     for (let l in results) {
         if (results[l].completedLocation.ID == task.completedLocation.ID) {
@@ -90,10 +35,6 @@ export const findTask = (tasks, locationID) => {
     return task;
 };
 
-export const getTalk = async (campaignID) => {
-    var talk = await getManager().find(TalkPoint, { where: { "_campaign": campaignID } });
-    return talk;
-};
 
 export const fillResults = (results, rating, campaign, oldRes) => {
     // populate results

@@ -6,10 +6,12 @@ import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { AssignedDate } from '../backend/entity/AssignedDate';
 import { Locations } from '../backend/entity/Locations';
 import { Assignment } from '../backend/entity/Assignment';
-import { spawnSync } from 'child_process';
+import * as managerRepo from '../repositories/managerRepo';
+
 var _ = require('lodash');
 var moment = require('moment');
 moment().format();
+
 
 // Empty "campaign" object we return when user 
 // tries to access a page with an invalid campaign id.
@@ -75,76 +77,6 @@ export const getCampaignLocations = campaign => {
     return locations
 };
 
-
-/**
- * Returns the canvassers that are available to work on
- * a campaign
- * @param campaignID 
- */
-export const getAvailableCanvassers = async campaignID => {
-    return await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._ID", "user")
-        .leftJoinAndSelect("canvasser._availableDates", "avaDate")
-        .leftJoinAndSelect("canvasser._assignedDates", "assDate")
-        .leftJoinAndSelect("canvasser._task", "task")
-        .leftJoinAndSelect("task._remainingLocation", "RL")
-        .leftJoinAndSelect("RL._locations", "RLocation")
-        .leftJoinAndSelect("task._completedLocation", "CL")
-        .leftJoinAndSelect("CL._locations", "CLocation")
-        .leftJoinAndSelect("task._assignment", "assignment")
-        .where("campaign._ID = :ID", { ID: campaignID })
-        .getMany();
-};
-
-export const getCanvassers = async campaignID => {
-    return await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._ID", "user")
-        .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._task", "tasks")
-        .where("campaign._ID = :ID", { ID: campaignID })
-        .getMany();
-}
-
-export const getTaskCanvasser = async (taskID, canvasserID) => {
-    return await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._tasks", "tasks")
-        .where("canvasser._ID = :ID", { ID: canvasserID })
-        .where("tasks._ID = ID", { ID: taskID })
-        .getMany();
-};
-
-/**
- * Returns the tasks for a campaign
- * @param campaignID 
- */
-export const getCampaignTask = async (campaignID) => {
-    return await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._remainingLocation", "rL")
-        .leftJoinAndSelect("rL._locations", "locations")
-        .where("campaignID = :ID", { ID: campaignID })
-        .getMany();
-}
-
-
-export const getTask = async (taskId) => {
-    return await getManager()
-        .createQueryBuilder(Task, "task")
-        .where("_ID = ID", { ID: taskId })
-        .getMany();
-}
-
-export const getRemainingLocations = async taskID => {
-    return await getManager()
-        .createQueryBuilder(RemainingLocation, "remainingLocation")
-        .leftJoinAndSelect("remainingLocation._locations", "locations")
-        .where("remainingLocation._ID = :ID", { ID: taskID })
-        .getMany();
-}
 
 /**
  * Code Sniplet has been obtained from https://www.movable-type.co.uk/scripts/latlong.html
@@ -397,7 +329,7 @@ function sortDates(availableDates) {
  * @param canvassers 
  */
 export const updateTasks = async (tasks, campaignID, canvassers) => {
-    let dbTasks = await getCampaignTask(campaignID);
+    let dbTasks = await managerRepo.getCampaignTask(campaignID);
     // we can assume the campaign will have the tasks at this point
     dbTasks.forEach(dbTasks => {
         var found = false;
@@ -462,13 +394,7 @@ export const launchORT = async (data) => {
  */
 export const loadCanvasserCampaigns = async (canvassers) => {
     for (let l in canvassers) {
-        var canvass = await getManager()
-            .createQueryBuilder(Canvasser, "canvasser")
-            .leftJoinAndSelect("canvasser._ID", "user")
-            .leftJoinAndSelect("canvasser._campaigns", "campaigns")
-            .leftJoinAndSelect("campaigns._assignment", "assignment")
-            .where("user._employeeID = :id", { id: canvassers[l].ID.employeeID })
-            .getOne();
+        var canvass = await managerRepo.getCanvasserCampaigns(canvassers[l].ID.employeeID);
 
         if (canvass != undefined) {
             for (let m in canvass.campaigns) {
@@ -481,65 +407,35 @@ export const loadCanvasserCampaigns = async (canvassers) => {
     return canvassers;
 };
 
+
 export const getOldAssignment = async (campaignID) => {
-    var task = await getManager()
-        .createQueryBuilder(Task, "task")
-        .leftJoinAndSelect("task._assignment", "assignment")
-        .where("task._campaignID = :id", { id: campaignID })
-        .getOne()
-        .then(res => {
-            return res;
-        });
+    var task = await managerRepo.getTaskAssignment(campaignID);
+
     var assignment;
+    // if there exists a task, then a previous assignment exists
     if (task != undefined && task != null) {
-        assignment = await getManager()
-            .createQueryBuilder(Assignment, "assignment")
-            .where("assignment._ID = :id", { id: task.assignment.ID })
-            .getOne()
-            .then(res => {
-                return res;
-            });
-        assignment.tasks = await getManager()
-            .createQueryBuilder(Task, "task")
-            .leftJoinAndSelect("task._assignment", "assignment")
-            .leftJoinAndSelect("task._remainingLocation", "RL")
-            .leftJoinAndSelect("RL._locations", "RLocation")
-            .where("assignment._ID = :id", { id: assignment.ID })
-            .getMany()
-            .then(res => {
-                return res;
-            });
+        assignment = task.assignment;
+        assignment.tasks = await managerRepo.getAssignmentTasks(assignment.ID);
     }
 
     return assignment;
 };
+
 
 export const clearAssignment = async (assignment) => {
     // remove locations for each remaining locations
     for (let l in assignment.tasks) {
         await removeRLocations(assignment.tasks[l]);
-        await getManager()
-            .createQueryBuilder()
-            .relation(Task, "_remainingLocation")
-            .of(assignment.tasks[l].ID)
-            .set(null);
-        await getManager()
-            .createQueryBuilder()
-            .delete()
-            .from(Task)
-            .where("_ID = :id", { id: assignment.tasks[l].ID })
-            .execute();
+        await managerRepo.removeRLofTask(assignment.tasks[l].ID);
+        await managerRepo.deleteTask(assignment.tasks[l].ID);
     }
     assignment.task = [];
     return assignment;
 };
 
+
 async function removeRLocations(task) {
     for (let l in task.remainingLocation.locations) {
-        await getManager()
-            .createQueryBuilder()
-            .relation(RemainingLocation, "_locations")
-            .of(task.remainingLocation.ID)
-            .remove(task.remainingLocation.locations[l].ID)
+        await managerRepo.removeRL(task.remainingLocation.ID, task.remainingLocation.locations[l].ID);
     }
 };

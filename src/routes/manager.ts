@@ -5,6 +5,7 @@ import { Assignment } from '../backend/entity/Assignment';
 import { Results } from '../backend/entity/Results';
 import { Questionaire } from '../backend/entity/Questionaire';
 import * as managerTools from '../util/managerTools';
+import * as managerRepo from '../repositories/managerRepo';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
 import { Canvasser } from '../backend/entity/Canvasser';
@@ -26,7 +27,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     /**
      * Check if id corressponds to a campaign
      */
-    let campaign = await getManager().findOne(Campaign, { where: { "_ID": req.params.id } });
+    let campaign = await managerRepo.getCampaignBasic(req.params.id);
     if (campaign === undefined) {
         return res.status(404).send('Campaign not found');
     }
@@ -64,7 +65,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
      * Locations to canvass
      * Estimated number of tasks
      */
-    let canvassers = await managerTools.getAvailableCanvassers(req.params.id);
+    let canvassers = await managerRepo.getAvailableCanvassers(req.params.id);
     let locations = managerTools.getCampaignLocations(campaign);
     let estimatedTasks = managerTools.estimateTask(locations, ESTIMATED_VISIT_TIME, AVG_TRAVEL_SPEED, WORKDAY_LIMIT);
 
@@ -153,21 +154,21 @@ router.get('/view-assignment/:id', async (req: Request, res: Response) => {
     let canvassers = [];
 
     // Check if id corressponds to a campaign    
-    campaign = await getManager().findOne(Campaign, { where: { "_ID": campaignID } });
+    campaign = await managerRepo.getCampaignBasic(campaignID);
     if (campaign === undefined) {
         return res.status(404).send('Assignment not found')
     }
 
     // Grab all canvassers that work for this campaign
-    canvassers = await managerTools.getCanvassers(campaignID);
+    canvassers = await managerRepo.getCanvassers(campaignID);
 
     // Grab all task with this campaign id
-    tasks = await managerTools.getCampaignTask(campaignID);
+    tasks = await managerRepo.getCampaignTask(campaignID);
     let test = [];
 
     // Grab all remaining locations for the tasks
     for (let i in tasks) {
-        let location = await managerTools.getRemainingLocations(tasks[i].ID);
+        let location = await managerRepo.getRemainingLocations(tasks[i].ID);
         tasks[i].remainingLocations = locations;
         location.forEach(l => {
             l.locations.forEach(place => {
@@ -251,8 +252,7 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
 });
 
 router.get('/results/:id', middleware.manages, async (req: Request, res: Response) => {
-    var campaign = await getManager().findOne(Campaign,
-        { where: { "_ID": req.params.id } });
+    var campaign = await managerRepo.getCampaignBasic(req.params.id);
 
     var resul = await getManager().find(Results, {
         where: { "_campaign": campaign },
