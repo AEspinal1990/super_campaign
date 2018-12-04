@@ -56,7 +56,7 @@ export const getWorkdayLimit = () => {
 
 
 /**
- * Returns the locations for a campaign
+ * Returns the geocode of each location within a campaign
  * @param campaign 
  */
 export const getCampaignLocations = campaign => {
@@ -433,7 +433,6 @@ export const launchORT = async (data) => {
 
     // start up OR-Tools from child process
     let myPromise = new Promise((resolve, reject) => {
-        var sys = require('sys')
         var exec = require('child_process').exec;
         let dir = exec("cd src/util && python ortool.py", function (err, stdout, stderr) {
             if (err) {

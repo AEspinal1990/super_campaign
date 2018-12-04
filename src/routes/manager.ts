@@ -213,6 +213,7 @@ router.post('/view-assignment-detail', async (req: Request, res: Response) => {
         .leftJoinAndSelect("rmL._locations", "fmLs")
         .where("campaign._ID = :ID", { ID: req.body.campaignID })
         .getMany();
+        
     if (res.status(200)) {
         if (canv === undefined) {
             res.send('Error retreiving task ' + req.body.taskID);

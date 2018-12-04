@@ -136,6 +136,7 @@ router.get('/edit/:id', middleware.manages, async (req: Request, res: Response) 
         for (let i in campaign[0].question) {
             questionsInput += campaign[0].question[i].question + "\n";
         }
+        
         //parse talking points back to input form
         const tRepo = getRepository(TalkPoint);
         const talkPoint = await tRepo.find({ where: { "_campaign": req.params.id } });
