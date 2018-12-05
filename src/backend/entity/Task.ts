@@ -15,14 +15,10 @@ export class Task{
     @OneToOne(type => CompletedLocation, {nullable: true, cascade: true})
     @JoinColumn({name: "completedLocation"})
     private _completedLocation!:CompletedLocation;
-    @Column({name: "currentLocation", nullable: true})
-    private _currentLocation!:number;
-    @Column({name: "ofDate"})
-    private _scheduledOn!:Date;
-    @Column({name: "taskStatus"})
-    private _status!:boolean;
     @ManyToOne(type => Assignment, as => as.tasks)
     private _assignment!:Assignment;
+    @Column({name: "ofDate"})
+    private _scheduledOn!:Date;
     @Column({ name: "duration" })
     private _duration!: number;
     @Column({ name: "canvasserName", nullable: true })
@@ -42,14 +38,8 @@ export class Task{
     public get completedLocation():CompletedLocation{
         return this._completedLocation;
     }
-    public get currentLocation():number{
-        return this._currentLocation;
-    }
     public get scheduledOn():Date{
         return this._scheduledOn;
-    }
-    public get status():boolean{
-        return this._status;
     }
     public get assignment():Assignment{
         return this._assignment;
@@ -84,14 +74,8 @@ export class Task{
     public set completedLocation(value:CompletedLocation){
         this._completedLocation = value;
     }
-    public set currentLocation(location:number){
-        this._currentLocation = location;
-    }
     public set scheduledOn(date:Date){
         this._scheduledOn = date;
-    }
-    public set status(stat:boolean){
-        this._status = stat;
     }
     public set assignment(value:Assignment){
         this._assignment = value;

@@ -77,6 +77,7 @@ def create_distance_callback(data):
 
 # demand === time per location
 # capacities === max time
+# calculates the total time consumed for traveling and servicing
 def create_demand_callback(data):
     def demand_callback(from_node, to_node):
 
@@ -114,23 +115,29 @@ def main():
 
     # Create routing model
     routing = pywrapcp.RoutingModel(data["num_locations"], data["num_canvassers"], data["depot"])
+    
+    # create the distance callback and add it to the or-tools 
+    # distance calculating function
     distance_callback = create_distance_callback(data)
     routing.SetArcCostEvaluatorOfAllVehicles(distance_callback)
 
     '''Add specifications/limitations with dimensions'''
-    # distance dimension
-    # time dimension
+    # distance dimension & time dimension
     demand_callback = create_demand_callback(data)
+    # creates the constraint
     add_capacity_constraints(routing, data, demand_callback)
 
-    # Search options - set to first solution heuristic
+    # Search options - set to first solution heuristic search
     search_parameters = pywrapcp.RoutingModel.DefaultSearchParameters()
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC) # pylint: disable=no-member
     assignment = routing.SolveWithParameters(search_parameters)
 
+    # results of searches are returned to routing var
     tasks = {}
     tasks["routes"] = []
+
+    # for each canvasser/task, insert results into task json object which will then write to results json
     for vehicle_id in range(data["num_canvassers"]):
         index = routing.Start(vehicle_id)
 

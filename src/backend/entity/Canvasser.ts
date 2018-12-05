@@ -19,6 +19,7 @@ export class Canvasser{
     @ManyToMany(type => Task,  {cascade: true})
     @JoinTable({name: "canvasser_task_mapping"})
     private _task!:Task[];
+    
     @ManyToMany(type => Availability, {cascade: true, nullable: true})
     @JoinTable({name: "canvasser_availability_mapping"})
     private _availableDates!: Availability[];

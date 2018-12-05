@@ -79,7 +79,15 @@
             icon: getIcon
         });
 
+        var address = loc._streetNumber +
+            ' ' + loc._street +
+            ', ' + loc._unit +
+            ', ' + loc._city +
+            ', ' + loc._state +
+            ', ' + loc._zipcode
+
         var infoContent = ('<div id="content">' +
+            '<h4> ' + address + ' </h4>' +
             '<form action="/canvasser/canvassing/enter-results" method="POST">' +
             '<input type="hidden" name="campaignID" value="' + campaignID + '">' +
             '<input type="hidden" name="locationID" value="' + loc._ID + '">' +

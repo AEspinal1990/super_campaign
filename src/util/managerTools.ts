@@ -115,7 +115,7 @@ export const estimateTask = (locations, avgDuration, travelSpeed, workdayDuratio
     locations.forEach(location => {
         let avgSingleDistance = 0;
 
-        // find the average distance from all other locations
+        // find the average distance between all other locations
         locations.forEach(otherLocation => {
             // find avg distance from locations object
             avgSingleDistance +=
@@ -127,7 +127,7 @@ export const estimateTask = (locations, avgDuration, travelSpeed, workdayDuratio
     });
 
     avgDistance /= locations.length;
-    let numTask = (avgDistance + avgDuration) / (workdayDuration / 60);
+    let numTask = (avgDistance + avgDuration) / (workdayDuration);
     return Math.ceil(numTask);
 }
 
@@ -170,7 +170,6 @@ export const createTasks = (routes, campaign, assignment) => {
         }
 
         task.numLocations = task.remainingLocation.locations.length;
-        task.status = false;
         task.campaignID = campaign.ID;
         task.duration = campaign.avgDuration;
         task.assignment = assignment;
@@ -205,7 +204,10 @@ export const removeBusy = (canvassers: Canvasser[]) => {
 }
 
 export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
-    let availableDates = [];
+    // 2D array of current available dates
+        // 1st dimension represents the canvassers
+        // 2nd represents the dates
+    let currentAvailDates = [];
     // Sort by dates to allow for easier front loading.
     canvassers.forEach(canvasser => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
@@ -214,7 +216,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         if (canvasser.assignedDates.length === 0) {
             canvasser.assignedDates = [];
             canvasser.task = [];
-            availableDates.push(canvasser.availableDates);
+            currentAvailDates.push(canvasser.availableDates);
         } else {
             /**
              * create a list of available dates by comparing
@@ -231,12 +233,12 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
                     }
                 }
             });
-            availableDates.push(date);
+            currentAvailDates.push(date);
         }
     });
 
     // check if there are no available dates
-    if (availableDates.length == 0) {
+    if (currentAvailDates.length == 0) {
         return {
             canvasser: null,
             status: 3
@@ -251,44 +253,51 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // Since dates are already sorted,
         // earliest date will be at a canvassers first available date.
         for (let i in canvassers) {
-            if (availableDates[i] === undefined) {
+            // check if the canvasser has any more current available dates
+            if (currentAvailDates[i] === undefined) {
                 continue;
-            } else if (availableDates[i].length === 0) {
+            } else if (currentAvailDates[i].length === 0) {
                 continue;
             }
-            let date = canvassersEarliestDates(availableDates[i]);
+
+            let date = canvassersEarliestDates(currentAvailDates[i]);
             if (date != null) {
                 if (earliestDate === undefined || date < earliestDate) {
                     canvasserIndex = Number(i);
                     earliestDate = date;
-                    status = 4;
+                    if (status != 2){
+                        status = 4;
+                    }
                 }
             }
+
+            // if there are not enough canvassers with available dates. there are unassigned tasks
             if (Number(i) == canvassers.length - 1 && status != 4) {
                 status = 2;
             }
         }
+
         if (status == 2) {
-            earliestDate = undefined;
-            continue;
+            return {
+                canvasser: canvassers,
+                status: 2
+            };
         }
+
         // Insert into datesAssigned
         canvassers[canvasserIndex] = assignTask(canvassers[canvasserIndex], tasks[l]);
         tasks[l].canvasser = canvassers[canvasserIndex].ID.name;
         tasks[l].scheduledOn = earliestDate;
-        for (let m in availableDates[l]) {
-            if (+availableDates[l][m].availableDate == +earliestDate) {
-                availableDates[l].splice(m, 1);
+
+        // reflect newly assigned date on the list of current available dates
+        for (let m in currentAvailDates[l]) {
+            if (+currentAvailDates[l][m].availableDate == +earliestDate) {
+                currentAvailDates[l].splice(m, 1);
             }
         }
+
         earliestDate = undefined;
     };
-    if (status == 2) {
-        return {
-            canvasser: canvassers,
-            status: 2
-        };
-    }
 
     return {
         canvasser: canvassers,
@@ -364,6 +373,7 @@ export const launchORT = async (data) => {
     });
 
     // start up OR-Tools from child process
+    // the child process is created within the promse callback
     let myPromise = new Promise((resolve, reject) => {
         var exec = require('child_process').exec;
         let dir = exec("cd src/util && python ortool.py", function (err, stdout, stderr) {

@@ -19,11 +19,9 @@ const fs = require('fs');
 
 router.get('/', middleware.isAuthenticated, async (req: Request, res: Response) => {
     res.render('campaignScreen');
-
 });
 
-router.post('/new-assignment/:id', async (req: Request, res: Response) => {
-
+router.post('/new-assignment/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     /**
      * Check if id corressponds to a campaign
      */
@@ -92,7 +90,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     canvassers = managerTools.removeBusy(canvassers);
     var ret = managerTools.assignTasks(canvassers, tasks);
     if (ret.status == 3) {
-        // no available dates
+        // no available dates so no tasks were assigned
         canvassers = null;
     } else {
         // all or some tasks are assigned
@@ -124,6 +122,7 @@ router.post('/new-assignment/:id', async (req: Request, res: Response) => {
     } else {
         return res.send("Warning!!! No canvassers are available to assign task(s) to!");
     }
+    
     if (status == 2) {
         // warn: only some tasks were assigned
         return res.send("Warning!!! Not enough canvassers are available to be assigned for all tasks!")
@@ -173,9 +172,8 @@ router.get('/view-assignment/:id', async (req: Request, res: Response) => {
         location.forEach(l => {
             l.locations.forEach(place => {
                 tasks[i].remainingLocations.push(place);
-            })
-
-        })
+            });
+        });
         remainingLocations.push(location);
         test.push(location);
     }
