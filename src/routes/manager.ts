@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import { getManager } from 'typeorm';
-import { Campaign } from '../backend/entity/Campaign';
 import { Assignment } from '../backend/entity/Assignment';
 import { Results } from '../backend/entity/Results';
 import { Questionaire } from '../backend/entity/Questionaire';
@@ -50,6 +49,7 @@ router.post('/new-assignment/:id', middleware.isAuthenticated, async (req: Reque
     } else {
         assignment = new Assignment();
     }
+    
     /**
      * Grab global parameters from globals.json
      */
@@ -122,7 +122,7 @@ router.post('/new-assignment/:id', middleware.isAuthenticated, async (req: Reque
     } else {
         return res.send("Warning!!! No canvassers are available to assign task(s) to!");
     }
-    
+
     if (status == 2) {
         // warn: only some tasks were assigned
         return res.send("Warning!!! Not enough canvassers are available to be assigned for all tasks!")

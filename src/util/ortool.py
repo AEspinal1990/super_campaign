@@ -116,7 +116,7 @@ def main():
     # Create routing model
     routing = pywrapcp.RoutingModel(data["num_locations"], data["num_canvassers"], data["depot"])
     
-    # create the distance callback and add it to the or-tools 
+    # create the distance callback and add it to the routing model
     # distance calculating function
     distance_callback = create_distance_callback(data)
     routing.SetArcCostEvaluatorOfAllVehicles(distance_callback)
@@ -137,11 +137,11 @@ def main():
     tasks = {}
     tasks["routes"] = []
 
-    # for each canvasser/task, insert results into task json object which will then write to results json
+    # for each route, insert results into task json object which will then write to results json
     for vehicle_id in range(data["num_canvassers"]):
         index = routing.Start(vehicle_id)
 
-        # check if there is no locations for this task
+        # check if there are locations/nodes for this task
         if routing.IndexToNode(assignment.Value(routing.NextVar(index))) == 0:
             continue
         else:
@@ -151,6 +151,7 @@ def main():
             while not routing.IsEnd(index):
                 index = assignment.Value(routing.NextVar(index))
                 location_index = routing.IndexToNode(index)
+                # exclude depot nodes
                 if location_index != 0:
                     route["locations"].append(data["locations"][location_index])
             # add route to tasks

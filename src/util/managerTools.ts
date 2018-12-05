@@ -5,7 +5,6 @@ import { Task } from '../backend/entity/Task';
 import { RemainingLocation } from '../backend/entity/RemainingLocation';
 import { AssignedDate } from '../backend/entity/AssignedDate';
 import { Locations } from '../backend/entity/Locations';
-import { Assignment } from '../backend/entity/Assignment';
 import * as managerRepo from '../repositories/managerRepo';
 
 var _ = require('lodash');
@@ -208,6 +207,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // 1st dimension represents the canvassers
         // 2nd represents the dates
     let currentAvailDates = [];
+    
     // Sort by dates to allow for easier front loading.
     canvassers.forEach(canvasser => {
         canvasser.availableDates = sortDates(canvasser.availableDates);
@@ -254,6 +254,7 @@ export const assignTasks = (canvassers: Canvasser[], tasks: Task[]) => {
         // earliest date will be at a canvassers first available date.
         for (let i in canvassers) {
             // check if the canvasser has any more current available dates
+            // because as we loop through currentAvailDates is added to assignedDates and we update
             if (currentAvailDates[i] === undefined) {
                 continue;
             } else if (currentAvailDates[i].length === 0) {
