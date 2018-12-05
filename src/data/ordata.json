@@ -1,7 +1,7 @@
 {
 	"locations": [
 		{
-			"_ID": 2,
+			"_ID": 1,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -13,7 +13,7 @@
 			"_route": null
 		},
 		{
-			"_ID": 2,
+			"_ID": 1,
 			"_streetNumber": 100,
 			"_street": "Nicolls Rd",
 			"_unit": "0",
@@ -25,7 +25,7 @@
 			"_route": null
 		}
 	],
-	"num_canvassers": 2,
+	"num_canvassers": 1,
 	"estimated_visit_time": 10,
 	"workday_limit": 360,
 	"avg_travel_speed": 804

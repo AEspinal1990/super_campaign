@@ -140,7 +140,7 @@ router.get('/view-tasks/:id', async (req: Request, res: Response) => {
 });
 
 router.post('/view-task-detail', async (req: Request, res: Response) => {
-    const canv = await canvasserRepo.getCanvasserTaskRL(req.body.campaignID)
+    const canv = await canvasserRepo.getCanvasserTaskRL(req.body.campaignID);
 
     if (res.status(200)) {
         if (canv === undefined) {
