@@ -121,7 +121,7 @@ router.post('/availability', middleware.isAuthenticated, async (req: Request, re
     res.redirect("/home");
 });
 
-router.get('/view-tasks/:id', async (req: Request, res: Response) => {
+router.get('/view-tasks/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     const canv = await canvasserRepo.getCanvasserTaskCampaign(req.user[0]._employeeID)
 
     // check when a canvaseer is in many campaigns. check the list of campaigns
@@ -139,7 +139,7 @@ router.get('/view-tasks/:id', async (req: Request, res: Response) => {
     canvasserLogger.info(`/${req.params.id}/view-tasks - View Tasks`);
 });
 
-router.post('/view-task-detail', async (req: Request, res: Response) => {
+router.post('/view-task-detail', middleware.isAuthenticated, async (req: Request, res: Response) => {
     const canv = await canvasserRepo.getCanvasserTaskRL(req.body.campaignID);
 
     if (res.status(200)) {
@@ -176,7 +176,7 @@ router.post('/view-task-detail', async (req: Request, res: Response) => {
 /**
  * Start of canvassing where user selects a campaign -> task -> real time canvassing
  */
-router.get('/canvassing', async (req: Request, res: Response) => {
+router.get('/canvassing', middleware.isAuthenticated, async (req: Request, res: Response) => {
     var canvasser = await canvasserRepo.getCanvasserCampaignsTasks(req.user[0]._employeeID);
 
     var tasks = [];
@@ -200,7 +200,7 @@ router.get('/canvassing', async (req: Request, res: Response) => {
  * Real time canvassing where route is shown on map, 
  * along with talking points, questionaire, and option for entering results
  */
-router.post('/canvassing/map', async (req: Request, res: Response) => {
+router.post('/canvassing/map', middleware.isAuthenticated, async (req: Request, res: Response) => {
     var task = await canvasserRepo.getTaskByID(req.body.taskID);
     // create a list of talking points withou the campaign object
     var talkingPoints = await canvasserRepo.getTalk(req.body.campaignID);
@@ -221,7 +221,7 @@ router.post('/canvassing/map', async (req: Request, res: Response) => {
 /**
  * For entering results of a location
  */
-router.post('/canvassing/enter-results', async (req: Request, res: Response) => {
+router.post('/canvassing/enter-results', middleware.isAuthenticated, async (req: Request, res: Response) => {
     // create a list of questions without the campaign object
     var questionaire = await canvasserRepo.getQuestionaire(req.body.campaignID);
     var questions = [];
@@ -240,7 +240,7 @@ router.post('/canvassing/enter-results', async (req: Request, res: Response) => 
 /**
  * For saving the results
  */
-router.post('/canvassing/results', async (req: Request, res: Response) => {
+router.post('/canvassing/results', middleware.isAuthenticated, async (req: Request, res: Response) => {
     var results = req.body.results;
     var rating = req.body.rating;
     var completedLocation = new CompletedLocation();

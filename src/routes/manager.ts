@@ -7,7 +7,6 @@ import * as managerTools from '../util/managerTools';
 import * as managerRepo from '../repositories/managerRepo';
 import * as resultStatisticsUtil from '../util/resultStatisticsUtil';
 import { io } from '../server';
-import { Canvasser } from '../backend/entity/Canvasser';
 
 const router: Router = Router();
 const logger = require('../util/logger');
@@ -49,7 +48,7 @@ router.post('/new-assignment/:id', middleware.isAuthenticated, async (req: Reque
     } else {
         assignment = new Assignment();
     }
-    
+
     /**
      * Grab global parameters from globals.json
      */
@@ -142,7 +141,7 @@ router.post('/new-assignment/:id', middleware.isAuthenticated, async (req: Reque
     }
 });
 
-router.get('/view-assignment/:id', async (req: Request, res: Response) => {
+router.get('/view-assignment/:id', middleware.isAuthenticated, async (req: Request, res: Response) => {
     let campaign;
     let tasks = [];
     let remainingLocations = [];
@@ -203,15 +202,8 @@ router.get('/view-assignment/:id', async (req: Request, res: Response) => {
     res.render('view-assignments', { tasks, campaignID, id, numLocations })
 });
 
-router.post('/view-assignment-detail', async (req: Request, res: Response) => {
-    const canv = await getManager()
-        .createQueryBuilder(Canvasser, "canvasser")
-        .leftJoinAndSelect("canvasser._campaigns", "campaign")
-        .leftJoinAndSelect("canvasser._task", "task")
-        .leftJoinAndSelect("task._remainingLocation", "rmL")
-        .leftJoinAndSelect("rmL._locations", "fmLs")
-        .where("campaign._ID = :ID", { ID: req.body.campaignID })
-        .getMany();
+router.post('/view-assignment-detail', middleware.isAuthenticated, async (req: Request, res: Response) => {
+    const canv = await managerRepo.getCanvasserRL(req.body.campaignID);
         
     if (res.status(200)) {
         if (canv === undefined) {

@@ -149,3 +149,15 @@ export const getCampaignBasic = async campaignID => {
     return await getManager().findOne(Campaign,
         { where: { "_ID": campaignID } });
 }
+
+
+export const getCanvasserRL = async campaignID => {
+    return await getManager()
+        .createQueryBuilder(Canvasser, "canvasser")
+        .leftJoinAndSelect("canvasser._campaigns", "campaign")
+        .leftJoinAndSelect("canvasser._task", "task")
+        .leftJoinAndSelect("task._remainingLocation", "rmL")
+        .leftJoinAndSelect("rmL._locations", "fmLs")
+        .where("campaign._ID = :ID", { ID: campaignID })
+        .getMany();
+}
